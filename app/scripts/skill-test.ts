@@ -22,6 +22,8 @@ const SLUG = "seating-demo"
 const CLIENT = `clients/${SLUG}`
 const STARTING_STAGE = "none"
 const TODAY = new Date().toLocaleDateString("en-CA")
+const SKILLS = "../../.claude/skills"
+const UNDER_CAP = /^[\s\S]{0,12000}$/
 
 interface SkillCase {
   args: string
@@ -29,7 +31,9 @@ interface SkillCase {
   stage: string
   expected: Record<string, RegExp[]>
   printed?: RegExp
+  unchanged?: string[]
   from?: string
+  writesSkills?: boolean
   addDir?: string
 }
 
@@ -67,7 +71,7 @@ const CASES: Record<string, SkillCase> = {
     produces: ["mockup.html", "prototype.md"],
     stage: "prototype",
     expected: { "mockup.html": [/<html/i], "prototype.md": [/\(mockup\.html\)/] },
-    printed: /prototypes:registerPrototype/,
+    printed: /prototypes:uploadMockup/,
   },
   feedback: {
     args: "inbox/feedback.txt",
@@ -86,6 +90,19 @@ const CASES: Record<string, SkillCase> = {
     expected: { "progress.md": [new RegExp(`- ${TODAY} .*/estimate`)] },
     printed: /\/estimate/,
   },
+  handoff: {
+    args: "inbox/run-note.md",
+    produces: ["progress.md"],
+    from: "prd",
+    stage: "prd",
+    expected: {
+      "progress.md": [new RegExp(`- ${TODAY} .*handoff`)],
+      [`${SKILLS}/prd/learnings.md`]: [new RegExp(`- ${TODAY}: .*Rule: `), UNDER_CAP],
+    },
+    unchanged: [`${SKILLS}/prd/SKILL.md`, `${SKILLS}/estimate/learnings.md`],
+    printed: /SKILL\.md/,
+    writesSkills: true,
+  },
   handover: {
     args: "https://seating-demo.example.com",
     produces: ["handover.md"],
@@ -97,7 +114,7 @@ const CASES: Record<string, SkillCase> = {
 function prepareWorkspace(skill: string, skillCase: SkillCase): string {
   const workspace = mkdtempSync(path.join(tmpdir(), `skill-test-${skill}-`))
   cpSync(FIXTURE, workspace, { recursive: true })
-  cpSync(path.join(REPO, ".claude/skills", skill), path.join(workspace, ".claude/skills", skill), {
+  cpSync(path.join(REPO, ".claude/skills"), path.join(workspace, ".claude/skills"), {
     recursive: true,
     filter: (source) => !source.includes(`${path.sep}fixture`),
   })
@@ -116,7 +133,7 @@ function prepareWorkspace(skill: string, skillCase: SkillCase): string {
 }
 
 function runSkill(skill: string, skillCase: SkillCase, workspace: string): string {
-  const prompt = `/${skill} ${SLUG} ${skillCase.args}\n\nThis is a test run: add --dry-run to the client-state.ts command, and print any \`npx convex run\` command instead of running it.`
+  const prompt = `/${skill} ${SLUG} ${skillCase.args}\n\nThis is a test run: add --dry-run to the client-state.ts command, and print any \`npx convex run\` command instead of running it, long arguments elided.`
   const result = spawnSync(
     "claude",
     [
@@ -124,7 +141,8 @@ function runSkill(skill: string, skillCase: SkillCase, workspace: string): strin
       ["--model", "sonnet"],
       ["--setting-sources", "project"],
       ["--strict-mcp-config"],
-      ["--permission-mode", "acceptEdits"],
+      // Claude Code asks before any write under .claude/, and a headless run can't answer.
+      ["--permission-mode", skillCase.writesSkills ? "bypassPermissions" : "acceptEdits"],
       ["--disallowedTools", "Agent"],
       [
         "--allowedTools",
@@ -176,7 +194,10 @@ function failures(
       : []
   const notPrinted =
     skillCase.printed && !skillCase.printed.test(output) ? [`output: no ${skillCase.printed}`] : []
-  return [...missing, ...wrongStage, ...unprovenQuotes, ...notPrinted]
+  const changed = (skillCase.unchanged ?? [])
+    .filter((file) => read(file) !== readFileSync(path.join(REPO, CLIENT, file), "utf8"))
+    .map((file) => `${file}: changed`)
+  return [...missing, ...wrongStage, ...unprovenQuotes, ...notPrinted, ...changed]
 }
 
 function transcripts(client: string): string {
