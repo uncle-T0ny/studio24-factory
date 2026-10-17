@@ -20,6 +20,8 @@ WorkingDirectory=/opt/voice-agent
 # The names in agent/.env.example with their values; root-owned, mode 600.
 EnvironmentFile=/etc/voice-agent.env
 Environment=NODE_ENV=production
+# LiveKit Agents logs the conversation text at info; the journal keeps warnings and errors only.
+Environment=LOG_LEVEL=warn
 ExecStart=/usr/bin/node dist/main.js start
 Restart=on-failure
 RestartSec=5
@@ -27,7 +29,7 @@ RestartSec=5
 # A stop drains: SIGTERM lets the live sessions run to their end (at most VOICE_MAX_SECONDS)
 # before the worker exits. Keep this above VOICE_MAX_SECONDS + 60.
 KillSignal=SIGTERM
-TimeoutStopSec=420
+TimeoutStopSec=720
 
 NoNewPrivileges=true
 PrivateTmp=true

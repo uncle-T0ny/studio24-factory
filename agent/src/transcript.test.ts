@@ -72,6 +72,29 @@ describe("turns", () => {
     )
   })
 
+  it("merge consecutive messages of one speaker into one turn, live and at the end", () => {
+    const split: Message[] = [
+      { role: "assistant", textContent: "How many guests?", createdAt: 1 },
+      { role: "user", textContent: "About three", createdAt: 2 },
+      { role: "user", textContent: "hundred.", createdAt: 3 },
+      { role: "assistant", textContent: "Three hundred, right?", createdAt: 4 },
+    ]
+    const count = createTurnCounter("voice-1")
+    const live = split.map((message) => count(message))
+
+    expect(live.map((event) => [event?.index, event?.text])).toEqual([
+      [0, "How many guests?"],
+      [1, "About three"],
+      [1, "About three hundred."],
+      [2, "Three hundred, right?"],
+    ])
+    expect(historyTurns(split).map((turn) => turn.text)).toEqual([
+      "How many guests?",
+      "About three hundred.",
+      "Three hundred, right?",
+    ])
+  })
+
   it("clip a long text", () => {
     const [turn] = historyTurns([
       { role: "user", textContent: "x".repeat(MAX_TURN_LENGTH + 10), createdAt: 1 },

@@ -39,6 +39,10 @@ async function storeTurn(ctx: MutationCtx, interview: Doc<"interviews">, turn: T
   } else {
     await ctx.db.insert("transcriptTurns", turnRow(interview, turn))
   }
+
+  if (interview.status === "waiting") {
+    await ctx.db.patch(interview._id, { status: "live" })
+  }
 }
 
 async function endInterview(

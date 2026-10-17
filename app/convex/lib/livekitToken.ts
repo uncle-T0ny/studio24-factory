@@ -1,7 +1,6 @@
 import { AccessToken, RoomAgentDispatch, RoomConfiguration } from "livekit-server-sdk"
+import { MAX_INTERVIEW_SEC } from "./usage"
 import type { LiveKitKeys } from "./voice"
-
-export const TOKEN_TTL = "10m"
 
 export interface VoiceGrant {
   roomName: string
@@ -16,7 +15,7 @@ export async function mintVoiceToken(keys: LiveKitKeys, grant: VoiceGrant): Prom
   const token = new AccessToken(keys.apiKey, keys.apiSecret, {
     identity: grant.identity,
     name: grant.name,
-    ttl: TOKEN_TTL,
+    ttl: MAX_INTERVIEW_SEC,
   })
 
   token.addGrant({

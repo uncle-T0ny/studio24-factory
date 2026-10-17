@@ -42,6 +42,8 @@ function speech() {
       apiKey: config.deepgramApiKey,
       model: "nova-3",
       language: "en",
+      // Smart formatting wrote a spoken number as "12:30" (lesson 1).
+      smartFormat: false,
       keyterm: [...KEYTERMS],
     }),
     tts: new deepgram.TTS({ apiKey: config.deepgramApiKey, model: "aura-2-thalia-en" }),
@@ -64,8 +66,10 @@ function languageModel() {
   })
 }
 
+// A longer pause before the turn ends keeps a sentence with a pause in it as one answer (lesson 2).
 const TURN_HANDLING = {
   turnDetection: "vad",
+  endpointing: { minDelay: 800 },
   interruption: { enabled: true, mode: "vad" },
   preemptiveGeneration: { enabled: true },
 } as const
@@ -98,8 +102,8 @@ export default defineAgent({
     quietTranscripts(log())
 
     const roomName = ctx.job.room?.name ?? ""
-    const { sessionId } = parseJobMetadata(ctx.job.metadata)
-    const logger = log().child({ roomName, sessionId })
+    const { interviewId } = parseJobMetadata(ctx.job.metadata)
+    const logger = log().child({ roomName, interviewId })
     const poster = createTranscriptPoster({
       siteUrl: config.convexSiteUrl,
       secret: config.agentSecret,
