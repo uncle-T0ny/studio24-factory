@@ -2,22 +2,15 @@ import { type Infer, v } from "convex/values"
 import { type Ask, askChecked, checkAnswer, LlmTask } from "./llm"
 import { type PrdAnswer } from "./prd"
 import { SEEDED_TEMPLATE } from "./seededTemplate"
+import { freeTierBreakValidator, manifestValidator, verdictValidator } from "./validators"
 
-export const manifestValidator = v.object({
-  stack: v.array(v.string()),
-  deployTarget: v.string(),
-  configure: v.array(v.string()),
-  limits: v.array(v.string()),
-  monthlyCost: v.object({ freeUsd: v.number(), paidUsd: v.number(), notes: v.string() }),
-})
-
-export type Manifest = Infer<typeof manifestValidator>
+type Manifest = Infer<typeof manifestValidator>
 
 export const analysisAnswerValidator = v.object({
   verdicts: v.array(
     v.object({
       code: v.string(),
-      verdict: v.union(v.literal("inTemplate"), v.literal("extension"), v.literal("notSupported")),
+      verdict: verdictValidator,
       hours: v.number(),
       infraMonthlyUsd: v.number(),
       alternative: v.optional(v.string()),
@@ -25,15 +18,7 @@ export const analysisAnswerValidator = v.object({
     }),
   ),
   assumptions: v.array(v.string()),
-  freeTierBreaks: v.array(
-    v.object({
-      service: v.string(),
-      limit: v.string(),
-      atUsage: v.string(),
-      extraUsd: v.number(),
-      reason: v.string(),
-    }),
-  ),
+  freeTierBreaks: v.array(freeTierBreakValidator),
 })
 
 export type AnalysisAnswer = Infer<typeof analysisAnswerValidator>

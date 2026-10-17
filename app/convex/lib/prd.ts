@@ -1,21 +1,17 @@
 import { type Infer, v } from "convex/values"
 import { type Ask, askChecked, checkAnswer, LlmTask } from "./llm"
 import { type TranscriptLine, transcriptAsData } from "./transcript"
+import { priorityValidator, requirementKindValidator } from "./validators"
 
 export const prdAnswerValidator = v.object({
   summary: v.string(),
   requirements: v.array(
     v.object({
       code: v.string(),
-      kind: v.union(v.literal("FR"), v.literal("NFR")),
+      kind: requirementKindValidator,
       title: v.string(),
       detail: v.string(),
-      priority: v.union(
-        v.literal("must"),
-        v.literal("should"),
-        v.literal("could"),
-        v.literal("wont"),
-      ),
+      priority: priorityValidator,
       quotes: v.array(v.object({ turn: v.number(), text: v.string() })),
     }),
   ),
