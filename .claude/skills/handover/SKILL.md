@@ -18,6 +18,10 @@ description: Hands the final app to the client: checks it sits behind a login an
 
 **Done when** the login result is recorded, every account in the manifest has its checklist item, and `state.json` says `final`. Ticking the items is the client's and the developer's work, by hand.
 
+## Learnings
+
+Read [learnings.md](learnings.md) before you run. A problem a run hits and solves is recorded there at the session's end by `/wrap-up`, which also proposes changes to this file from it (a new rule, or an obsolete one removed), applied only on the developer's yes.
+
 ## Test
 
 From `app/`: `npm run skill-test -- handover`. It runs this skill headless on the made-up client in `../prd/fixture/` with a placeholder URL and checks `handover.md` and the stage.

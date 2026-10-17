@@ -21,14 +21,19 @@ const FIXTURE = path.join(REPO, ".claude/skills/prd/fixture")
 const SLUG = "seating-demo"
 const CLIENT = `clients/${SLUG}`
 const STARTING_STAGE = "none"
-const REAL_CLIENT_STATE = "app/scripts/client-state.ts"
 const TODAY = new Date().toLocaleDateString("en-CA")
+const SKILLS = "../../.claude/skills"
+const UNDER_CAP = /^[\s\S]{0,12000}$/
 
 interface SkillCase {
   args: string
   produces: string[]
   stage: string
   expected: Record<string, RegExp[]>
+  printed?: RegExp
+  unchanged?: string[]
+  from?: string
+  writesSkills?: boolean
   addDir?: string
 }
 
@@ -66,6 +71,7 @@ const CASES: Record<string, SkillCase> = {
     produces: ["mockup.html", "prototype.md"],
     stage: "prototype",
     expected: { "mockup.html": [/<html/i], "prototype.md": [/\(mockup\.html\)/] },
+    printed: /prototypes:uploadMockup/,
   },
   feedback: {
     args: "inbox/feedback.txt",
@@ -75,6 +81,27 @@ const CASES: Record<string, SkillCase> = {
       [`feedback/${TODAY}.md`]: [/## What works/, /## What doesn't/],
       "decisions.md": [new RegExp(`\\(feedback, ${TODAY}\\)`)],
     },
+  },
+  orchestrator: {
+    args: "",
+    produces: ["progress.md"],
+    from: "prd",
+    stage: "prd",
+    expected: { "progress.md": [new RegExp(`- ${TODAY} .*/estimate`)] },
+    printed: /\/estimate/,
+  },
+  "wrap-up": {
+    args: "inbox/run-note.md",
+    produces: ["progress.md"],
+    from: "prd",
+    stage: "prd",
+    expected: {
+      "progress.md": [new RegExp(`- ${TODAY} .*wrap-up`)],
+      [`${SKILLS}/prd/learnings.md`]: [new RegExp(`- ${TODAY}: .*Rule: `), UNDER_CAP],
+    },
+    unchanged: [`${SKILLS}/prd/SKILL.md`, `${SKILLS}/estimate/learnings.md`],
+    printed: /SKILL\.md/,
+    writesSkills: true,
   },
   handover: {
     args: "https://seating-demo.example.com",
@@ -87,28 +114,26 @@ const CASES: Record<string, SkillCase> = {
 function prepareWorkspace(skill: string, skillCase: SkillCase): string {
   const workspace = mkdtempSync(path.join(tmpdir(), `skill-test-${skill}-`))
   cpSync(FIXTURE, workspace, { recursive: true })
-  cpSync(path.join(REPO, ".claude/skills", skill), path.join(workspace, ".claude/skills", skill), {
+  cpSync(path.join(REPO, ".claude/skills"), path.join(workspace, ".claude/skills"), {
     recursive: true,
     filter: (source) => !source.includes(`${path.sep}fixture`),
   })
-  // Once the real script is on the branch it replaces the fixture's stand-in, with the lib it imports.
-  if (existsSync(path.join(REPO, REAL_CLIENT_STATE))) {
-    cpSync(path.join(REPO, "app/scripts"), path.join(workspace, "app/scripts"), {
-      recursive: true,
-      filter: (source) => !source.endsWith(".test.ts"),
-    })
-  }
+  // The skills set the stage with app/scripts/client-state.ts, which imports from app/scripts/lib.
+  cpSync(path.join(REPO, "app/scripts"), path.join(workspace, "app/scripts"), {
+    recursive: true,
+    filter: (source) => !source.endsWith(".test.ts"),
+  })
   for (const output of skillCase.produces) {
     rmSync(path.join(workspace, CLIENT, output), { recursive: true, force: true })
   }
   const statePath = path.join(workspace, CLIENT, "state.json")
   const state = JSON.parse(readFileSync(statePath, "utf8")) as Record<string, unknown>
-  writeFileSync(statePath, JSON.stringify({ ...state, stage: STARTING_STAGE }))
+  writeFileSync(statePath, JSON.stringify({ ...state, stage: skillCase.from ?? STARTING_STAGE }))
   return workspace
 }
 
-function runSkill(skill: string, skillCase: SkillCase, workspace: string): void {
-  const prompt = `/${skill} ${SLUG} ${skillCase.args}\n\nThis is a test run: add --dry-run to the client-state.ts command.`
+function runSkill(skill: string, skillCase: SkillCase, workspace: string): string {
+  const prompt = `/${skill} ${SLUG} ${skillCase.args}\n\nThis is a test run: add --dry-run to the client-state.ts command, and print any \`npx convex run\` command instead of running it, long arguments elided.`
   const result = spawnSync(
     "claude",
     [
@@ -116,8 +141,17 @@ function runSkill(skill: string, skillCase: SkillCase, workspace: string): void 
       ["--model", "sonnet"],
       ["--setting-sources", "project"],
       ["--strict-mcp-config"],
-      ["--permission-mode", "acceptEdits"],
-      ["--allowedTools", "Bash(node:*)", "Bash(grep:*)", "Bash(ls:*)", "Bash(mkdir:*)"],
+      // Claude Code asks before any write under .claude/, and a headless run can't answer.
+      ["--permission-mode", skillCase.writesSkills ? "bypassPermissions" : "acceptEdits"],
+      ["--disallowedTools", "Agent"],
+      [
+        "--allowedTools",
+        "Bash(node:*)",
+        "Bash(grep:*)",
+        "Bash(ls:*)",
+        "Bash(mkdir:*)",
+        "Bash(date:*)",
+      ],
       skillCase.addDir ? ["--add-dir", skillCase.addDir] : [],
     ].flat(),
     { cwd: workspace, encoding: "utf8", timeout: 600_000 },
@@ -126,6 +160,7 @@ function runSkill(skill: string, skillCase: SkillCase, workspace: string): void 
   if (result.status !== 0) {
     throw new Error(`claude exited with ${String(result.status)}: ${result.stderr}`)
   }
+  return result.stdout
 }
 
 function quotesNotInTranscript(prd: string, transcript: string): string[] {
@@ -138,7 +173,12 @@ function quotesNotInTranscript(prd: string, transcript: string): string[] {
     .filter((quote) => !spoken.includes(normalize(quote)))
 }
 
-function failures(skill: string, skillCase: SkillCase, workspace: string): string[] {
+function failures(
+  skill: string,
+  skillCase: SkillCase,
+  workspace: string,
+  output: string,
+): string[] {
   const client = path.join(workspace, CLIENT)
   const read = (file: string) => readFileSync(path.join(client, file), "utf8")
   const missing = Object.entries(skillCase.expected).flatMap(([file, patterns]) =>
@@ -152,7 +192,12 @@ function failures(skill: string, skillCase: SkillCase, workspace: string): strin
     skill === "prd" && existsSync(path.join(client, "prd.md"))
       ? quotesNotInTranscript(read("prd.md"), transcripts(client)).map((q) => `unproven "${q}"`)
       : []
-  return [...missing, ...wrongStage, ...unprovenQuotes]
+  const notPrinted =
+    skillCase.printed && !skillCase.printed.test(output) ? [`output: no ${skillCase.printed}`] : []
+  const changed = (skillCase.unchanged ?? [])
+    .filter((file) => read(file) !== readFileSync(path.join(REPO, CLIENT, file), "utf8"))
+    .map((file) => `${file}: changed`)
+  return [...missing, ...wrongStage, ...unprovenQuotes, ...notPrinted, ...changed]
 }
 
 function transcripts(client: string): string {
@@ -169,8 +214,8 @@ if (!Object.hasOwn(CASES, skill)) {
 }
 const skillCase = CASES[skill]
 const workspace = prepareWorkspace(skill, skillCase)
-runSkill(skill, skillCase, workspace)
-const found = failures(skill, skillCase, workspace)
+const output = runSkill(skill, skillCase, workspace)
+const found = failures(skill, skillCase, workspace, output)
 if (found.length > 0) {
   console.error(`FAIL ${skill} (workspace kept: ${workspace})\n${found.join("\n")}`)
   process.exit(1)

@@ -7,6 +7,8 @@ description: Runs before every commit, and before every merge to main. Runs the 
 
 Every session runs this before each commit; the integrator runs it before each merge to `main`. The commit (or merge) waits until every line below says PASS. Paths are relative to the repo root.
 
+The code rules and the commands are in [code-rules.md](code-rules.md).
+
 ## 1. Gates
 
 - In `app/`: `npm run check`, `npm test`, `npm run build`. Once the privacy check is part of `npm run check`, it runs there.
@@ -46,3 +48,7 @@ NFR-8   FAIL app/convex/projects.ts:42 the comment restates the code
 ```
 
 Any FAIL: fix it, stage the fix, run this again. Commit only when all pass.
+
+## Learnings
+
+Read [learnings.md](learnings.md) before you run. A problem a run hits and solves is recorded there at the session's end by `/wrap-up`, which also proposes changes to this file from it (a new rule, or an obsolete one removed), applied only on the developer's yes.

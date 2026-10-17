@@ -21,6 +21,10 @@ description: Drafts a client's PRD from the interview transcripts in their folde
 
 **Done when** every requirement has an ID, a priority and a quote found verbatim in a transcript (or is flagged), the out-of-scope list exists, and `state.json` says `prd`.
 
+## Learnings
+
+Read [learnings.md](learnings.md) before you run. A problem a run hits and solves is recorded there at the session's end by `/wrap-up`, which also proposes changes to this file from it (a new rule, or an obsolete one removed), applied only on the developer's yes.
+
 ## Test
 
 From `app/`: `npm run skill-test -- prd`. It runs this skill headless on the made-up client in `fixture/` and checks the outputs above, every quote included.

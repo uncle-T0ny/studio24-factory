@@ -21,6 +21,10 @@ description: Reads a template repo and gives a verdict for each of a client's re
 
 **Done when** the manifest has its five bullets, every PRD requirement has exactly one verdict row, and every extension has hours and $/month. Next: `/estimate`.
 
+## Learnings
+
+Read [learnings.md](learnings.md) before you run. A problem a run hits and solves is recorded there at the session's end by `/wrap-up`, which also proposes changes to this file from it (a new rule, or an obsolete one removed), applied only on the developer's yes.
+
 ## Test
 
 From `app/`: `npm run skill-test -- analyze-template`. It runs this skill headless on the made-up client in `../prd/fixture/`, with this repo as the template, and checks `analysis.md` and that the stage did not move.
