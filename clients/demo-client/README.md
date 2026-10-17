@@ -14,4 +14,5 @@ The project's stage is in [state.json](state.json), a mirror of its stage in Con
 | `prototype.md`               | The prototype and its links            | `/prototype`                  |
 | [feedback/](feedback/)       | The client's feedback on the prototype | `/feedback`                   |
 | `handover.md`                | The final app and the handover         | `/handover`                   |
+| `progress.md`                | The dated progress log, append-only    | `/orchestrator`               |
 | [state.json](state.json)     | The stage, and when it last changed    | `app/scripts/client-state.ts` |

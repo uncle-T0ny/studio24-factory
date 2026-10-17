@@ -16,6 +16,8 @@ node --experimental-strip-types app/scripts/client-state.ts --slug <slug> --stag
 
 From the repo root: it sets the stage in Convex with `npx convex run projects:setStage` (in `app/`, under the developer's own Convex login, so no key sits in the repo), then mirrors it in the folder's `state.json`. `--prod` targets the live app; `--dry-run` writes `state.json` and prints the command without running it.
 
+Start here: `/orchestrator <slug>` ([.claude/skills/orchestrator/SKILL.md](.claude/skills/orchestrator/SKILL.md)) says where a client is, what is done and missing, and the one next skill to run; with no slug it lists every client and its stage.
+
 | Stage     | Skill                                 | Produces                                                                                    |
 | --------- | ------------------------------------- | ------------------------------------------------------------------------------------------- |
 | interview | `/interview`                          | The client's interview transcript, from the voice agent or the text interview.              |
