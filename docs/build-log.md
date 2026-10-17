@@ -42,3 +42,12 @@ Each merge to `main`, in order: the merge commit, its time (MDT), the branch, an
 - Tables: none; pure functions.
 - Decisions: one retry, told what was wrong, then a second invalid answer is kept and flagged; a quote is verified only when a client turn holds it word for word.
 - Gates: app check (187 tests) and build, green.
+
+## e227fe1, 17:28, s7-skills (e4ecc75)
+
+- Gives: one skill per stage, each provable headless: `npm run skill-test -- <skill>`.
+- Entry points: `app/scripts/skill-test.ts:166`, `.claude/skills/prd/SKILL.md:1`.
+- Tables: none; writes `clients/<slug>/` files, and the stage via `client-state.ts`.
+- Decision: one fixture holding the client after every stage, and the test deletes what the skill makes; rejected: chaining skills (slow, flaky).
+- Gaps: prototype registration calls S4's `prototypes:registerPrototype` in a follow-up commit; the dev-app path is untested (the test runs the mockup only).
+- Gates: app check (187 tests) and build, green; merged without conflicts.
