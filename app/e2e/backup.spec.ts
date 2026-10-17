@@ -31,7 +31,7 @@ test("backup: the owner exports a project and imports it back as a new project",
 
   const exported: unknown = JSON.parse(await readFile(filePath, "utf8"))
 
-  expect(exported).toMatchObject({ version: 1, data: { project: { name } } })
+  expect(exported).toMatchObject({ version: 1, data: { project: { clientName: name } } })
 
   await page.getByRole("link", { name: "All projects" }).click()
   await importFile(page, filePath)
