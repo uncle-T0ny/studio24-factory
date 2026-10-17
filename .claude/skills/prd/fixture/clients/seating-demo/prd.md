@@ -1,6 +1,6 @@
 # PRD: seating-demo
 
-Drafted from [interview/transcript-01.md](interview/transcript-01.md). Decisions: [decisions.md](decisions.md).
+Drafted from [interview/2000-01-01.md](interview/2000-01-01.md). Decisions: [decisions.md](decisions.md).
 
 ## Functional requirements
 

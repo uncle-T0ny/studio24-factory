@@ -1,7 +1,3 @@
-# seating-demo
+# Seating demo
 
-A made-up demo client: an event planner who wants a seating and floor plan app.
-
-- Interview: [interview/transcript-01.md](interview/transcript-01.md)
-- PRD: [prd.md](prd.md), decisions: [decisions.md](decisions.md)
-- Analysis: [analysis.md](analysis.md)
+A made-up client for the stage skills' tests: an event planner who wants a seating and floor plan app. Nothing here comes from a real client. The stage is in [state.json](state.json).

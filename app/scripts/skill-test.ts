@@ -21,6 +21,8 @@ const FIXTURE = path.join(REPO, ".claude/skills/prd/fixture")
 const SLUG = "seating-demo"
 const CLIENT = `clients/${SLUG}`
 const STARTING_STAGE = "none"
+const REAL_CLIENT_STATE = "app/scripts/client-state.ts"
+const TODAY = new Date().toLocaleDateString("en-CA")
 
 interface SkillCase {
   args: string
@@ -35,21 +37,21 @@ const CASES: Record<string, SkillCase> = {
     args: "inbox/interview.txt",
     produces: ["interview"],
     stage: "interview",
-    expected: { "interview/transcript-01.md": [/drag the tables around/] },
+    expected: { [`interview/${TODAY}.md`]: [/drag the tables around/] },
   },
   prd: {
     args: "",
-    produces: ["prd.md", "decisions.md"],
+    produces: ["prd.md"],
     stage: "prd",
     expected: {
       "prd.md": [/\| FR-1 /, /\| NFR-1 /, /\| must /, /## Out of scope/, /## Flagged/],
-      "decisions.md": [/- D-1 /],
+      "decisions.md": [new RegExp(`\\(prd, ${TODAY}\\)`)],
     },
   },
   "analyze-template": {
     args: REPO,
     produces: ["analysis.md"],
-    stage: "analysis",
+    stage: STARTING_STAGE,
     expected: { "analysis.md": [/## Manifest/, /## Verdicts/, /\| FR-1 /, /\| NFR-1 /] },
     addDir: REPO,
   },
@@ -61,15 +63,18 @@ const CASES: Record<string, SkillCase> = {
   },
   prototype: {
     args: "--mockup-only",
-    produces: ["prototype"],
+    produces: ["mockup.html", "prototype.md"],
     stage: "prototype",
-    expected: { "prototype/mockup.html": [/<html/i], "README.md": [/prototype\/mockup\.html/] },
+    expected: { "mockup.html": [/<html/i], "prototype.md": [/\(mockup\.html\)/] },
   },
   feedback: {
     args: "inbox/feedback.txt",
     produces: ["feedback"],
     stage: "feedback",
-    expected: { "feedback/feedback-01.md": [/## What works/, /## What doesn't/] },
+    expected: {
+      [`feedback/${TODAY}.md`]: [/## What works/, /## What doesn't/],
+      "decisions.md": [new RegExp(`\\(feedback, ${TODAY}\\)`)],
+    },
   },
   handover: {
     args: "https://seating-demo.example.com",
@@ -86,6 +91,13 @@ function prepareWorkspace(skill: string, skillCase: SkillCase): string {
     recursive: true,
     filter: (source) => !source.includes(`${path.sep}fixture`),
   })
+  // Once the real script is on the branch it replaces the fixture's stand-in, with the lib it imports.
+  if (existsSync(path.join(REPO, REAL_CLIENT_STATE))) {
+    cpSync(path.join(REPO, "app/scripts"), path.join(workspace, "app/scripts"), {
+      recursive: true,
+      filter: (source) => !source.endsWith(".test.ts"),
+    })
+  }
   for (const output of skillCase.produces) {
     rmSync(path.join(workspace, CLIENT, output), { recursive: true, force: true })
   }
