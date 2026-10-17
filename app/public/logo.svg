@@ -1,5 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 64" role="img" aria-label="Starter App">
-  <rect x="0" y="0" width="64" height="64" rx="14" fill="#2158d6" />
-  <circle cx="32" cy="32" r="15.4" fill="none" stroke="#ffffff" stroke-width="7.7" />
-  <text x="80" y="42" font-family="Helvetica, Arial, sans-serif" font-size="28" fill="#0f172a">Starter App</text>
-</svg>

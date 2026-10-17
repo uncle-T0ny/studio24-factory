@@ -4,7 +4,6 @@ import { useState, type SubmitEvent } from "react"
 import { useNavigate } from "react-router-dom"
 import { api } from "../../convex/_generated/api"
 import type { Doc } from "../../convex/_generated/dataModel"
-import { BRAND } from "../app.config"
 import { ImportCard } from "../backup/ImportCard"
 import { projectBackup } from "../backup/projectBackup"
 import { FeedbackButton } from "../feedback/FeedbackButton"
@@ -116,7 +115,6 @@ export function ProjectsPage() {
   return (
     <PageColumn>
       <PageHeader
-        eyebrow={BRAND}
         title="Projects"
         actions={
           <Toolbar>

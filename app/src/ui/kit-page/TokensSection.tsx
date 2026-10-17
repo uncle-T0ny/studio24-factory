@@ -49,7 +49,7 @@ const FONT_SAMPLES: Record<string, FontSample> = {
 const DISPLAY_TOKEN = "--text-display"
 
 const TYPE_SAMPLES: Record<string, string> = {
-  "--text-display": "Starter App",
+  "--text-display": "Studio24 Factory",
   "--text-xl": "Spring launch",
   "--text-lg": "New project",
   "--text-md": "Body text, buttons and inputs",
