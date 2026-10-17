@@ -2,7 +2,7 @@ import { getAuthUserId } from "@convex-dev/auth/server"
 import { ConvexError } from "convex/values"
 import { isOwnerEmail, ownerEnv } from "./owners"
 import { hashToken } from "./shareToken"
-import type { Stage } from "./validators"
+import { STAGES, type Stage } from "./validators"
 import type { Doc, Id } from "../_generated/dataModel"
 import type { MutationCtx, QueryCtx } from "../_generated/server"
 
@@ -103,7 +103,7 @@ export async function requireClientStage(
     throw new ConvexError(WRONG_STAGE)
   }
 
-  if (access.project.stage !== stage) {
+  if (STAGES.indexOf(stage) > STAGES.indexOf(access.project.stage)) {
     throw new ConvexError(notAtStage(access.project.stage))
   }
 

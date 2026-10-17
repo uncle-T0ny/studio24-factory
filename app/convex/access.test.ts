@@ -73,11 +73,19 @@ describe("client link access", () => {
     await expect(open(t, token, "prd")).rejects.toThrow(WRONG_STAGE)
   })
 
-  it("refuses a stage the link opens while the project is at another stage, naming that stage", async () => {
+  it("refuses a stage the project hasn't reached yet, naming the current stage", async () => {
     const { t, projectId } = await fixture()
     const { token } = await t.run(async (ctx) => await insertClientLink(ctx, projectId, ["prd"]))
 
     await expect(open(t, token, "prd")).rejects.toThrow(notAtStage("interview"))
+  })
+
+  it("still opens a stage the project has moved past", async () => {
+    const { t, projectId, token } = await fixture()
+
+    await t.run(async (ctx) => await ctx.db.patch(projectId, { stage: "prd" }))
+
+    expect(await open(t, token, "interview")).toBe(projectId)
   })
 
   it("rejects an unknown, an empty, a revoked and an expired link", async () => {

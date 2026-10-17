@@ -1,6 +1,7 @@
 import { useQuery } from "convex/react"
 import { Navigate, useParams } from "react-router-dom"
 import { api } from "../../convex/_generated/api"
+import { STAGES } from "../../convex/lib/validators"
 import { STAGE_LABELS } from "../projects/stages"
 import { PageMessage } from "../ui"
 
@@ -18,8 +19,13 @@ export function ClientLandingPage() {
     )
   }
 
-  if (link.stages.includes(link.stage)) {
-    return <Navigate to={`/c/${token}/${link.stage}`} replace />
+  const reached = STAGES.filter(
+    (stage) => link.stages.includes(stage) && STAGES.indexOf(stage) <= STAGES.indexOf(link.stage),
+  )
+  const latest = reached.at(-1)
+
+  if (latest) {
+    return <Navigate to={`/c/${token}/${latest}`} replace />
   }
 
   const opens = link.stages.map((stage) => STAGE_LABELS[stage]).join(", ")
