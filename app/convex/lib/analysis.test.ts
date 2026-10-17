@@ -76,11 +76,12 @@ describe("the verdicts", () => {
     expect(result.problems).toEqual([])
   })
 
-  it("asks again when a requirement has no verdict or one is unsupported with no way out", async () => {
+  it("asks again when a verdict is missing, doubled or a dead end, or no free tier breaks", async () => {
     const [first, second] = recordedAnalysis.verdicts
     const flawed = {
       ...recordedAnalysis,
       verdicts: [{ ...first, verdict: "notSupported", hours: 0 }, second, second],
+      freeTierBreaks: [],
     }
     const ask = modelAnswering(flawed, flawed)
 
@@ -91,6 +92,7 @@ describe("the verdicts", () => {
       "FR-3 has no verdict.",
       "FR-2 is not a requirement, or has a second verdict.",
       "FR-1 is not supported, with no alternative or estimate.",
+      "No free-tier break: say where each runs out.",
     ])
   })
 })
