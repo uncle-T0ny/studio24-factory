@@ -1,5 +1,6 @@
 import type { ReactNode, SubmitEvent } from "react"
 import { Eyebrow, Heading, HeadingLevel } from "./Text"
+import { Wordmark } from "./Wordmark"
 import { classNames } from "./types"
 
 export enum CardElement {
@@ -83,6 +84,7 @@ export function PageHeader({ eyebrow, title, actions }: PageHeaderProps) {
   return (
     <header className="ui-page-header">
       <div className="ui-page-header-titles">
+        <Wordmark />
         {eyebrow ? <Eyebrow>{eyebrow}</Eyebrow> : null}
         <Heading level={HeadingLevel.Display}>{title}</Heading>
       </div>

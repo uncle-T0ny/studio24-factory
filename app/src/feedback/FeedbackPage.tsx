@@ -13,7 +13,6 @@ import {
   formatSenderTime,
   type FeedbackEntry,
 } from "../../convex/lib/feedback"
-import { BRAND } from "../app.config"
 import { useErrorState } from "../lib/errors"
 import { formatTimestamp } from "../lib/formatDate"
 import {
@@ -173,7 +172,6 @@ function FeedbackInbox() {
   return (
     <PageColumn>
       <PageHeader
-        eyebrow={BRAND}
         title="Feedback"
         actions={
           <Toolbar>

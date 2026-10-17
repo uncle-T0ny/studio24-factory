@@ -3,19 +3,19 @@ import { useConvex } from "convex/react"
 import { useState, type SubmitEvent } from "react"
 import { api } from "../../convex/_generated/api"
 import type { AccountStatus } from "../../convex/lib/signIn"
-import { APP_NAME, BRAND } from "../app.config"
+import { APP_NAME } from "../app.config"
 import {
   Button,
   ButtonVariant,
   Card,
   CenteredPage,
-  Eyebrow,
   Field,
   Heading,
   HeadingLevel,
   Text,
   TextField,
   TextTone,
+  Wordmark,
 } from "../ui"
 import { DemoSignIn } from "./DemoSignIn"
 import { PasswordReset } from "./PasswordReset"
@@ -135,8 +135,12 @@ export function SignInPage() {
   return (
     <CenteredPage>
       <Card narrow onSubmit={(event) => void submit(event)}>
-        <Eyebrow>{BRAND}</Eyebrow>
+        <Wordmark />
         <Heading level={HeadingLevel.Display}>{APP_NAME}</Heading>
+        <Text tone={TextTone.Muted}>
+          From a client's problem to a working app in production. It started with an app for my
+          wife, a wedding planner.
+        </Text>
         <Field label="Email">
           <TextField
             name="email"

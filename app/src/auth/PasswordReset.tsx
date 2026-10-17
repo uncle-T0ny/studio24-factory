@@ -1,12 +1,11 @@
 import { useAuthActions } from "@convex-dev/auth/react"
 import { useState, type SubmitEvent } from "react"
 import { normalizeEmail } from "../../convex/lib/owners"
-import { BRAND } from "../app.config"
 import {
   Button,
   ButtonVariant,
   Card,
-  Eyebrow,
+  Wordmark,
   Field,
   Heading,
   HeadingLevel,
@@ -164,7 +163,7 @@ export function RequestCodeStep({
 }: RequestCodeStepProps) {
   return (
     <Card narrow onSubmit={onSubmit}>
-      <Eyebrow>{BRAND}</Eyebrow>
+      <Wordmark />
       <Heading level={HeadingLevel.Display}>Reset password</Heading>
       <Text tone={TextTone.Muted} size={TextSize.Small}>
         Enter the email you sign in with. We'll send you an {RESET_CODE_LENGTH}-digit code.
@@ -211,7 +210,7 @@ export function NewPasswordStep({
 }: NewPasswordStepProps) {
   return (
     <Card narrow onSubmit={onSubmit}>
-      <Eyebrow>{BRAND}</Eyebrow>
+      <Wordmark />
       <Heading level={HeadingLevel.Display}>Check your email</Heading>
       <Text tone={TextTone.Muted} size={TextSize.Small}>
         We sent an {RESET_CODE_LENGTH}-digit code to {email}. Enter it and choose a new password.

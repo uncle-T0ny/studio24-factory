@@ -1276,3 +1276,9 @@ textarea {
   font-family: var(--font-mono);
   overflow-wrap: anywhere;
 }
+
+.ui-wordmark img {
+  display: block;
+  height: 24px;
+  width: auto;
+}
