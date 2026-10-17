@@ -68,3 +68,11 @@ Never cut: the sign-in, the client link, the voice interview, the PRD and the pr
 
 - Only the integrator deploys (Convex production, the web Worker and the voice worker), at T+20, T+60 and T+96. No other session touches a shared deployment.
 - The repo stays private until the submission.
+
+## Decisions during the build
+
+- Mockups are served from Convex file storage in a sandboxed iframe, not from `app/public`.
+- A client link opens only the stages the project has reached; otherwise it names the current one.
+- The owner moves a project's stage from the project page.
+- The voice fallback is unit-tested, not driven by fake keys in e2e.
+- One analysis call returns the verdicts and the free-tier breaks; the totals are a pure sum.

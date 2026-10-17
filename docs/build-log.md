@@ -75,3 +75,12 @@ Each merge to `main`, in order: the merge commit, its time (MDT), the branch, an
 - Gives: the text interview works with a real key: the opening question sends a placeholder instead of an empty user message, which the provider refused (400), ending the interview as failed on prod.
 - Entry point: `convex/interviews.ts:157`; a regression test in `convex/interviews.test.ts`.
 - Gates: check (188 tests), build, e2e 10/10.
+
+## e9a1f0e, 17:49, s3-prd (f1928ab, the PRD, analysis and estimate)
+
+- Gives: the PRD page drafts FRs and NFRs from the interview, unverified quotes highlighted, flagged when invalid twice; the analysis page shows verdicts, hours, $/month and where each free tier breaks; with no key the answers are recorded and labelled.
+- Entry points: `convex/prd.ts:68`, `:93`; `convex/estimates.ts:60`, `:105`; `convex/lib/llm.ts:132`; `convex/lib/prd.ts:75`; `src/prd/PrdPage.tsx:73`; `src/analysis/AnalysisPage.tsx:71`.
+- Tables: reads `transcriptTurns`, `templates`; writes `prds`, `requirements`, `decisions`, `templates`, `verdicts`, `estimates`, `usage`.
+- Decision: the Convex validators are the one shape: the JSON schema sent to the model and the answer check both derive from them; rejected: hand-written JSON schemas.
+- Gaps: `addByLink` has no UI (parked), so the analysis uses the latest or the seeded template; the estimate's label follows the deployment's key; 874 new code lines and 291 of data, over the 400 target.
+- Gates: check (198 tests), build.
