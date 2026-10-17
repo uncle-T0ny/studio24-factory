@@ -3,11 +3,13 @@ import { omit } from "convex-helpers"
 import { internal } from "./_generated/api"
 import { action, internalMutation, internalQuery } from "./_generated/server"
 import { requireClientStage } from "./lib/access"
+import { FIXTURE_TRANSCRIPT } from "./lib/fixtureTranscript"
 import { clientQuery } from "./lib/functions"
 import { RECORDED_MODEL } from "./lib/llm"
 import { askCounted } from "./lib/llmUsage"
 import { draftPrd, verifyQuote } from "./lib/prd"
 import { requirementFields } from "./lib/validators"
+import { requireTestFunctions } from "./testing"
 
 const requirementAnswerFields = omit(requirementFields, ["prdId", "projectId"])
 
@@ -111,5 +113,29 @@ export const forClient = clientQuery("prd")({
       .collect()
 
     return { prd, requirements, decisions, recorded: prd.model === RECORDED_MODEL }
+  },
+})
+
+// The e2e's interview: the PRD stage tested without the interview stage's UI.
+export const insertFixtureInterview = internalMutation({
+  args: { token: v.string() },
+  handler: async (ctx, { token }) => {
+    requireTestFunctions(process.env.ALLOW_TEST_FUNCTIONS)
+    const { project, link } = await requireClientStage(ctx, token, "prd")
+    const interviewId = await ctx.db.insert("interviews", {
+      projectId: project._id,
+      linkId: link._id,
+      mode: "text",
+      status: "done",
+    })
+
+    for (const turn of FIXTURE_TRANSCRIPT) {
+      await ctx.db.insert("transcriptTurns", {
+        ...turn,
+        interviewId,
+        projectId: project._id,
+        at: Date.now() + turn.seq,
+      })
+    }
   },
 })
