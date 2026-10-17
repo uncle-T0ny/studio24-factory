@@ -6,6 +6,7 @@ export const OWNER_PASSWORD = "e2e-password-123"
 
 export const ALLOWLISTED_OWNER_SUFFIX = "e2e-owner"
 export const ALLOWLISTED_OWNER_EMAIL = testOwnerEmail(ALLOWLISTED_OWNER_SUFFIX)
+export const DEMO_DEVELOPER_EMAIL = testOwnerEmail("e2e-demo")
 
 export interface TestOwner {
   suffix: string
