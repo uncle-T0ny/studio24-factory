@@ -29,6 +29,7 @@ interface SkillCase {
   produces: string[]
   stage: string
   expected: Record<string, RegExp[]>
+  printed?: RegExp
   addDir?: string
 }
 
@@ -66,6 +67,7 @@ const CASES: Record<string, SkillCase> = {
     produces: ["mockup.html", "prototype.md"],
     stage: "prototype",
     expected: { "mockup.html": [/<html/i], "prototype.md": [/\(mockup\.html\)/] },
+    printed: /prototypes:registerPrototype/,
   },
   feedback: {
     args: "inbox/feedback.txt",
@@ -107,8 +109,8 @@ function prepareWorkspace(skill: string, skillCase: SkillCase): string {
   return workspace
 }
 
-function runSkill(skill: string, skillCase: SkillCase, workspace: string): void {
-  const prompt = `/${skill} ${SLUG} ${skillCase.args}\n\nThis is a test run: add --dry-run to the client-state.ts command.`
+function runSkill(skill: string, skillCase: SkillCase, workspace: string): string {
+  const prompt = `/${skill} ${SLUG} ${skillCase.args}\n\nThis is a test run: add --dry-run to the client-state.ts command, and print any \`npx convex run\` command instead of running it.`
   const result = spawnSync(
     "claude",
     [
@@ -126,6 +128,7 @@ function runSkill(skill: string, skillCase: SkillCase, workspace: string): void 
   if (result.status !== 0) {
     throw new Error(`claude exited with ${String(result.status)}: ${result.stderr}`)
   }
+  return result.stdout
 }
 
 function quotesNotInTranscript(prd: string, transcript: string): string[] {
@@ -138,7 +141,12 @@ function quotesNotInTranscript(prd: string, transcript: string): string[] {
     .filter((quote) => !spoken.includes(normalize(quote)))
 }
 
-function failures(skill: string, skillCase: SkillCase, workspace: string): string[] {
+function failures(
+  skill: string,
+  skillCase: SkillCase,
+  workspace: string,
+  output: string,
+): string[] {
   const client = path.join(workspace, CLIENT)
   const read = (file: string) => readFileSync(path.join(client, file), "utf8")
   const missing = Object.entries(skillCase.expected).flatMap(([file, patterns]) =>
@@ -152,7 +160,9 @@ function failures(skill: string, skillCase: SkillCase, workspace: string): strin
     skill === "prd" && existsSync(path.join(client, "prd.md"))
       ? quotesNotInTranscript(read("prd.md"), transcripts(client)).map((q) => `unproven "${q}"`)
       : []
-  return [...missing, ...wrongStage, ...unprovenQuotes]
+  const notPrinted =
+    skillCase.printed && !skillCase.printed.test(output) ? [`output: no ${skillCase.printed}`] : []
+  return [...missing, ...wrongStage, ...unprovenQuotes, ...notPrinted]
 }
 
 function transcripts(client: string): string {
@@ -169,8 +179,8 @@ if (!Object.hasOwn(CASES, skill)) {
 }
 const skillCase = CASES[skill]
 const workspace = prepareWorkspace(skill, skillCase)
-runSkill(skill, skillCase, workspace)
-const found = failures(skill, skillCase, workspace)
+const output = runSkill(skill, skillCase, workspace)
+const found = failures(skill, skillCase, workspace, output)
 if (found.length > 0) {
   console.error(`FAIL ${skill} (workspace kept: ${workspace})\n${found.join("\n")}`)
   process.exit(1)
