@@ -5,7 +5,9 @@ import type { Doc } from "../../convex/_generated/dataModel"
 import { ExportButton } from "../backup/ExportButton"
 import { projectBackup } from "../backup/projectBackup"
 import { FeedbackButton } from "../feedback/FeedbackButton"
-import { PageColumn, PageHeader, PageMessage, Text, TextLink, TextTone, Toolbar } from "../ui"
+import { ClientLinks } from "../links/ClientLinks"
+import { PageColumn, PageHeader, PageMessage, TextLink, Toolbar } from "../ui"
+import { StageTimeline } from "./StageTimeline"
 
 function OwnerProject({ project }: { project: Doc<"projects"> }) {
   return (
@@ -21,7 +23,8 @@ function OwnerProject({ project }: { project: Doc<"projects"> }) {
           </Toolbar>
         }
       />
-      <Text tone={TextTone.Muted}>Stage: {project.stage}</Text>
+      <StageTimeline project={project} />
+      <ClientLinks key={project.stage} project={project} />
     </PageColumn>
   )
 }

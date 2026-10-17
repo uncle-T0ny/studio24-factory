@@ -77,6 +77,34 @@ export const get = ownerQuery({
   },
 })
 
+export const stageEvents = ownerQuery({
+  args: {
+    projectId: v.id("projects"),
+  },
+  returns: v.array(schema.doc("stageEvents")),
+  handler: async (ctx, args) => {
+    await ctx.requireProject(args.projectId)
+
+    return await ctx.db
+      .query("stageEvents")
+      .withIndex("by_project", (q) => q.eq("projectId", args.projectId))
+      .collect()
+  },
+})
+
+export const moveStage = ownerMutation({
+  args: {
+    projectId: v.id("projects"),
+    stage: stageValidator,
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    await moveToStage(ctx, await ctx.requireProject(args.projectId), args.stage)
+
+    return null
+  },
+})
+
 export const remove = ownerMutation({
   args: {
     projectId: v.id("projects"),
