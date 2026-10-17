@@ -26,6 +26,8 @@ async function fixture({ withPrototype = true } = {}) {
   const { projectId, token } = await projectWithLink(t, owner.userId, ["feedback"])
   const slug = await t.run(async (ctx) => (await ctx.db.get(projectId))?.slug ?? "")
 
+  await t.mutation(internal.projects.setStage, { slug, stage: "feedback" })
+
   if (withPrototype) {
     await t.mutation(internal.prototypes.registerPrototype, {
       slug,

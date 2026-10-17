@@ -17,12 +17,10 @@ function clientWithMockup(): { suffix: string; token: string } {
     JSON.stringify({ ownerSuffix: suffix, clientName, stages: ["prototype", "feedback"] }),
   ])
   const { token } = JSON.parse(created) as { token: string }
+  const slug = slugOf(clientName)
 
-  runConvex([
-    "run",
-    "prototypes:uploadMockup",
-    JSON.stringify({ slug: slugOf(clientName), html: MOCKUP }),
-  ])
+  runConvex(["run", "projects:setStage", JSON.stringify({ slug, stage: "feedback" })])
+  runConvex(["run", "prototypes:uploadMockup", JSON.stringify({ slug, html: MOCKUP })])
 
   return { suffix, token }
 }

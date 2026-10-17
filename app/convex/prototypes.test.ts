@@ -9,6 +9,8 @@ async function fixture() {
   const { projectId, token } = await projectWithLink(t, owner.userId, ["prototype"])
   const slug = await t.run(async (ctx) => (await ctx.db.get(projectId))?.slug ?? "")
 
+  await t.mutation(internal.projects.setStage, { slug, stage: "prototype" })
+
   return { t, slug, token }
 }
 
