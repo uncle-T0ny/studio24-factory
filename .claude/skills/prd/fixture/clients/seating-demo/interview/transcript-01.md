@@ -1,0 +1,35 @@
+# Interview transcript 01
+
+Source: the voice interview, verbatim.
+
+**Agent:** What do you want to build?
+
+**Client:** I plan events, and the seating chart is the part that eats my week. I want an app where I draw the room and drag the tables around.
+
+**Agent:** What does a floor plan look like today?
+
+**Client:** A spreadsheet for the guest list and a sketch on paper for the room. When a guest cancels, I redo both by hand.
+
+**Agent:** Who else would use it?
+
+**Client:** My couples. They should see the plan and move guests between tables, but they must not change the room itself.
+
+**Agent:** Where do you use it on the day?
+
+**Client:** On the day of the event I only have my phone, so the plan has to be readable on a small screen.
+
+**Agent:** Anything about the guests themselves?
+
+**Client:** Dietary needs. The caterer asks me for a list per table, and I want to print it or send it as a file.
+
+**Agent:** Any constraints?
+
+**Client:** It has to be cheap to run while I test it with a handful of events. And my guests' names stay private, nobody outside my team sees them.
+
+**Agent:** What is not needed now?
+
+**Client:** Payments and invitations. I already have tools for those, so leave them out.
+
+**Agent:** How fast does it need to feel?
+
+**Client:** When I drag a table it should move right away, no waiting.
