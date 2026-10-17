@@ -2,7 +2,7 @@
 
 A made-up client, the one the local run seeds (slug `demo-client`). Nothing here comes from a real client: real clients live in `clients-private/<slug>/`, with the same layout, outside this repo.
 
-The project's stage is in [state.json](state.json), a mirror of its stage in Convex. The stage skills fill the folder; [CLAUDE.md](../../CLAUDE.md) says which writes what.
+The project's stage is in [state.json](state.json), a mirror of its stage in Convex. The stage skills fill the folder, as the table says; [/orchestrator](../../.claude/skills/orchestrator/SKILL.md) tells what comes next.
 
 | Path                         | Holds                                  | Written by                    |
 | ---------------------------- | -------------------------------------- | ----------------------------- |

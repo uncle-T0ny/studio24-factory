@@ -7,6 +7,8 @@ description: Runs before every commit, and before every merge to main. Runs the 
 
 Every session runs this before each commit; the integrator runs it before each merge to `main`. The commit (or merge) waits until every line below says PASS. Paths are relative to the repo root.
 
+The code rules and the commands are in [code-rules.md](code-rules.md).
+
 ## 1. Gates
 
 - In `app/`: `npm run check`, `npm test`, `npm run build`. Once the privacy check is part of `npm run check`, it runs there.

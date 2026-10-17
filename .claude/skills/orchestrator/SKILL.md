@@ -11,7 +11,7 @@ The developer decides; the orchestrator recommends, launches what was approved, 
 
 **Steps.**
 
-1. Resolve the folder: `clients-private/<slug>/` first, then `clients/<slug>/`; read and write only there. No folder: the next action is `/interview <slug>`.
+1. Resolve the folder ([clients.md](clients.md): the stages, the stage command, the folders and privacy): `clients-private/<slug>/` first, then `clients/<slug>/`; read and write only there. No folder: the next action is `/interview <slug>`.
 2. Read `state.json` (the stage) and list which stage files exist: `interview/*.md`, `prd.md` (more than a placeholder), `analysis.md`, `estimate.md`, `prototype.md`, `feedback/*.md`, `handover.md`.
 3. Pick the one next action, the first row that matches:
 
