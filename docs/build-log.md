@@ -102,3 +102,12 @@ Each merge to `main`, in order: the merge commit, its time (MDT), the branch, an
 - Decision: the browser sends WAV and the server measures the cap from the file size; rejected: trusting the client's duration.
 - Gaps: the "recorded demo answer" label follows the key at view time; a failed split shows one line; 707 new lines, over the 400 target (main agreed).
 - Integrator: `app/.env.example` names `OPENROUTER_API_KEY` and `FEEDBACK_STT_MODEL` (d5596ba). Gates: check (221 tests), build, e2e 16/16.
+
+## 870e6f3, 17:53, s2-voice (fc777fc, the voice interviewer)
+
+- Gives: the voice interviewer in the PRD's question order; it confirms ambiguous answers and keeps each question to 30 words at most; same-speaker segments merged into one turn.
+- Entry points: `agent/src/main.ts:101`, `agent/src/prompts.ts:2`, `agent/src/transcript.ts:59`, `app/convex/lib/voiceData.ts` storeTurn.
+- Tables: `interviews` (live at the first turn, done at the end), `transcriptTurns`.
+- Decision: merge same-speaker messages by index, and keep the 800 ms endpointing too.
+- Deploy: `LOG_LEVEL=warn`, `VOICE_MAX_SECONDS` 600, `TimeoutStopSec` 720, the token TTL equal to the interview's maximum.
+- Gates: app check (222 tests), build, e2e 16/16; agent check (20 tests) and `tsc`.
