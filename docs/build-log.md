@@ -84,3 +84,12 @@ Each merge to `main`, in order: the merge commit, its time (MDT), the branch, an
 - Decision: the Convex validators are the one shape: the JSON schema sent to the model and the answer check both derive from them; rejected: hand-written JSON schemas.
 - Gaps: `addByLink` has no UI (parked), so the analysis uses the latest or the seeded template; the estimate's label follows the deployment's key; 874 new code lines and 291 of data, over the 400 target.
 - Gates: check (198 tests), build.
+
+## 88da9ba, 17:50, s1-workspace (dfd100b, stages and client links)
+
+- Gives: the owner moves a project's stage (the stage picker on the timeline) and issues or revokes one-stage client links; a client link opens its stage once the project has reached it, else names the current stage.
+- Entry points: `convex/projects.ts:16` moveToStage, moveStage, setStage; `convex/links.ts`; `convex/lib/access.ts` requireClientStage; `src/projects/StageTimeline.tsx`; `src/links/ClientLinks.tsx`; `src/links/ClientLandingPage.tsx`.
+- Tables: `projects`, `stageEvents`, `clientLinks`.
+- Decision: the timeline status comes from the stage's position in STAGES, and stageEvents only add dates; rejected: storing every status.
+- Gaps: sign-up is allowlisted, so the final gate admits owners only; the link URL is shown once; 397 new lines.
+- Integrator: the `convex/_generated/api.ts` conflict resolved as the union of both sides. Gates: check (209 tests), build, e2e 14/14.
