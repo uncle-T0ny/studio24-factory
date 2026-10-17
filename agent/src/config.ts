@@ -1,6 +1,6 @@
 export const DEFAULT_OPENROUTER_MODEL = "anthropic/claude-haiku-5.5"
 export const OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
-export const DEFAULT_MAX_SECONDS = 300
+export const DEFAULT_MAX_SECONDS = 600
 export const DEFAULT_AGENT_NAME = "voice-assistant"
 const MAX_MAX_SECONDS = 3600
 

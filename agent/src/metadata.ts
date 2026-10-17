@@ -1,5 +1,5 @@
 export interface JobMetadata {
-  sessionId: string | null
+  interviewId: string | null
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -8,7 +8,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 export function parseJobMetadata(raw: string | undefined): JobMetadata {
   if (raw === undefined || raw.length === 0) {
-    return { sessionId: null }
+    return { interviewId: null }
   }
 
   let parsed: unknown
@@ -16,10 +16,12 @@ export function parseJobMetadata(raw: string | undefined): JobMetadata {
   try {
     parsed = JSON.parse(raw)
   } catch {
-    return { sessionId: null }
+    return { interviewId: null }
   }
 
-  const sessionId = isRecord(parsed) ? parsed.sessionId : undefined
+  const interviewId = isRecord(parsed) ? parsed.interviewId : undefined
 
-  return { sessionId: typeof sessionId === "string" && sessionId.length > 0 ? sessionId : null }
+  return {
+    interviewId: typeof interviewId === "string" && interviewId.length > 0 ? interviewId : null,
+  }
 }

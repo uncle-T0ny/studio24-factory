@@ -54,36 +54,44 @@ function spoken(message: Message): Pick<Turn, "role" | "text"> | null {
   return { role: message.role, text: text.slice(0, MAX_TURN_LENGTH) }
 }
 
+// One spoken answer can arrive as several user messages (lesson 2 of the mic test): consecutive
+// messages of one speaker share a turn, so a re-post of that turn replaces its text.
+function nextTurn(last: Turn | null, turn: Pick<Turn, "role" | "text">, at: number): Turn {
+  return last?.role === turn.role
+    ? { ...last, text: `${last.text} ${turn.text}`.slice(0, MAX_TURN_LENGTH) }
+    : { index: (last?.index ?? -1) + 1, ...turn, at }
+}
+
+export function createTurnCounter(roomName: string) {
+  let last: Turn | null = null
+
+  return (message: Message): TurnEvent | null => {
+    const turn = spoken(message)
+    const next = turn && nextTurn(last, turn, message.createdAt)
+
+    if (!next || next.index >= MAX_TURNS) {
+      return null
+    }
+
+    last = next
+
+    return { type: "turn", roomName, ...next }
+  }
+}
+
 export function historyTurns(messages: readonly Message[]): Turn[] {
+  const count = createTurnCounter("")
   const turns: Turn[] = []
 
   for (const message of messages) {
-    const turn = spoken(message)
+    const event = count(message)
 
-    if (turn && turns.length < MAX_TURNS) {
-      turns.push({ index: turns.length, ...turn, at: message.createdAt })
+    if (event) {
+      turns[event.index] = { index: event.index, role: event.role, text: event.text, at: event.at }
     }
   }
 
   return turns
-}
-
-export function createTurnCounter(roomName: string) {
-  let next = 0
-
-  return (message: Message): TurnEvent | null => {
-    const turn = spoken(message)
-
-    if (!turn || next >= MAX_TURNS) {
-      return null
-    }
-
-    const event: TurnEvent = { type: "turn", roomName, index: next, ...turn, at: message.createdAt }
-
-    next += 1
-
-    return event
-  }
 }
 
 export interface Logger {

@@ -101,6 +101,17 @@ describe("the agent events route", () => {
     ])
   })
 
+  it("marks a waiting interview live at the agent's first turn", async () => {
+    const { t, roomName, interviewId } = await fixture()
+
+    await t.run(async (ctx) => await ctx.db.patch(interviewId, { status: "waiting" }))
+    await post(t, turn(roomName, 0, "Hello!", VoiceRole.Assistant))
+
+    expect(await t.run(async (ctx) => await ctx.db.get(interviewId))).toMatchObject({
+      status: "live",
+    })
+  })
+
   it("refuses a body that isn't an agent event, and a room it doesn't know", async () => {
     const { t, roomName } = await fixture()
 

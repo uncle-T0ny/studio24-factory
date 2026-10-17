@@ -9,7 +9,7 @@ RUN apt-get update \
   && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-ENV NODE_ENV=production
+ENV NODE_ENV=production LOG_LEVEL=warn
 
 COPY package.json package-lock.json tsconfig.json tsconfig.build.json ./
 RUN npm ci
