@@ -93,3 +93,12 @@ Each merge to `main`, in order: the merge commit, its time (MDT), the branch, an
 - Decision: the timeline status comes from the stage's position in STAGES, and stageEvents only add dates; rejected: storing every status.
 - Gaps: sign-up is allowlisted, so the final gate admits owners only; the link URL is shown once; 397 new lines.
 - Integrator: the `convex/_generated/api.ts` conflict resolved as the union of both sides. Gates: check (209 tests), build, e2e 14/14.
+
+## 101a5c7, 17:52, s4-feedback (b5d87d3, prototypes and client feedback)
+
+- Gives: the client opens the prototype and sends written or spoken feedback, sorted into works, broken and request.
+- Entry points: `convex/prototypes.ts:72` registerPrototype, `:96` uploadMockup; `convex/clientFeedback.ts:127` submitText, `:157` submitVoice, `:264` transcribeAndSplit; `src/clientFeedback/ClientFeedbackPage.tsx:35`.
+- Tables: reads `projects`; writes `prototypes`, `clientFeedback`, `usage`.
+- Decision: the browser sends WAV and the server measures the cap from the file size; rejected: trusting the client's duration.
+- Gaps: the "recorded demo answer" label follows the key at view time; a failed split shows one line; 707 new lines, over the 400 target (main agreed).
+- Integrator: `app/.env.example` names `OPENROUTER_API_KEY` and `FEEDBACK_STT_MODEL` (d5596ba). Gates: check (221 tests), build, e2e 16/16.
