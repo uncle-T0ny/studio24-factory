@@ -1,4 +1,5 @@
 import { FIXTURE_TRANSCRIPT } from "./fixtureTranscript"
+import { SEEDED_TEMPLATE } from "./seededTemplate"
 import { clientTurnCount } from "./transcript"
 
 // The answers askLlm returns without OPENROUTER_API_KEY, one per task, made on the fixture
@@ -107,33 +108,6 @@ const prd = {
   ],
 }
 
-const manifest = {
-  stack: [
-    "Convex: database, server functions, Convex Auth (password)",
-    "Vite, React and TypeScript",
-    "Cloudflare Workers static assets",
-    "LiveKit Agents voice worker (optional)",
-    "Claude through OpenRouter (optional)",
-  ],
-  deployTarget: "Cloudflare Workers for the web app, Convex Cloud for the backend",
-  configure: [
-    "Set the app name and brand in app.config.ts",
-    "Create the Convex production deployment and set its environment variables",
-    "Set the Worker name in wrangler.jsonc and deploy",
-  ],
-  limits: [
-    "Needs a connection: the Convex client has no offline mode",
-    "One share token per project opens it to a guest",
-    "Convex free plan: 1,000,000 function calls a month",
-  ],
-  monthlyCost: {
-    freeUsd: 0,
-    paidUsd: 30,
-    notes:
-      "Convex Professional, $25 a developer a month, and Workers Paid, $5 a month, once the free plans are outgrown.",
-  },
-}
-
 const analysis = {
   verdicts: [
     {
@@ -216,10 +190,10 @@ const analysis = {
     {
       service: "Convex",
       limit: "1,000,000 function calls a month",
-      atUsage: "About 160 events a month",
-      extraUsd: 25,
+      atUsage: "About 170 events a month",
+      extraUsd: 2.2,
       reason:
-        "Each seat change re-runs the plan's live queries for everyone who has it open; past the free calls Convex Professional is $25 a developer a month.",
+        "Each seat change re-runs the plan's live queries for everyone who has it open. The Free plan stops at its calls; Convex Starter bills $2.20 per extra million.",
     },
   ],
 }
@@ -245,7 +219,7 @@ function interviewTurn(data: string) {
 
 export const RECORDED_ANSWERS = {
   prd: () => prd,
-  manifest: () => manifest,
+  manifest: () => SEEDED_TEMPLATE.manifest,
   analysis: () => analysis,
   feedbackSplit: () => feedbackSplit,
   interviewTurn,

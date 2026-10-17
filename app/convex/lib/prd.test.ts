@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest"
 import { FIXTURE_TRANSCRIPT } from "./fixtureTranscript"
-import { type LlmAnswer, type LlmRequest } from "./llm"
+import { type Ask } from "./llm"
 import { checkPrd, draftPrd, type PrdAnswer, verifyQuote } from "./prd"
 import { RECORDED_ANSWERS } from "./recordedAnswers"
 
@@ -8,7 +8,7 @@ const turns = FIXTURE_TRANSCRIPT.map((turn) => ({ ...turn, _id: `turn-${turn.seq
 const recorded = RECORDED_ANSWERS.prd() as PrdAnswer
 
 function modelAnswering(...answers: unknown[]) {
-  const ask = vi.fn<(request: LlmRequest) => Promise<LlmAnswer>>()
+  const ask = vi.fn<Ask>()
   for (const json of answers) {
     ask.mockResolvedValueOnce({ json, model: "test-model" })
   }
