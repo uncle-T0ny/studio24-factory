@@ -33,9 +33,9 @@ test("a client link names the current stage before its own is reached, then open
   const client = await clientPage(browser)
 
   await client.goto(url)
-  await expect(client.getByText("your project is now at the Interview stage")).toBeVisible()
+  await expect(client.getByText("Your project is at the Interview stage now")).toBeVisible()
 
-  await page.getByRole("button", { name: "Move to PRD" }).click()
+  await page.getByLabel("Stage", { exact: true }).selectOption("prd")
   await expect(page.getByLabel("Stage", { exact: true })).toHaveValue("prd")
   await client.goto(url)
   await expect(client).toHaveURL(/\/prd$/)
@@ -49,7 +49,7 @@ test("a client link names the current stage before its own is reached, then open
 test("a final-stage link asks the client to sign in", async ({ page, browser, owner }) => {
   await createProject(page, `Final Bakery (${owner.suffix})`)
   await page.getByLabel("Stage", { exact: true }).selectOption("final")
-  await expect(page.getByRole("button", { name: "Move to Transferred" })).toBeVisible()
+  await expect(page.getByLabel("Stage", { exact: true })).toHaveValue("final")
 
   const client = await clientPage(browser)
 

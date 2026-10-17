@@ -1,4 +1,4 @@
-import { Authenticated, AuthLoading, Unauthenticated, useQuery } from "convex/react"
+import { Authenticated, Unauthenticated, useQuery } from "convex/react"
 import { useParams } from "react-router-dom"
 import { api } from "../../convex/_generated/api"
 import { SignInPage } from "../auth/SignInPage"
@@ -14,11 +14,7 @@ function FinalApp({ token }: { token: string }) {
   return (
     <PageColumn>
       <PageHeader eyebrow="Your app" title={app.title} />
-      {app.appUrl ? (
-        <a href={app.appUrl}>Open {app.title}</a>
-      ) : (
-        <Text tone={TextTone.Muted}>Your app is being prepared.</Text>
-      )}
+      <Text tone={TextTone.Muted}>Your developer hands the app over here.</Text>
     </PageColumn>
   )
 }
@@ -28,9 +24,6 @@ export function FinalPage() {
 
   return (
     <>
-      <AuthLoading>
-        <PageMessage>Loading…</PageMessage>
-      </AuthLoading>
       <Unauthenticated>
         <Callout>Sign in to open your app.</Callout>
         <SignInPage />

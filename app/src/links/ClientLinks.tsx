@@ -24,38 +24,10 @@ import {
 
 const LINKABLE_STAGES = STAGE_OPTIONS.filter((option) => option.value !== "transferred")
 
-function linkUrl(token: string): string {
-  return `${window.location.origin}/c/${token}`
-}
-
-function LinkRow({ link }: { link: Doc<"clientLinks"> }) {
-  const revoke = useMutation(api.links.revoke)
-  const { error, showError } = useErrorState()
-  const stages = link.stages.map((stage) => STAGE_LABELS[stage]).join(", ")
-  const state =
-    link.revokedAt === undefined ? "Active" : `Revoked ${formatTimestamp(link.revokedAt)}`
-
-  return (
-    <ListRow
-      title={stages}
-      meta={error ?? `${state}. Created ${formatTimestamp(link._creationTime)}`}
-      actions={
-        link.revokedAt === undefined ? (
-          <Button
-            variant={ButtonVariant.Danger}
-            onClick={() => void revoke({ linkId: link._id }).catch(showError)}
-          >
-            Revoke
-          </Button>
-        ) : null
-      }
-    />
-  )
-}
-
 export function ClientLinks({ project }: { project: Doc<"projects"> }) {
   const links = useQuery(api.links.listForProject, { projectId: project._id })
   const createLink = useMutation(api.links.create)
+  const revoke = useMutation(api.links.revoke)
   const [stage, setStage] = useState<Stage>(project.stage)
   const [newUrl, setNewUrl] = useState<string | null>(null)
   const { error, setError, showError } = useErrorState()
@@ -65,9 +37,9 @@ export function ClientLinks({ project }: { project: Doc<"projects"> }) {
     setError(null)
 
     try {
-      const { token } = await createLink({ projectId: project._id, stages: [stage] })
+      const { token } = await createLink({ projectId: project._id, stage })
 
-      setNewUrl(linkUrl(token))
+      setNewUrl(`${window.location.origin}/c/${token}`)
     } catch (caught) {
       showError(caught)
     }
@@ -96,7 +68,25 @@ export function ClientLinks({ project }: { project: Doc<"projects"> }) {
       ) : null}
       <List label="Links">
         {links?.map((link) => (
-          <LinkRow key={link._id} link={link} />
+          <ListRow
+            key={link._id}
+            title={link.stages.map((each) => STAGE_LABELS[each]).join(", ")}
+            meta={
+              link.revokedAt === undefined
+                ? `Created ${formatTimestamp(link._creationTime)}`
+                : `Revoked ${formatTimestamp(link.revokedAt)}`
+            }
+            actions={
+              link.revokedAt === undefined ? (
+                <Button
+                  variant={ButtonVariant.Danger}
+                  onClick={() => void revoke({ linkId: link._id }).catch(showError)}
+                >
+                  Revoke
+                </Button>
+              ) : null
+            }
+          />
         ))}
       </List>
     </Card>

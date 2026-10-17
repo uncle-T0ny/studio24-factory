@@ -19,20 +19,16 @@ export function ClientLandingPage() {
     )
   }
 
-  const reached = STAGES.filter(
-    (stage) => link.stages.includes(stage) && STAGES.indexOf(stage) <= STAGES.indexOf(link.stage),
-  )
-  const latest = reached.at(-1)
+  const reached = STAGES.slice(0, STAGES.indexOf(link.stage) + 1)
+  const latest = reached.findLast((stage) => link.stages.includes(stage))
 
   if (latest) {
     return <Navigate to={`/c/${token}/${latest}`} replace />
   }
 
-  const opens = link.stages.map((stage) => STAGE_LABELS[stage]).join(", ")
-
   return (
     <PageMessage>
-      {`${link.clientName}, your project is now at the ${STAGE_LABELS[link.stage]} stage, and this link opens only: ${opens}. Ask the developer for the link to ${STAGE_LABELS[link.stage]}.`}
+      {`This link opens a later stage. Your project is at the ${STAGE_LABELS[link.stage]} stage now: ask the developer for its link.`}
     </PageMessage>
   )
 }

@@ -11,7 +11,3 @@ export const STAGE_LABELS: Record<Stage, string> = {
 }
 
 export const STAGE_OPTIONS = STAGES.map((stage) => ({ value: stage, label: STAGE_LABELS[stage] }))
-
-export function nextStage(stage: Stage): Stage | null {
-  return STAGES[STAGES.indexOf(stage) + 1] ?? null
-}

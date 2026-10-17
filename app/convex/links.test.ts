@@ -15,29 +15,25 @@ describe("client links", () => {
     const t = newBackend()
     const { as } = await signedIn(t, "owner@example.com")
     const projectId = await as.mutation(api.projects.create, { clientName: "Bakery", title: "App" })
-    const { token } = await as.mutation(api.links.create, { projectId, stages: ["interview"] })
+    const { token } = await as.mutation(api.links.create, { projectId, stage: "interview" })
     const [link] = await as.query(api.links.listForProject, { projectId })
 
     expect(link?.stages).toEqual(["interview"])
     expect(link?.tokenHash).not.toContain(token)
     expect(await t.query(api.links.open, { token })).toEqual({
-      clientName: "Bakery",
       stage: "interview",
       stages: ["interview"],
     })
   })
 
-  it("refuses a link with no stage and a link to another owner's project", async () => {
+  it("refuses a link to another owner's project", async () => {
     const t = newBackend()
     const owner = await signedIn(t, "owner@example.com")
     const other = await signedIn(t, "other@example.com")
     const projectId = await owner.as.mutation(api.projects.create, { clientName: "A", title: "A" })
 
-    await expect(owner.as.mutation(api.links.create, { projectId, stages: [] })).rejects.toThrow(
-      "Pick at least one stage",
-    )
     await expect(
-      other.as.mutation(api.links.create, { projectId, stages: ["interview"] }),
+      other.as.mutation(api.links.create, { projectId, stage: "interview" }),
     ).rejects.toThrow("Not allowed")
   })
 
@@ -71,10 +67,7 @@ describe("client links", () => {
 
     await as.mutation(api.projects.moveStage, { projectId, stage: "final" })
     await expect(t.query(api.links.finalApp, { token })).rejects.toThrow("Sign in")
-    expect(await as.query(api.links.finalApp, { token })).toEqual({
-      title: "Wedding planner",
-      appUrl: null,
-    })
+    expect(await as.query(api.links.finalApp, { token })).toEqual({ title: "Wedding planner" })
   })
 
   it("lets only the project's owner move its stage", async () => {
