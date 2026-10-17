@@ -30,6 +30,7 @@ import {
   Tone,
   Toolbar,
 } from "../ui"
+import { STAGE_LABELS } from "./stages"
 
 const DELETE_ERROR_VISIBLE_MS = 5000
 
@@ -97,7 +98,7 @@ function ProjectRow({ project, onDeleteError }: ProjectRowProps) {
     <ListRow
       to={`/project/${project._id}`}
       title={project.title}
-      meta={`Created ${formatTimestamp(project._creationTime)}`}
+      meta={`${STAGE_LABELS[project.stage]}. Created ${formatTimestamp(project._creationTime)}`}
       actions={
         <Button variant={ButtonVariant.Danger} onClick={remove}>
           Delete

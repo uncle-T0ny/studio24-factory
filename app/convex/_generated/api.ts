@@ -43,6 +43,7 @@ import type * as lib_usage from "../lib/usage.js";
 import type * as lib_validators from "../lib/validators.js";
 import type * as lib_voice from "../lib/voice.js";
 import type * as lib_voiceData from "../lib/voiceData.js";
+import type * as links from "../links.js";
 import type * as livekit from "../livekit.js";
 import type * as migrations from "../migrations.js";
 import type * as prd from "../prd.js";
@@ -96,6 +97,7 @@ const fullApi: ApiFromModules<{
   "lib/validators": typeof lib_validators;
   "lib/voice": typeof lib_voice;
   "lib/voiceData": typeof lib_voiceData;
+  links: typeof links;
   livekit: typeof livekit;
   migrations: typeof migrations;
   prd: typeof prd;
