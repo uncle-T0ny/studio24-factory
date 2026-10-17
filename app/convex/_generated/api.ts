@@ -12,6 +12,7 @@ import type * as ResendOTPPasswordReset from "../ResendOTPPasswordReset.js";
 import type * as accounts from "../accounts.js";
 import type * as auth from "../auth.js";
 import type * as backup from "../backup.js";
+import type * as clientFeedback from "../clientFeedback.js";
 import type * as feedback from "../feedback.js";
 import type * as http from "../http.js";
 import type * as lib_access from "../lib/access.js";
@@ -59,6 +60,7 @@ const fullApi: ApiFromModules<{
   accounts: typeof accounts;
   auth: typeof auth;
   backup: typeof backup;
+  clientFeedback: typeof clientFeedback;
   feedback: typeof feedback;
   http: typeof http;
   "lib/access": typeof lib_access;
