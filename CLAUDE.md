@@ -18,7 +18,7 @@ From the repo root: it sets the stage in Convex with `npx convex run projects:se
 
 Start here: `/orchestrator <slug>` ([.claude/skills/orchestrator/SKILL.md](.claude/skills/orchestrator/SKILL.md)) says where a client is, what is done and missing, and the one next skill to run; with no slug it lists every client and its stage.
 
-End every session with `/handoff`.
+End every session with `/wrap-up`.
 
 | Stage     | Skill                                 | Produces                                                                                    |
 | --------- | ------------------------------------- | ------------------------------------------------------------------------------------------- |

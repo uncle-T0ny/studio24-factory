@@ -1,1 +1,1 @@
-# /pre-commit learnings (written by /handoff, at most 12,000 characters)
+# /pre-commit learnings (written by /wrap-up, at most 12,000 characters)

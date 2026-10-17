@@ -1,1 +1,1 @@
-# /analyze-template learnings (written by /handoff, at most 12,000 characters)
+# /analyze-template learnings (written by /wrap-up, at most 12,000 characters)

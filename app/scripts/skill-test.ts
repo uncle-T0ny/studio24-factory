@@ -90,13 +90,13 @@ const CASES: Record<string, SkillCase> = {
     expected: { "progress.md": [new RegExp(`- ${TODAY} .*/estimate`)] },
     printed: /\/estimate/,
   },
-  handoff: {
+  "wrap-up": {
     args: "inbox/run-note.md",
     produces: ["progress.md"],
     from: "prd",
     stage: "prd",
     expected: {
-      "progress.md": [new RegExp(`- ${TODAY} .*handoff`)],
+      "progress.md": [new RegExp(`- ${TODAY} .*wrap-up`)],
       [`${SKILLS}/prd/learnings.md`]: [new RegExp(`- ${TODAY}: .*Rule: `), UNDER_CAP],
     },
     unchanged: [`${SKILLS}/prd/SKILL.md`, `${SKILLS}/estimate/learnings.md`],

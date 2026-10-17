@@ -1,1 +1,1 @@
-# /estimate learnings (written by /handoff, at most 12,000 characters)
+# /estimate learnings (written by /wrap-up, at most 12,000 characters)

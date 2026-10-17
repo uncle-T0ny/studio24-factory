@@ -23,7 +23,7 @@ description: Opens the client's feedback stage, then files their feedback on the
 
 ## Learnings
 
-Read [learnings.md](learnings.md) before you run. A problem a run hits and solves is recorded there at the session's end by `/handoff`, which also proposes changes to this file from it (a new rule, or an obsolete one removed), applied only on the developer's yes.
+Read [learnings.md](learnings.md) before you run. A problem a run hits and solves is recorded there at the session's end by `/wrap-up`, which also proposes changes to this file from it (a new rule, or an obsolete one removed), applied only on the developer's yes.
 
 ## Test
 
