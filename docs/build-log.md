@@ -17,3 +17,11 @@ Each merge to `main`, in order: the merge commit, its time (MDT), the branch, an
 - Tables: none.
 - Decision: `CLAUDE.md` keeps the template's code rules below the stage map.
 - Gap: Prettier covers `app/` only; the root docs are formatted by hand.
+
+## 18402ed, 17:24, s3-prd (d703432, the llm.ts interface)
+
+- Gives: one interface for every model call; with no `OPENROUTER_API_KEY` it returns the task's recorded answer, labelled "recorded demo answer".
+- Entry points: `askLlm(request, countCall)` at `app/convex/lib/llm.ts:124`; the recorded answers at `app/convex/lib/recordedAnswers.ts:232`.
+- Tables: none.
+- Decision: `countCall` is bound to F1's usage check, so the cap is checked before each model call runs.
+- Gates: app check (167 tests) and build, green.
