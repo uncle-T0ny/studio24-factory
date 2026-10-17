@@ -25,3 +25,12 @@ Each merge to `main`, in order: the merge commit, its time (MDT), the branch, an
 - Tables: none.
 - Decision: `countCall` is bound to F1's usage check, so the cap is checked before each model call runs.
 - Gates: app check (167 tests) and build, green.
+
+## b206569, 17:25, s5-framework (3e3b17a)
+
+- Gives: the `CLAUDE.md` process (what each stage skill reads, writes and sets), the `clients/demo-client/` skeleton, `clients-private/` gitignored, a privacy check on `clients/`, and one command that sets a client's stage in Convex, mirrored in `state.json`.
+- Entry points: `CLAUDE.md:9`, `CLAUDE.md:52`, `app/scripts/check-privacy.ts:33`, `app/scripts/lib/privacy.ts:24`, `app/scripts/client-state.ts:21`, `app/scripts/lib/clients.ts:19`.
+- Tables: none directly; `client-state.ts` calls `projects:setStage`.
+- Decision: Convex first, `state.json` only after Convex accepts; rejected: the file first, synced later.
+- Gaps: the stage list in `scripts/lib/clients.ts` mirrors F1's enum by hand; the email test flags placeholders too; the real Convex run is proven only against a local stub until S1 merges.
+- Integrator: `npm run check` now runs `check:privacy` (935103d). Gates: app check (178 tests, privacy included) and build, green.
