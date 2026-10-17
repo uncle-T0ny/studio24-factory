@@ -29,6 +29,9 @@ Ask in this order: first the product idea (what the app does, for whom, the main
 One question per turn, under 30 words. When an answer is ambiguous (a number, a date, a name), confirm it before moving on.
 With no turns yet, greet the client and ask what the app should do. When you know enough for a first requirements document, or after about 12 questions, thank the client, set done to true and ask nothing more.`
 
+// The provider rejects an empty user message, so the opening question gets a placeholder.
+const NO_TURNS_YET = "(No turns yet: the interview is starting.)"
+
 const questionValidator = v.object({ question: v.string(), done: v.boolean() })
 
 const SAMPLE_ANSWERS = FIXTURE_TRANSCRIPT.filter((turn) => turn.speaker === "client").map(
@@ -151,7 +154,7 @@ export const ask = internalAction({
         {
           task: LlmTask.InterviewTurn,
           instructions: INTERVIEWER,
-          data: transcriptAsData(turns),
+          data: turns.length > 0 ? transcriptAsData(turns) : NO_TURNS_YET,
           answer: questionValidator,
         },
         async () => {
