@@ -34,3 +34,11 @@ Each merge to `main`, in order: the merge commit, its time (MDT), the branch, an
 - Decision: Convex first, `state.json` only after Convex accepts; rejected: the file first, synced later.
 - Gaps: the stage list in `scripts/lib/clients.ts` mirrors F1's enum by hand; the email test flags placeholders too; the real Convex run is proven only against a local stub until S1 merges.
 - Integrator: `npm run check` now runs `check:privacy` (935103d). Gates: app check (178 tests, privacy included) and build, green.
+
+## 9183a56, 17:26, s3-prd (b89734b, PRD drafting)
+
+- Gives: the PRD drafted from a transcript, checked, and its quotes verified against what the client said; the `InterviewTurn` task for S2's text interview.
+- Entry points: `draftPrd` at `app/convex/lib/prd.ts:96`, `verifyQuote` at `app/convex/lib/prd.ts:120`, `transcriptAsData` at `app/convex/lib/transcript.ts:10`, the made-up fixture in `app/convex/lib/fixtureTranscript.ts`.
+- Tables: none; pure functions.
+- Decisions: one retry, told what was wrong, then a second invalid answer is kept and flagged; a quote is verified only when a client turn holds it word for word.
+- Gates: app check (187 tests) and build, green.
