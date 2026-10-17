@@ -21,7 +21,6 @@ const FIXTURE = path.join(REPO, ".claude/skills/prd/fixture")
 const SLUG = "seating-demo"
 const CLIENT = `clients/${SLUG}`
 const STARTING_STAGE = "none"
-const REAL_CLIENT_STATE = "app/scripts/client-state.ts"
 const TODAY = new Date().toLocaleDateString("en-CA")
 
 interface SkillCase {
@@ -30,6 +29,7 @@ interface SkillCase {
   stage: string
   expected: Record<string, RegExp[]>
   printed?: RegExp
+  from?: string
   addDir?: string
 }
 
@@ -78,6 +78,14 @@ const CASES: Record<string, SkillCase> = {
       "decisions.md": [new RegExp(`\\(feedback, ${TODAY}\\)`)],
     },
   },
+  orchestrator: {
+    args: "",
+    produces: ["progress.md"],
+    from: "prd",
+    stage: "prd",
+    expected: { "progress.md": [new RegExp(`- ${TODAY} .*/estimate`)] },
+    printed: /\/estimate/,
+  },
   handover: {
     args: "https://seating-demo.example.com",
     produces: ["handover.md"],
@@ -93,19 +101,17 @@ function prepareWorkspace(skill: string, skillCase: SkillCase): string {
     recursive: true,
     filter: (source) => !source.includes(`${path.sep}fixture`),
   })
-  // Once the real script is on the branch it replaces the fixture's stand-in, with the lib it imports.
-  if (existsSync(path.join(REPO, REAL_CLIENT_STATE))) {
-    cpSync(path.join(REPO, "app/scripts"), path.join(workspace, "app/scripts"), {
-      recursive: true,
-      filter: (source) => !source.endsWith(".test.ts"),
-    })
-  }
+  // The skills set the stage with app/scripts/client-state.ts, which imports from app/scripts/lib.
+  cpSync(path.join(REPO, "app/scripts"), path.join(workspace, "app/scripts"), {
+    recursive: true,
+    filter: (source) => !source.endsWith(".test.ts"),
+  })
   for (const output of skillCase.produces) {
     rmSync(path.join(workspace, CLIENT, output), { recursive: true, force: true })
   }
   const statePath = path.join(workspace, CLIENT, "state.json")
   const state = JSON.parse(readFileSync(statePath, "utf8")) as Record<string, unknown>
-  writeFileSync(statePath, JSON.stringify({ ...state, stage: STARTING_STAGE }))
+  writeFileSync(statePath, JSON.stringify({ ...state, stage: skillCase.from ?? STARTING_STAGE }))
   return workspace
 }
 
@@ -119,7 +125,15 @@ function runSkill(skill: string, skillCase: SkillCase, workspace: string): strin
       ["--setting-sources", "project"],
       ["--strict-mcp-config"],
       ["--permission-mode", "acceptEdits"],
-      ["--allowedTools", "Bash(node:*)", "Bash(grep:*)", "Bash(ls:*)", "Bash(mkdir:*)"],
+      ["--disallowedTools", "Agent"],
+      [
+        "--allowedTools",
+        "Bash(node:*)",
+        "Bash(grep:*)",
+        "Bash(ls:*)",
+        "Bash(mkdir:*)",
+        "Bash(date:*)",
+      ],
       skillCase.addDir ? ["--add-dir", skillCase.addDir] : [],
     ].flat(),
     { cwd: workspace, encoding: "utf8", timeout: 600_000 },
