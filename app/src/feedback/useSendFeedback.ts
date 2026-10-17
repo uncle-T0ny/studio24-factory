@@ -14,7 +14,6 @@ export interface FeedbackDraft {
 
 const UPLOAD_FAILED = "The screenshot didn't upload. Try again."
 
-// Uploads the screenshot to Convex storage, if there is one, then saves the entry.
 export function useSendFeedback(): (draft: FeedbackDraft) => Promise<Id<"feedback">> {
   const generateUploadUrl = useMutation(api.feedback.generateUploadUrl)
   const create = useMutation(api.feedback.create)

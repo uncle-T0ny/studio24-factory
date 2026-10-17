@@ -4,7 +4,6 @@ import { defineConfig } from "vitest/config"
 
 const UNKNOWN_VERSION = "unknown"
 
-// The git short commit the frontend is built from, sent with feedback (src/appVersion.ts).
 function gitShortCommit(): string {
   try {
     const commit = execFileSync("git", ["rev-parse", "--short", "HEAD"], {
@@ -21,14 +20,13 @@ function gitShortCommit(): string {
 export default defineConfig({
   plugins: [react()],
   build: {
-    // The voice module's chunk (livekit-client, loaded lazily on project pages) is about 580 kB.
     chunkSizeWarningLimit: 600,
   },
   define: {
     __APP_VERSION__: JSON.stringify(gitShortCommit()),
   },
   test: {
-    include: ["src/**/*.test.ts", "convex/**/*.test.ts"],
+    include: ["src/**/*.test.ts", "convex/**/*.test.ts", "scripts/**/*.test.ts"],
     environment: "node",
   },
 })

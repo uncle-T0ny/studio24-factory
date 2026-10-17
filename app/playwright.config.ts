@@ -2,7 +2,6 @@ import { defineConfig, devices } from "@playwright/test"
 import { assertLocalDeployment } from "./e2e/support/localDeployment"
 import { APP_PORT, APP_URL, CONVEX_URL } from "./e2e/support/ports"
 
-// Never let the suite reach the shared dev or the prod deployment.
 assertLocalDeployment()
 
 export default defineConfig({

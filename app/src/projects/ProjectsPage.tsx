@@ -45,7 +45,7 @@ function NewProjectForm() {
     setError(null)
 
     try {
-      const projectId = await createProject({ name })
+      const projectId = await createProject({ clientName: name, title: name })
 
       void navigate(`/project/${projectId}`)
     } catch (caught) {
@@ -57,9 +57,9 @@ function NewProjectForm() {
     <Card label="New project" onSubmit={(event) => void submit(event)}>
       <Heading level={HeadingLevel.Section}>New project</Heading>
       <FormRow>
-        <Field label="Project name">
+        <Field label="Client name">
           <TextField
-            placeholder="Spring launch"
+            placeholder="Spring Bakery"
             value={name}
             required
             onChange={(event) => setName(event.target.value)}
@@ -87,7 +87,7 @@ function ProjectRow({ project, onDeleteError }: ProjectRowProps) {
   const removeProject = useMutation(api.projects.remove)
 
   const remove = () => {
-    const isConfirmed = window.confirm(`Delete "${project.name}"?`)
+    const isConfirmed = window.confirm(`Delete "${project.title}"?`)
 
     if (isConfirmed) {
       removeProject({ projectId: project._id }).catch(onDeleteError)
@@ -97,7 +97,7 @@ function ProjectRow({ project, onDeleteError }: ProjectRowProps) {
   return (
     <ListRow
       to={`/project/${project._id}`}
-      title={project.name}
+      title={project.title}
       meta={`Created ${formatTimestamp(project._creationTime)}`}
       actions={
         <Button variant={ButtonVariant.Danger} onClick={remove}>

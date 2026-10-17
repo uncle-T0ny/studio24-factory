@@ -1,6 +1,4 @@
-// Page helpers. They find things only by role, label and visible text, so the markup can change
-// under them.
-import { expect, type Locator, type Page } from "@playwright/test"
+import { expect, type Page } from "@playwright/test"
 
 export async function openSignUp(page: Page): Promise<void> {
   await page.goto("/")
@@ -35,38 +33,11 @@ export async function expectProjectsPage(page: Page): Promise<void> {
   await expect(page.getByRole("heading", { name: "Projects", exact: true })).toBeVisible()
 }
 
-// Creates a project from the projects page and waits for its own page.
 export async function createProject(page: Page, name: string): Promise<void> {
   const form = page.getByRole("form", { name: "New project" })
 
-  await form.getByLabel("Project name").fill(name)
+  await form.getByLabel("Client name").fill(name)
   await form.getByRole("button", { name: "New project" }).click()
   await expect(page).toHaveURL(/\/project\//)
   await expect(page.getByRole("heading", { name, exact: true })).toBeVisible()
-}
-
-export function shareButton(page: Page): Locator {
-  return page.getByRole("button", { name: "Share link", exact: true })
-}
-
-export function shareDialog(page: Page): Locator {
-  return page.getByRole("dialog", { name: "Share link" })
-}
-
-// Opens the share popover on a project's page, reads the link and closes it again.
-export async function readShareLink(page: Page): Promise<string> {
-  await shareButton(page).click()
-  const link = await shareDialog(page).getByLabel("Link to share").inputValue()
-
-  await shareButton(page).click()
-  await expect(shareDialog(page)).toHaveCount(0)
-
-  return link
-}
-
-export async function renameProject(page: Page, name: string): Promise<void> {
-  const form = page.getByRole("form", { name: "Rename project" })
-
-  await form.getByLabel("Project name").fill(name)
-  await form.getByRole("button", { name: "Save" }).click()
 }

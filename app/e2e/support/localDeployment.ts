@@ -7,16 +7,12 @@ import { CONVEX_URL } from "./ports"
 
 export const APP_DIR = fileURLToPath(new URL("../..", import.meta.url))
 
-// The e2e backend's own state directory (gitignored). The Convex CLI runs here, so `convex dev`
-// writes its .env.local and its .convex/ local state here, never into app/.env.local, which may
-// point at the shared dev deployment. Its convex.json points the CLI at the app's functions.
 export const E2E_DIR = path.join(APP_DIR, ".e2e")
 
 const ENV_FILE = path.join(E2E_DIR, ".env.local")
 const APP_ENV_FILE = path.join(APP_DIR, ".env.local")
 const APP_CONVEX_JSON = path.join(APP_DIR, "convex.json")
 const DEFAULT_FUNCTIONS_DIR = "convex"
-// Comma-separated names of more deployments the suite must never touch, such as prod's.
 const SHARED_DEPLOYMENTS_ENV = "E2E_SHARED_DEPLOYMENTS"
 const LOCAL_DEPLOYMENT = /^(anonymous|local):/
 const CLOUD_URL = /\.convex\.(cloud|site)\b/
@@ -28,7 +24,6 @@ const DEPLOYMENT_ENV_NAMES = [
   "CONVEX_URL",
   "VITE_CONVEX_URL",
 ]
-// Any of these in the e2e env file means a deployment the harness did not make.
 const FOREIGN_DEPLOYMENT_NAMES = [
   "CONVEX_DEPLOY_KEY",
   "CONVEX_SELF_HOSTED_URL",
@@ -50,8 +45,6 @@ function deploymentName(deployment: string | undefined): string | null {
   return deployment.replace(/^[a-z]+:/, "")
 }
 
-// The deployments the suite must never reach: the cloud one app/.env.local names (the checkout's
-// own dev deployment), plus any listed in E2E_SHARED_DEPLOYMENTS.
 function sharedDeployments(): string[] {
   const fromEnv = (process.env[SHARED_DEPLOYMENTS_ENV] ?? "").split(",").map((name) => name.trim())
   const appDeployment = existsSync(APP_ENV_FILE)
@@ -61,8 +54,6 @@ function sharedDeployments(): string[] {
   return [...fromEnv, appDeployment ?? ""].filter((name) => name.length > 0)
 }
 
-// Throws unless app/.e2e/.env.local is missing (convex dev then makes a local deployment) or
-// points at a local one. With `requireUrl`, also checks that it is the backend on our port.
 export function assertLocalDeployment(requireUrl = false): void {
   if (!existsSync(ENV_FILE)) {
     if (requireUrl) {
@@ -112,10 +103,6 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value)
 }
 
-// Makes app/.e2e/ a Convex project over the app's own functions: a convex.json whose functions
-// path leads back to app/convex/, plus links to the app's package.json (the CLI reads its
-// dependencies) and node_modules (so `npx convex` there runs the app's own CLI). It only ever
-// writes inside app/.e2e/.
 export function prepareE2eDir(): void {
   const parsed: unknown = JSON.parse(readFileSync(APP_CONVEX_JSON, "utf8"))
   const appConfig: Record<string, unknown> = isRecord(parsed) ? parsed : {}
@@ -132,8 +119,6 @@ export function prepareE2eDir(): void {
   linkFromApp("node_modules")
 }
 
-// The environment for Convex CLI calls: anonymous agent mode, with no deployment variables
-// inherited from the shell, so only app/.e2e/.env.local chooses the deployment.
 export function localConvexEnv(): NodeJS.ProcessEnv {
   const deploymentNames: ReadonlySet<string> = new Set(DEPLOYMENT_ENV_NAMES)
   const inherited = Object.entries(process.env).filter(([name]) => !deploymentNames.has(name))

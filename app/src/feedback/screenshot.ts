@@ -5,14 +5,12 @@ import {
 } from "../../convex/lib/feedback"
 import { UserError } from "../lib/errors"
 
-// A canvas colour, where CSS variables don't resolve.
 const JPEG_BACKGROUND = "white"
 
 export const SCREENSHOT_ACCEPT = "image/png,image/jpeg,.png,.jpg,.jpeg"
 
 const PNG_TYPE = "image/png"
 const JPEG_TYPE = "image/jpeg"
-// A file bigger than this isn't decoded at all.
 export const MAX_SOURCE_BYTES = 30 * 1024 * 1024
 const JPEG_QUALITY = 0.85
 const FALLBACK_SIDE_PX = 1600
@@ -68,7 +66,6 @@ export function fitWithin(size: Size, maxSide: number): Size {
   }
 }
 
-// PNG or JPEG by the file's type, else by its name; null for anything else.
 export function screenshotTypeOf(file: FileLike): string | null {
   if (isScreenshotType(file.type)) {
     return file.type
@@ -83,9 +80,6 @@ export function screenshotTypeOf(file: FileLike): string | null {
   return /\.jpe?g$/.test(name) ? JPEG_TYPE : null
 }
 
-// The image a paste attaches: the first image on the clipboard. A macOS screenshot copied to the
-// clipboard is one PNG and no text. Text pasted into a text field stays text, even when the
-// clipboard also holds a picture of it (Word, Pages, Notes).
 export function pastedImage<T extends FileLike>(input: PasteInput<T>): T | null {
   if (input.isTextTarget && input.hasText) {
     return null
@@ -94,15 +88,12 @@ export function pastedImage<T extends FileLike>(input: PasteInput<T>): T | null 
   return input.files.find((file) => file.type.startsWith("image/")) ?? null
 }
 
-// A screenshot that fits MAX_SCREENSHOT_SIDE_PX and MAX_SCREENSHOT_BYTES is stored as it is.
 export function canKeepOriginal(size: Size, bytes: number): boolean {
   const longest = Math.max(size.width, size.height)
 
   return longest <= MAX_SCREENSHOT_SIDE_PX && bytes <= MAX_SCREENSHOT_BYTES
 }
 
-// Otherwise it is re-encoded, trying each step until one is small enough: PNG keeps text sharp,
-// JPEG is smaller for photos and full-screen Retina shots.
 export function encodingSteps(size: Size): EncodingStep[] {
   const fitted = fitWithin(size, MAX_SCREENSHOT_SIDE_PX)
 
@@ -137,7 +128,6 @@ async function encode(bitmap: ImageBitmap, step: EncodingStep): Promise<Blob> {
   }
 
   if (step.type === JPEG_TYPE) {
-    // JPEG has no transparency: a window screenshot's transparent shadow turns white, not black.
     context.fillStyle = JPEG_BACKGROUND
     context.fillRect(0, 0, step.size.width, step.size.height)
   }
@@ -161,7 +151,6 @@ async function decode(file: Blob): Promise<ImageBitmap> {
   }
 }
 
-// Checks a chosen or pasted image and shrinks it to fit the limits, in the browser.
 export async function prepareScreenshot(file: File): Promise<PreparedScreenshot> {
   const type = screenshotTypeOf(file)
 

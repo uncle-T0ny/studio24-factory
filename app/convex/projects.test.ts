@@ -12,34 +12,38 @@ afterEach(() => {
 })
 
 describe("projects", () => {
-  it("creates a project with a trimmed name and a long random share token", async () => {
+  it("creates a project at the interview stage with a unique slug from the client's name", async () => {
     const t = newBackend()
     const { as } = await signedIn(t, "owner@example.com")
-    const first = await as.mutation(api.projects.create, { name: "  Spring launch " })
-    const second = await as.mutation(api.projects.create, { name: "Autumn review" })
+    const first = await as.mutation(api.projects.create, {
+      clientName: "  Spring Bakery ",
+      title: "Orders app",
+    })
+    const second = await as.mutation(api.projects.create, {
+      clientName: "Spring Bakery",
+      title: "Loyalty app",
+    })
     const projects = await as.query(api.projects.listMine, {})
 
-    expect(projects.map((project) => project.name)).toEqual(["Autumn review", "Spring launch"])
-    expect(projects.map((project) => project._id)).toEqual([second, first])
-    expect(new Set(projects.map((project) => project.shareToken)).size).toBe(2)
-
-    for (const project of projects) {
-      expect(project.shareToken).toMatch(/^[A-Za-z0-9_-]{32}$/)
-    }
+    expect(projects.map((project) => project._id).sort()).toEqual([first, second].sort())
+    expect(projects.map((project) => project.slug).sort()).toEqual([
+      "spring-bakery",
+      "spring-bakery-2",
+    ])
+    expect(projects.every((project) => project.stage === "interview" && !project.isDemo)).toBe(true)
   })
 
   it("refuses an empty name and a too long one", async () => {
     const t = newBackend()
     const { as } = await signedIn(t, "owner@example.com")
-    const projectId = await as.mutation(api.projects.create, { name: "Spring launch" })
 
-    await expect(as.mutation(api.projects.create, { name: "  " })).rejects.toThrow(
-      "A project needs a name.",
-    )
     await expect(
-      as.mutation(api.projects.rename, {
-        projectId,
-        name: "x".repeat(MAX_PROJECT_NAME_LENGTH + 1),
+      as.mutation(api.projects.create, { clientName: "  ", title: "App" }),
+    ).rejects.toThrow("A project needs a name.")
+    await expect(
+      as.mutation(api.projects.create, {
+        clientName: "Client",
+        title: "x".repeat(MAX_PROJECT_NAME_LENGTH + 1),
       }),
     ).rejects.toThrow("Keep the name under")
   })
@@ -47,7 +51,7 @@ describe("projects", () => {
   it("deletes the owner's project", async () => {
     const t = newBackend()
     const { as } = await signedIn(t, "owner@example.com")
-    const projectId = await as.mutation(api.projects.create, { name: "Spring launch" })
+    const projectId = await as.mutation(api.projects.create, { clientName: "Client", title: "App" })
 
     await as.mutation(api.projects.remove, { projectId })
 

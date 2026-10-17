@@ -3,7 +3,6 @@ import { signUp } from "./app"
 import { deleteTestOwner, newTestOwner, type TestOwner } from "./owners"
 
 interface Fixtures {
-  // A fresh owner, signed up and signed in on `page`, deleted with all their data afterwards.
   owner: TestOwner
 }
 

@@ -12,10 +12,6 @@ import {
 import { assertScreenshot, readFeedbackEntries } from "./lib/feedbackEntries"
 import { ownerMutation, ownerQuery } from "./lib/functions"
 
-// In-app feedback. Every public function requires a signed-in owner, the same check as
-// the rest of the app (ownerQuery and ownerMutation), and every owner sees every entry.
-// listForTriage is internal: `npm run feedback` (scripts/feedback.ts) runs it.
-
 const FEEDBACK_MISSING = "This feedback no longer exists."
 
 export const generateUploadUrl = ownerMutation({
@@ -80,7 +76,6 @@ export const setStatus = ownerMutation({
   },
 })
 
-// For triage by Claude: `npm run feedback -- [--prod] [--all]` prints these as Markdown.
 export const listForTriage = internalQuery({
   args: {
     includeDone: v.boolean(),

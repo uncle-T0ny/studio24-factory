@@ -4,7 +4,6 @@ import { Tone, type Option } from "../types"
 export const ICON_SIZE = 14
 export const PAGE_PATH = "/ui-kit"
 export const KIT_IMAGE_ALT = "Screenshot"
-// A public asset (the placeholder app icon), so the kit page imports no feature code.
 export const KIT_IMAGE_SRC = "/apple-touch-icon.png"
 
 export enum Shape {

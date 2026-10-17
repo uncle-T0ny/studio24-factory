@@ -18,15 +18,18 @@ import type * as lib_access from "../lib/access.js";
 import type * as lib_accounts from "../lib/accounts.js";
 import type * as lib_appConfig from "../lib/appConfig.js";
 import type * as lib_backup from "../lib/backup.js";
+import type * as lib_clientLinks from "../lib/clientLinks.js";
 import type * as lib_feedback from "../lib/feedback.js";
 import type * as lib_feedbackEntries from "../lib/feedbackEntries.js";
 import type * as lib_functions from "../lib/functions.js";
 import type * as lib_livekitToken from "../lib/livekitToken.js";
 import type * as lib_ownerData from "../lib/ownerData.js";
 import type * as lib_owners from "../lib/owners.js";
+import type * as lib_projectData from "../lib/projectData.js";
 import type * as lib_projects from "../lib/projects.js";
 import type * as lib_shareToken from "../lib/shareToken.js";
 import type * as lib_signIn from "../lib/signIn.js";
+import type * as lib_usage from "../lib/usage.js";
 import type * as lib_validators from "../lib/validators.js";
 import type * as lib_voice from "../lib/voice.js";
 import type * as lib_voiceData from "../lib/voiceData.js";
@@ -34,8 +37,8 @@ import type * as livekit from "../livekit.js";
 import type * as migrations from "../migrations.js";
 import type * as projects from "../projects.js";
 import type * as seed from "../seed.js";
-import type * as share from "../share.js";
 import type * as testing from "../testing.js";
+import type * as usage from "../usage.js";
 import type * as voice from "../voice.js";
 
 import type {
@@ -56,15 +59,18 @@ const fullApi: ApiFromModules<{
   "lib/accounts": typeof lib_accounts;
   "lib/appConfig": typeof lib_appConfig;
   "lib/backup": typeof lib_backup;
+  "lib/clientLinks": typeof lib_clientLinks;
   "lib/feedback": typeof lib_feedback;
   "lib/feedbackEntries": typeof lib_feedbackEntries;
   "lib/functions": typeof lib_functions;
   "lib/livekitToken": typeof lib_livekitToken;
   "lib/ownerData": typeof lib_ownerData;
   "lib/owners": typeof lib_owners;
+  "lib/projectData": typeof lib_projectData;
   "lib/projects": typeof lib_projects;
   "lib/shareToken": typeof lib_shareToken;
   "lib/signIn": typeof lib_signIn;
+  "lib/usage": typeof lib_usage;
   "lib/validators": typeof lib_validators;
   "lib/voice": typeof lib_voice;
   "lib/voiceData": typeof lib_voiceData;
@@ -72,8 +78,8 @@ const fullApi: ApiFromModules<{
   migrations: typeof migrations;
   projects: typeof projects;
   seed: typeof seed;
-  share: typeof share;
   testing: typeof testing;
+  usage: typeof usage;
   voice: typeof voice;
 }> = anyApi as any;
 

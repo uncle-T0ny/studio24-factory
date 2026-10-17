@@ -7,7 +7,6 @@ import { classNames, ControlSize } from "./types"
 const ICON_SIZE = 14
 const CLEAR_KEY = "Escape"
 
-// Esc clears a field that has text; on an empty field it is left to the page.
 export function clearsOnKey(key: string, value: string): boolean {
   return key === CLEAR_KEY && value.length > 0
 }

@@ -1,0 +1,53 @@
+# Build log
+
+Each merge to `main`, in order: the merge commit, its time (MDT), the branch, and the session's reading note.
+
+## 8fdb7fd, 17:18, c0-comments
+
+- Gives: the template's code without its redundant comments; only the comments that state a why the code can't show remain, ten of them reworded to one line.
+- Entry points: none new; 119 files across `app/` and `agent/`, 577 lines removed.
+- Tables: none.
+- Decision: comments only; the bundled output is unchanged (esbuild-identical).
+- Gates: app check (162 tests) and build, agent check and `tsc`, all green.
+
+## 1ae004f, 17:19, d1-docs
+
+- Gives: the PRD, the decisions, the stage map, and `/pre-commit` enforcing NFR-1 to NFR-9.
+- Entry points: `CLAUDE.md:9`, `docs/DECISIONS.md:42`, `docs/PRD.md:6`, `.claude/skills/pre-commit/SKILL.md:17`.
+- Tables: none.
+- Decision: `CLAUDE.md` keeps the template's code rules below the stage map.
+- Gap: Prettier covers `app/` only; the root docs are formatted by hand.
+
+## 18402ed, 17:24, s3-prd (d703432, the llm.ts interface)
+
+- Gives: one interface for every model call; with no `OPENROUTER_API_KEY` it returns the task's recorded answer, labelled "recorded demo answer".
+- Entry points: `askLlm(request, countCall)` at `app/convex/lib/llm.ts:124`; the recorded answers at `app/convex/lib/recordedAnswers.ts:232`.
+- Tables: none.
+- Decision: `countCall` is bound to F1's usage check, so the cap is checked before each model call runs.
+- Gates: app check (167 tests) and build, green.
+
+## b206569, 17:25, s5-framework (3e3b17a)
+
+- Gives: the `CLAUDE.md` process (what each stage skill reads, writes and sets), the `clients/demo-client/` skeleton, `clients-private/` gitignored, a privacy check on `clients/`, and one command that sets a client's stage in Convex, mirrored in `state.json`.
+- Entry points: `CLAUDE.md:9`, `CLAUDE.md:52`, `app/scripts/check-privacy.ts:33`, `app/scripts/lib/privacy.ts:24`, `app/scripts/client-state.ts:21`, `app/scripts/lib/clients.ts:19`.
+- Tables: none directly; `client-state.ts` calls `projects:setStage`.
+- Decision: Convex first, `state.json` only after Convex accepts; rejected: the file first, synced later.
+- Gaps: the stage list in `scripts/lib/clients.ts` mirrors F1's enum by hand; the email test flags placeholders too; the real Convex run is proven only against a local stub until S1 merges.
+- Integrator: `npm run check` now runs `check:privacy` (935103d). Gates: app check (178 tests, privacy included) and build, green.
+
+## 9183a56, 17:26, s3-prd (b89734b, PRD drafting)
+
+- Gives: the PRD drafted from a transcript, checked, and its quotes verified against what the client said; the `InterviewTurn` task for S2's text interview.
+- Entry points: `draftPrd` at `app/convex/lib/prd.ts:96`, `verifyQuote` at `app/convex/lib/prd.ts:120`, `transcriptAsData` at `app/convex/lib/transcript.ts:10`, the made-up fixture in `app/convex/lib/fixtureTranscript.ts`.
+- Tables: none; pure functions.
+- Decisions: one retry, told what was wrong, then a second invalid answer is kept and flagged; a quote is verified only when a client turn holds it word for word.
+- Gates: app check (187 tests) and build, green.
+
+## e227fe1, 17:28, s7-skills (e4ecc75)
+
+- Gives: one skill per stage, each provable headless: `npm run skill-test -- <skill>`.
+- Entry points: `app/scripts/skill-test.ts:166`, `.claude/skills/prd/SKILL.md:1`.
+- Tables: none; writes `clients/<slug>/` files, and the stage via `client-state.ts`.
+- Decision: one fixture holding the client after every stage, and the test deletes what the skill makes; rejected: chaining skills (slow, flaky).
+- Gaps: prototype registration calls S4's `prototypes:registerPrototype` in a follow-up commit; the dev-app path is untested (the test runs the mockup only).
+- Gates: app check (187 tests) and build, green; merged without conflicts.

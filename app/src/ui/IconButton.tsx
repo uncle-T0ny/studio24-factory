@@ -15,7 +15,6 @@ export interface IconButtonProps extends Omit<
   icon: ReactNode
   variant?: IconButtonVariant
   size?: ControlSize.Small | ControlSize.Medium
-  // A tool or toggle: shows whether it is on and tells assistive tech (aria-pressed).
   pressed?: boolean
 }
 

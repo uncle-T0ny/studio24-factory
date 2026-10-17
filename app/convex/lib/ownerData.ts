@@ -1,9 +1,6 @@
+import { deleteProjectData } from "./projectData"
 import type { Id, TableNames } from "../_generated/dataModel"
 import type { MutationCtx } from "../_generated/server"
-
-// Every table that holds an owner's data, with the storage files each row holds. Deleting an
-// owner (testing:deleteTestOwner) walks this list, so a new owner-scoped table goes here too;
-// convex/testing.test.ts fails when a table with an ownerId field is missing from it.
 
 export interface OwnerRow {
   id: Id<TableNames>
@@ -24,6 +21,10 @@ export const OWNER_SCOPED_TABLES: readonly OwnerScopedTable[] = [
         .withIndex("by_owner", (q) => q.eq("ownerId", ownerId))
         .collect()
 
+      for (const project of projects) {
+        await deleteProjectData(ctx, project._id)
+      }
+
       return projects.map((project) => ({ id: project._id, files: [] }))
     },
   },
@@ -42,30 +43,18 @@ export const OWNER_SCOPED_TABLES: readonly OwnerScopedTable[] = [
     },
   },
   {
-    table: "voiceSessions",
+    table: "templates",
     rows: async (ctx, ownerId) => {
-      const sessions = await ctx.db
-        .query("voiceSessions")
+      const templates = await ctx.db
+        .query("templates")
         .withIndex("by_owner", (q) => q.eq("ownerId", ownerId))
         .collect()
 
-      return sessions.map((session) => ({ id: session._id, files: [] }))
-    },
-  },
-  {
-    table: "voiceTranscripts",
-    rows: async (ctx, ownerId) => {
-      const turns = await ctx.db
-        .query("voiceTranscripts")
-        .withIndex("by_owner", (q) => q.eq("ownerId", ownerId))
-        .collect()
-
-      return turns.map((turn) => ({ id: turn._id, files: [] }))
+      return templates.map((template) => ({ id: template._id, files: [] }))
     },
   },
 ]
 
-// Deletes the owner's rows in every owner-scoped table, with their files.
 export async function deleteOwnerData(ctx: MutationCtx, ownerId: Id<"users">): Promise<void> {
   for (const { rows } of OWNER_SCOPED_TABLES) {
     for (const row of await rows(ctx, ownerId)) {
