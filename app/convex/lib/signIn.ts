@@ -1,12 +1,6 @@
 import { v } from "convex/values"
 import { isOwnerEmail, normalizeEmail, type OwnerEnv } from "./owners"
 
-// What accounts:status tells the sign-in form after a failed attempt (prod masks the auth error
-// itself as "Server Error"). Missing covers both an email off OWNER_EMAILS and an owner's email
-// with no account yet, so the public query never reveals who is on the allowlist; the form offers
-// sign-up, and sign-up refuses an email off the list. The accepted trade-off: anyone can still
-// learn whether an email has a usable account (Ready or Locked), which the form needs to tell a
-// wrong password from a missing account.
 export enum AccountStatus {
   Missing = "missing",
   Locked = "locked",

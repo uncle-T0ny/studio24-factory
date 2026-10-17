@@ -23,7 +23,6 @@ function chunk(type: string, data: Buffer): Buffer {
   return Buffer.concat([length, body, checksum])
 }
 
-// A PNG of one opaque colour, made here so the feedback test needs no binary fixture in git.
 export function solidPng(width: number, height: number, color: Rgb): Buffer {
   const header = Buffer.alloc(13)
 

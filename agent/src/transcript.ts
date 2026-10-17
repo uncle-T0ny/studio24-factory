@@ -1,8 +1,4 @@
-// The transcript goes to the app's Convex HTTP action (app/convex/http.ts), one event per POST:
-// each committed turn as it happens (best effort), then, when the session ends, the whole
-// history, which replaces what the turns stored. Each turn carries its index, so a retried POST
-// stores nothing twice. The shapes match agentEventValidator in app/convex/lib/voice.ts; the two
-// packages share no code, so a change to one is a change to both.
+// Same shapes as agentEventValidator in app/convex/lib/voice.ts; the packages share no code.
 
 export const AGENT_EVENTS_PATH = "/voice/agent-events"
 
@@ -35,11 +31,9 @@ export interface EndEvent {
 
 export type AgentEvent = TurnEvent | EndEvent
 
-// The longest turn text and the most turns sent; the server keeps the same limits.
 export const MAX_TURN_LENGTH = 4000
 export const MAX_TURNS = 500
 
-// A message as the session commits it (llm.ChatMessage has these fields).
 export interface Message {
   role: string
   textContent: string | undefined
@@ -50,9 +44,6 @@ function isRole(role: string): role is Role {
   return role === Role.User || role === Role.Assistant
 }
 
-// The message as a turn's role and text, or null: only user and assistant messages with some
-// text count (the session also commits system and developer messages, and an interrupted reply
-// can be empty).
 function spoken(message: Message): Pick<Turn, "role" | "text"> | null {
   const text = message.textContent?.trim() ?? ""
 
@@ -63,7 +54,6 @@ function spoken(message: Message): Pick<Turn, "role" | "text"> | null {
   return { role: message.role, text: text.slice(0, MAX_TURN_LENGTH) }
 }
 
-// The session's messages as turns, numbered in order: the history the end event carries.
 export function historyTurns(messages: readonly Message[]): Turn[] {
   const turns: Turn[] = []
 
@@ -78,7 +68,6 @@ export function historyTurns(messages: readonly Message[]): Turn[] {
   return turns
 }
 
-// Numbers the turns as they are committed, the same way historyTurns does.
 export function createTurnCounter(roomName: string) {
   let next = 0
 
@@ -111,9 +100,7 @@ export interface PosterOptions {
 }
 
 export interface TranscriptPoster {
-  // Queues the event; events go out one at a time, in the order they were queued.
   post: (event: AgentEvent) => void
-  // Resolves once every queued event was sent or given up on.
   flush: () => Promise<void>
 }
 
@@ -125,8 +112,6 @@ const defaultSleep = (ms: number) =>
     setTimeout(resolve, ms)
   })
 
-// A 4xx answer (a wrong secret, a malformed event, a room the app doesn't know) won't change on
-// a retry; a network error or a 5xx might.
 function isRetryable(status: number | null): boolean {
   return status === null || status >= 500
 }

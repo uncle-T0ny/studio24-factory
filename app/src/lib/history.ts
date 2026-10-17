@@ -1,7 +1,3 @@
-// An undo and redo stack of async steps, with a size limit and change listeners (for the
-// buttons' enabled state). Each step undoes and redoes itself, so the stack knows nothing of
-// what it changes.
-
 export interface HistoryStep {
   undo: () => Promise<void>
   redo: () => Promise<void>
@@ -45,8 +41,6 @@ export class History {
     this.notify()
   }
 
-  // For a step that ended up changing nothing: an edit burst that was cancelled or came back to
-  // where it started.
   remove(step: HistoryStep): void {
     this.undoSteps = this.undoSteps.filter((candidate) => candidate !== step)
     this.redoSteps = this.redoSteps.filter((candidate) => candidate !== step)

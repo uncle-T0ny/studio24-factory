@@ -7,9 +7,7 @@ export enum PopoverAlign {
 }
 
 export enum PopoverSize {
-  // As wide as its content needs.
   Auto = "auto",
-  // A panel of fixed width, e.g. share or a list of changes; scrolls when taller than the window.
   Wide = "wide",
 }
 
@@ -41,7 +39,6 @@ export interface PopoverProps {
   children: ReactNode
 }
 
-// The trigger opens and closes it; Escape or a pointer down outside closes it.
 export function Popover({
   label,
   open,

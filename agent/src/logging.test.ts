@@ -2,7 +2,6 @@ import { initializeLogger, log } from "@livekit/agents"
 import { afterEach, describe, expect, it, vi } from "vitest"
 import { carriesTranscript, quietTranscripts } from "./logging.ts"
 
-// The framework's logger (pino) writes JSON lines to stdout when it isn't pretty.
 function captured(level: string, write: () => void): string {
   const lines: string[] = []
   const spy = vi.spyOn(process.stdout, "write").mockImplementation((chunk: string | Uint8Array) => {

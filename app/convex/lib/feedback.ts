@@ -1,8 +1,5 @@
 import { ConvexError, v, type Infer } from "convex/values"
 
-// In-app feedback: the validators, limits and pure helpers shared by convex/feedback.ts,
-// the dialog and the /feedback page in src/feedback/, and scripts/feedback.ts.
-
 export enum FeedbackType {
   Broken = "broken",
   Feature = "feature",
@@ -26,8 +23,6 @@ export const FEEDBACK_STATUS_LABELS: Record<FeedbackStatus, string> = {
 }
 
 export const MAX_MESSAGE_LENGTH = 5000
-// A screenshot is stored as PNG or JPEG, at most this many bytes, its longest side at most
-// MAX_SCREENSHOT_SIDE_PX; the browser shrinks a bigger one before it uploads (src/feedback).
 export const MAX_SCREENSHOT_BYTES = 3 * 1024 * 1024
 export const MAX_SCREENSHOT_SIDE_PX = 2400
 export const SCREENSHOT_TYPES: readonly string[] = ["image/png", "image/jpeg"]
@@ -53,17 +48,12 @@ export const viewportValidator = v.object({
   height: v.number(),
 })
 
-// Captured in the browser when the feedback is sent (src/feedback/context.ts).
 export const feedbackContextValidator = v.object({
-  // pathname + search, e.g. /project/<id>?tab=settings
   path: v.string(),
-  // The project the page shows, when sent from a project's page.
   projectId: v.optional(v.string()),
-  // The git short commit the frontend was built from.
   appVersion: v.string(),
   userAgent: v.string(),
   viewport: viewportValidator,
-  // The browser's clock as ISO 8601 UTC, and its IANA time zone.
   time: v.string(),
   timeZone: v.string(),
 })
@@ -78,7 +68,6 @@ export const feedbackFields = {
   status: feedbackStatusValidator,
 }
 
-// One entry as the /feedback page and the triage script get it.
 export const feedbackEntryValidator = v.object({
   id: v.id("feedback"),
   type: feedbackTypeValidator,
@@ -133,7 +122,6 @@ function cleanPixels(value: number): number {
   return Math.min(Math.round(value), MAX_VIEWPORT_PX)
 }
 
-// The context is the browser's word: long strings are clipped, odd numbers zeroed, never refused.
 export function cleanFeedbackContext(context: FeedbackContext): FeedbackContext {
   const cleaned: FeedbackContext = {
     path: clip(context.path, MAX_PATH_LENGTH),
@@ -195,7 +183,6 @@ function browserName(userAgent: string): string {
   return "Unknown browser"
 }
 
-// "Chrome 141 on macOS" from a user agent; "Unknown browser" when nothing matches.
 export function browserSummary(userAgent: string): string {
   const os = OS_PATTERNS.find((candidate) => candidate.pattern.test(userAgent))?.name
   const browser = browserName(userAgent)
@@ -208,7 +195,6 @@ const TIME_FORMAT: Intl.DateTimeFormatOptions = {
   timeStyle: "short",
 }
 
-// "Oct 16, 2026, 3:04 PM (America/Denver)": the sender's own clock and time zone.
 export function formatSenderTime(context: Pick<FeedbackContext, "time" | "timeZone">): string {
   const date = new Date(context.time)
 

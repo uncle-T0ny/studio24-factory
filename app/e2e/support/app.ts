@@ -1,5 +1,3 @@
-// Page helpers. They find things only by role, label and visible text, so the markup can change
-// under them.
 import { expect, type Locator, type Page } from "@playwright/test"
 
 export async function openSignUp(page: Page): Promise<void> {
@@ -35,7 +33,6 @@ export async function expectProjectsPage(page: Page): Promise<void> {
   await expect(page.getByRole("heading", { name: "Projects", exact: true })).toBeVisible()
 }
 
-// Creates a project from the projects page and waits for its own page.
 export async function createProject(page: Page, name: string): Promise<void> {
   const form = page.getByRole("form", { name: "New project" })
 
@@ -53,7 +50,6 @@ export function shareDialog(page: Page): Locator {
   return page.getByRole("dialog", { name: "Share link" })
 }
 
-// Opens the share popover on a project's page, reads the link and closes it again.
 export async function readShareLink(page: Page): Promise<string> {
   await shareButton(page).click()
   const link = await shareDialog(page).getByLabel("Link to share").inputValue()

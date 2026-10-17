@@ -13,12 +13,6 @@ import {
   voiceConnectionValidator,
 } from "./lib/voice"
 
-// Starts a voice session on a project for its owner or a guest with the share link: counts it
-// against the daily cap, records it, and mints the browser's LiveKit token, which dispatches the
-// agent. One transaction, so two clicks can't both take the last session of the day, and a
-// failed mint counts nothing.
-
-// Counts one session for today, or refuses past VOICE_SESSIONS_PER_DAY.
 async function countSession(ctx: MutationCtx, now: number): Promise<void> {
   const cap = sessionsPerDay(process.env.VOICE_SESSIONS_PER_DAY)
   const day = usageDay(now)

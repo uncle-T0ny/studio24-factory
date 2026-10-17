@@ -23,7 +23,6 @@ export interface TextProps {
   mono?: boolean
   inline?: boolean
   alert?: boolean
-  // Keeps the text's own line breaks and wraps long words, e.g. a message someone typed.
   multiline?: boolean
 }
 

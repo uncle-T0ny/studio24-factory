@@ -11,8 +11,6 @@ const SCREENSHOT_COLOR: Rgb = {
 const SCREENSHOT_WIDTH_PX = 320
 const SCREENSHOT_HEIGHT_PX = 200
 
-// A macOS screenshot copied to the clipboard pastes as one PNG file with no text. The test hands
-// the page exactly that paste event, so it never touches the system clipboard other sessions use.
 async function pastePng(target: Locator, png: Buffer): Promise<void> {
   await target.evaluate((element, base64) => {
     const bytes = Uint8Array.from(atob(base64), (char) => char.charCodeAt(0))

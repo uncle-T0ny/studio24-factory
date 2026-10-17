@@ -23,12 +23,9 @@ const SAVED_VISIBLE_MS = 3000
 export interface RenameFormProps {
   projectId: Id<"projects">
   name: string
-  // A guest's token from the share link; the owner has none.
   shareToken?: string
 }
 
-// Renames the project, for the owner or a guest with the share link: projects.rename is a
-// projectMutation, so the server checks either one.
 export function RenameForm({ projectId, name, shareToken }: RenameFormProps) {
   const rename = useMutation(api.projects.rename)
   const [draft, setDraft] = useState(name)

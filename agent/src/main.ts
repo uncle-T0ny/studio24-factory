@@ -30,23 +30,12 @@ import {
   type TranscriptPoster,
 } from "./transcript.ts"
 
-// The voice worker. It registers with LiveKit under AGENT_NAME (config.ts) and joins only the
-// rooms the app dispatches it to: the token app/convex/livekit.ts mints names the same
-// AGENT_NAME. In the room it listens, answers through the LLM, speaks, and POSTs the transcript
-// to the app's Convex HTTP action.
-
 const MAX_DURATION_REASON = "max_duration"
-// A SIGTERM lets the live sessions finish: each one ends at the session limit anyway.
 const DRAIN_MARGIN_MS = 60_000
-// The worker's health and status server listens on this machine only: nothing outside needs it.
 const HEALTH_HOST = "127.0.0.1"
 
-// Read at start: a missing variable stops the worker before it registers.
 const config = readConfig(process.env)
 
-// Speech in and out through Deepgram's own plugin, on DEEPGRAM_API_KEY: Nova-3 listens and
-// Aura-2 (Thalia) speaks. There is no LiveKit Inference fallback. KEYTERMS (prompts.ts) bias
-// the STT towards your domain's words; empty, it sends none.
 function speech() {
   return {
     stt: new deepgram.STT({
@@ -59,15 +48,13 @@ function speech() {
   }
 }
 
-// OpenRouter's OpenAI-compatible API through the OpenAI plugin, with thinking off on every
-// request (openRouterBody.ts). maxCompletionTokens goes out as max_completion_tokens. Don't set
-// temperature: Claude Haiku 5.5 refuses it there.
 class OpenRouterLLM extends openai.LLM {
   override chat(options: Parameters<openai.LLM["chat"]>[0]) {
     return super.chat({ ...options, extraKwargs: withThinkingOff(options.extraKwargs) })
   }
 }
 
+// Don't set temperature: Claude Haiku 5.5 refuses it on OpenRouter.
 function languageModel() {
   return new OpenRouterLLM({
     model: config.openRouterModel,
@@ -77,16 +64,12 @@ function languageModel() {
   })
 }
 
-// Every turn is set here, so a self-hosted worker and one on LiveKit Cloud behave the same
-// (their defaults differ). Turns end on VAD silence plus STT endpointing; for LiveKit's turn
-// detector model use turnDetection: new inference.TurnDetector() (README).
 const TURN_HANDLING = {
   turnDetection: "vad",
   interruption: { enabled: true, mode: "vad" },
   preemptiveGeneration: { enabled: true },
 } as const
 
-// Each committed turn goes to the app as it happens; the end event carries the whole history.
 function postTurns(session: voice.AgentSession, poster: TranscriptPoster, roomName: string) {
   const nextTurn = createTurnCounter(roomName)
 
@@ -130,7 +113,6 @@ export default defineAgent({
     })
     let endReason = "ended"
 
-    // The session limit: say goodbye, then delete the room, which drops the user too.
     const endAtLimit = async () => {
       endReason = MAX_DURATION_REASON
 
@@ -154,7 +136,6 @@ export default defineAgent({
     })
     postTurns(session, poster, roomName)
 
-    // Runs when the job ends, for any reason: the whole history goes out before it exits.
     ctx.addShutdownCallback(async () => {
       clearTimeout(limit)
       poster.post({
@@ -170,10 +151,7 @@ export default defineAgent({
     await session.start({
       agent: new voice.Agent({ instructions: INSTRUCTIONS }),
       room: ctx.room,
-      // The room goes when the session does (the user left, or the limit), so nobody stays in
-      // it using minutes. Noise cancellation (LiveKit Cloud's) plugs in here too (README).
       inputOptions: { deleteRoomOnClose: true },
-      // No session recording or transcript upload to LiveKit Cloud: the app keeps the transcript.
       record: false,
     })
     await ctx.connect()

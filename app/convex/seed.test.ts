@@ -2,8 +2,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { internal } from "./_generated/api"
 import { newBackend } from "./test.setup"
 
-// The local seed (convex/seed.ts) that `npm start` runs on every start.
-
 const EMAIL = "demo@example.com"
 
 beforeEach(() => {
