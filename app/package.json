@@ -28,7 +28,8 @@
     "deploy": "npm run deploy:convex && npm run deploy:web",
     "prove:owner": "tsx scripts/prove-owner-path.ts",
     "feedback": "tsx scripts/feedback.ts",
-    "backup:prod": "tsx scripts/backup.ts --prod"
+    "backup:prod": "tsx scripts/backup.ts --prod",
+    "skill-test": "node --experimental-strip-types scripts/skill-test.ts"
   },
   "dependencies": {
     "@auth/core": "^0.41.3",
