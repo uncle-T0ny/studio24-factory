@@ -21,6 +21,10 @@ description: Opens the client's feedback stage, then files their feedback on the
 
 **Done when** `state.json` says `feedback` and every point of the source sits under exactly one of the two sections, with its quote.
 
+## Learnings
+
+Read [learnings.md](learnings.md) before you run. A problem a run hits and solves is recorded there at the session's end by `/handoff`, which also proposes changes to this file from it (a new rule, or an obsolete one removed), applied only on the developer's yes.
+
 ## Test
 
 From `app/`: `npm run skill-test -- feedback`. It runs this skill headless on the made-up client in `../prd/fixture/` with `inbox/feedback.txt` and checks the two sections and the stage.

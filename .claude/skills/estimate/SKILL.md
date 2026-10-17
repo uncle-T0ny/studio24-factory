@@ -19,6 +19,10 @@ description: Turns a client's template analysis into an estimate: build hours pl
 
 **Done when** every requirement is counted in the hours, every service has its $/month, every free tier has its breaking point (or `unverified`), the total line is there, and `state.json` says `analysis`.
 
+## Learnings
+
+Read [learnings.md](learnings.md) before you run. A problem a run hits and solves is recorded there at the session's end by `/handoff`, which also proposes changes to this file from it (a new rule, or an obsolete one removed), applied only on the developer's yes.
+
 ## Test
 
 From `app/`: `npm run skill-test -- estimate`. It runs this skill headless on the made-up client in `../prd/fixture/` and checks `estimate.md` and the stage.

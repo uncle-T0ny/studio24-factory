@@ -28,16 +28,17 @@ The developer decides; the orchestrator recommends, launches what was approved, 
    | `feedback`, nothing left to change          | `/handover <slug> <final app URL>`                              |
    | `final`                                     | the open items of the `handover.md` checklist                   |
 
-4. Report in four lines: the stage, what is done (the files), what is missing, and the next action with the exact command.
-5. Append one line to `progress.md`, an append-only log (create it with a `# Progress: <slug>` title): `- <yyyy-mm-dd HH:MM> stage <stage>; done: <files>; next: <action>`, the time from `date "+%F %H:%M"`.
-6. Ask the developer to approve the next action. Only on a yes:
+4. Report in four lines: the stage, what is done (the files), what is missing, and the next action with the exact command; then append one line to `progress.md`, an append-only log (create it with a `# Progress: <slug>` title): `- <yyyy-mm-dd HH:MM> stage <stage>; done: <files>; next: <action>`, the time from `date "+%F %H:%M"`.
+5. Ask the developer to approve the next action. Only on a yes:
    - a stage skill runs in a background subagent, given the slug and this repo's path;
    - build work (the dev app from the template) runs as parallel background sessions, each in its own git worktree (`git worktree add ../<repo>-worktrees/<branch> -b <branch> <base>`, never the Agent tool's worktree isolation), each owning a listed set of files; one integrator session is the only writer to `main`;
    - sessions check in at each milestone; relay the developer's decisions to them, and report each check-in back to the developer.
 
-**Outputs.** The report, the new line in `progress.md`, and the sessions the developer approved.
-
 **Done when** the developer has the stage, the done and missing files, and one next action, and `progress.md` has today's line. It never sets the stage; the stage skills do.
+
+## Learnings
+
+Read [learnings.md](learnings.md) before you run. A problem a run hits and solves is recorded there at the session's end by `/handoff`, which also proposes changes to this file from it (a new rule, or an obsolete one removed), applied only on the developer's yes.
 
 ## Test
 
