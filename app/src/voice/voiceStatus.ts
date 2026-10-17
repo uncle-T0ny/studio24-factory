@@ -1,5 +1,7 @@
 import type { AgentState } from "@livekit/components-react"
+import type { Infer } from "convex/values"
 import { MediaDeviceFailure } from "livekit-client"
+import type { interviewFailureValidator } from "../../convex/lib/validators"
 import { Tone } from "../ui"
 
 export enum VoiceProblem {
@@ -8,6 +10,7 @@ export enum VoiceProblem {
   MicBusy = "mic-busy",
   MicUnavailable = "mic-unavailable",
   AgentDidNotJoin = "agent-did-not-join",
+  CapReached = "cap-reached",
 }
 
 export interface ProblemText {
@@ -18,24 +21,39 @@ export interface ProblemText {
 export const VOICE_PROBLEMS: Record<VoiceProblem, ProblemText> = {
   [VoiceProblem.MicBlocked]: {
     title: "The microphone is blocked.",
-    body: "Allow it for this site in your browser's site settings, then try again. Or type your message below.",
+    body: "Allow it for this site in your browser's site settings, then try again. Or type your answers instead.",
   },
   [VoiceProblem.MicMissing]: {
     title: "No microphone found.",
-    body: "Plug one in and try again, or type your message below.",
+    body: "Plug one in and try again, or type your answers instead.",
   },
   [VoiceProblem.MicBusy]: {
     title: "The microphone is in use by another app.",
-    body: "Close that app and try again, or type your message below.",
+    body: "Close that app and try again, or type your answers instead.",
   },
   [VoiceProblem.MicUnavailable]: {
     title: "This browser can't use the microphone here.",
-    body: "Try another browser, or type your message below.",
+    body: "Try another browser, or type your answers instead.",
   },
   [VoiceProblem.AgentDidNotJoin]: {
     title: "The assistant didn't join.",
-    body: "It may be starting up or offline. Try again in a minute, or type your message below.",
+    body: "It may be starting up or offline. Try again in a minute, or type your answers instead.",
   },
+  [VoiceProblem.CapReached]: {
+    title: "Today's voice interviews are used up.",
+    body: "Type your answers instead, or come back after 00:00 UTC.",
+  },
+}
+
+export function interviewFailure(problem: VoiceProblem): Infer<typeof interviewFailureValidator> {
+  switch (problem) {
+    case VoiceProblem.AgentDidNotJoin:
+      return "agentUnavailable"
+    case VoiceProblem.CapReached:
+      return "capReached"
+    default:
+      return "micDenied"
+  }
 }
 
 export function microphoneProblem(error: unknown): VoiceProblem {

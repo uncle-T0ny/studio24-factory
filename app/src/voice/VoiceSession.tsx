@@ -5,9 +5,9 @@ import {
   useTranscriptions,
   useVoiceAssistant,
 } from "@livekit/components-react"
+import { ConvexError } from "convex/values"
 import { Room, RoomEvent, type RemoteParticipant } from "livekit-client"
 import { useCallback, useEffect, useRef, useState } from "react"
-import { TypedFallback } from "./TypedFallback"
 import {
   agentStatus,
   checkMicrophone,
@@ -16,6 +16,7 @@ import {
   VOICE_PROBLEMS,
   VoiceProblem,
 } from "./voiceStatus"
+import { CAP_REACHED } from "../../convex/lib/usage"
 import { useErrorState } from "../lib/errors"
 import {
   Badge,
@@ -43,7 +44,7 @@ export interface VoiceConnectionDetails {
 
 export interface VoiceSessionProps {
   connect: () => Promise<VoiceConnectionDetails>
-  onTypedMessage: (text: string) => Promise<void>
+  onTypeInstead: (problem: VoiceProblem) => void
   agentJoinTimeoutMs: number
 }
 
@@ -120,7 +121,9 @@ function useVoiceAttempt(room: Room, { connect, agentJoinTimeoutMs }: VoiceSessi
 
       await room.connect(serverUrl, participantToken)
     } catch (caught) {
-      await fail(null, caught)
+      const capReached = caught instanceof ConvexError && caught.data === CAP_REACHED
+
+      await fail(capReached ? VoiceProblem.CapReached : null, caught)
       return
     }
 
@@ -186,7 +189,6 @@ function VoiceCard({ room, ...props }: VoiceSessionProps & { room: Room }) {
   const { attempt, problem, error, start, end } = useVoiceAttempt(room, props)
   const { canPlayAudio, startAudio } = useAudioPlayback(room)
   const isInRoom = attempt === Attempt.InRoom
-  const problemText = problem ? VOICE_PROBLEMS[problem] : null
 
   return (
     <Card label="Voice assistant">
@@ -213,7 +215,7 @@ function VoiceCard({ room, ...props }: VoiceSessionProps & { room: Room }) {
         <Heading level={HeadingLevel.Section}>Voice assistant</Heading>
       </CardHeader>
       <Text tone={TextTone.Muted} size={TextSize.Small}>
-        Talk with the assistant out loud. The transcript is saved with the project.
+        Talk with the interviewer out loud. The transcript is saved with your project.
       </Text>
       {isInRoom && !canPlayAudio ? (
         <Button onClick={() => void startAudio()}>Turn on the sound</Button>
@@ -224,12 +226,14 @@ function VoiceCard({ room, ...props }: VoiceSessionProps & { room: Room }) {
           {error}
         </Text>
       ) : null}
-      {problemText ? (
+      {problem ? (
         <div className="voice-fallback">
-          <Callout tone={Tone.Warning} title={problemText.title}>
-            <Text size={TextSize.Small}>{problemText.body}</Text>
+          <Callout tone={Tone.Warning} title={VOICE_PROBLEMS[problem].title}>
+            <Text size={TextSize.Small}>{VOICE_PROBLEMS[problem].body}</Text>
           </Callout>
-          <TypedFallback onSend={props.onTypedMessage} />
+          <div>
+            <Button onClick={() => props.onTypeInstead(problem)}>Type your answers instead</Button>
+          </div>
         </div>
       ) : null}
       <LiveTranscript room={room} />
