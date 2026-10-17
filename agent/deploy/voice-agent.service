@@ -1,0 +1,37 @@
+# systemd unit for the voice worker on your own server, without Docker
+# (README, "Optional: voice (LiveKit)"). Install:
+#   sudo cp deploy/voice-agent.service /etc/systemd/system/
+#   sudo systemctl daemon-reload && sudo systemctl enable --now voice-agent
+# The worker only makes outbound connections (LiveKit, OpenRouter, Convex): open no ports.
+
+[Unit]
+Description=Voice agent worker (LiveKit Agents)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=voice-agent
+Group=voice-agent
+# agent/ copied here, then `npm ci && npm run build && npm prune --omit=dev` and
+# `npx livekit-agents download-files`. It runs dist/, so any Node 22 works, even one without
+# TypeScript stripping (Ubuntu's).
+WorkingDirectory=/opt/voice-agent
+# The names in agent/.env.example with their values; root-owned, mode 600.
+EnvironmentFile=/etc/voice-agent.env
+Environment=NODE_ENV=production
+ExecStart=/usr/bin/node dist/main.js start
+Restart=on-failure
+RestartSec=5
+
+# A stop drains: SIGTERM lets the live sessions run to their end (at most VOICE_MAX_SECONDS)
+# before the worker exits. Keep this above VOICE_MAX_SECONDS + 60.
+KillSignal=SIGTERM
+TimeoutStopSec=420
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,117 @@
+:root {
+  --paper: #f1f5f9;
+  --surface: #ffffff;
+  --panel: #f8fafc;
+  --canvas: #e8edf3;
+  --ink: #0f172a;
+  --ink-2: #334155;
+  --muted: #5b6779;
+  --line: #d4dbe5;
+  --grid: #e2e8f0;
+  --accent: #2158d6;
+  --accent-ink: #ffffff;
+  --accent-soft: #e3ecfd;
+  --amber: #a15c07;
+  --amber-ink: #6b3d05;
+  --amber-soft: #fdf1d6;
+  --danger: #b42318;
+  --danger-soft: #fde6e3;
+
+  --focus-ring-color: var(--accent);
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+  --shadow-overlay: 0 8px 24px color-mix(in srgb, var(--ink) 16%, transparent);
+
+  /* System fonts: nothing to load, and each platform's own UI face. To use a web font, put its
+     family first here and load it in index.html. */
+  --font-display:
+    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-body:
+    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+  --text-2xs: 0.68rem;
+  --text-xs: 0.75rem;
+  --text-sm: 0.82rem;
+  --text-md: 0.875rem;
+  --text-lg: 1rem;
+  --text-xl: 1.25rem;
+  --text-display: 2rem;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-bold: 600;
+  --leading-tight: 1.15;
+  --leading-normal: 1.5;
+  --tracking-caps: 0.1em;
+
+  --space-half: 2px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-16: 64px;
+
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-xl: 12px;
+  --radius-pill: 999px;
+
+  --control-sm: 26px;
+  --control-md: 30px;
+  --control-lg: 36px;
+
+  --top-bar-height: 52px;
+  --left-panel-width: 220px;
+  --right-panel-width: 248px;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0b1120;
+    --surface: #141c2c;
+    --panel: #101827;
+    --canvas: #192235;
+    --ink: #e5e9f0;
+    --ink-2: #c3cad6;
+    --muted: #949eb0;
+    --line: #2a3446;
+    --grid: #1f293a;
+    --accent: #6ea2f7;
+    --accent-ink: #0b1120;
+    --accent-soft: #18284a;
+    --amber: #f0b54a;
+    --amber-ink: #f8d690;
+    --amber-soft: #3a2b10;
+    --danger: #f4897b;
+    --danger-soft: #3d1c19;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --paper: #0b1120;
+  --surface: #141c2c;
+  --panel: #101827;
+  --canvas: #192235;
+  --ink: #e5e9f0;
+  --ink-2: #c3cad6;
+  --muted: #949eb0;
+  --line: #2a3446;
+  --grid: #1f293a;
+  --accent: #6ea2f7;
+  --accent-ink: #0b1120;
+  --accent-soft: #18284a;
+  --amber: #f0b54a;
+  --amber-ink: #f8d690;
+  --amber-soft: #3a2b10;
+  --danger: #f4897b;
+  --danger-soft: #3d1c19;
+  color-scheme: dark;
+}

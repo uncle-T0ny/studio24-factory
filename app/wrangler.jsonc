@@ -1,0 +1,14 @@
+// Cloudflare Workers static assets, no Worker script: `npm run deploy:web`.
+// https://developers.cloudflare.com/workers/static-assets/routing/single-page-application/
+// Rename the worker for your app. Wrangler uses the account you are logged in to
+// (`npx wrangler login`); add your account id here only if that login reaches several accounts.
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "client-app-starter",
+  "compatibility_date": "2026-10-16",
+  "assets": {
+    "directory": "./dist",
+    // Unmatched paths (/project/<id>, /p/<token>) get index.html with 200.
+    "not_found_handling": "single-page-application",
+  },
+}

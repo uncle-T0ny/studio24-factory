@@ -1,0 +1,32 @@
+# The README's "Run locally" on a fresh checkout, on all three systems: `npm run start:check`
+# provisions the local Convex backend, generates the auth keys, seeds the demo owner, starts the
+# app, waits for it to answer 200 and for seed:owner to return the demo owner, then stops.
+# No secrets here, so voice stays off.
+name: Local run
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  local-run:
+    name: npm start (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Versions (Node 22 ships npm 10)
+        run: |
+          node --version
+          npm --version
+      - name: npm start, check mode
+        run: npm run start:check

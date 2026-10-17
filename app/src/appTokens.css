@@ -1,0 +1,6 @@
+/* The app's own colours, on top of the kit's tokens (ui/tokens.css): a domain colour lives here,
+   with its dark-mode value, never in a component. `npm run check:colors` allows raw colours only
+   here and in src/ui/. */
+:root {
+  --app-highlight: var(--accent-soft);
+}

@@ -1,0 +1,15 @@
+{
+  // `npm run build`: the sources to plain JavaScript in dist/, for a Node without TypeScript
+  // stripping (Ubuntu's, say). `npm run start:prod` runs dist/main.js. The `.ts` in relative
+  // imports become `.js`.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "outDir": "dist",
+    "rootDir": "src",
+    "rewriteRelativeImportExtensions": true,
+    "sourceMap": true
+  },
+  "include": ["src"],
+  "exclude": ["src/**/*.test.ts"]
+}
