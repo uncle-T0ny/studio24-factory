@@ -5,7 +5,6 @@ import type { Id } from "./_generated/dataModel"
 import {
   internalAction,
   internalMutation,
-  internalQuery,
   type ActionCtx,
   type MutationCtx,
 } from "./_generated/server"
@@ -68,7 +67,7 @@ export function recordingSeconds(bytes: number): number {
 async function startFeedback(
   ctx: MutationCtx,
   projectId: Id<"projects">,
-  input: { mode: "text"; transcript: string } | { mode: "voice"; audioFileId: Id<"_storage"> },
+  input: { mode: "text" | "voice"; transcript: string; audioFileId?: Id<"_storage"> },
 ): Promise<void> {
   const prototype = await latestPrototype(ctx, projectId)
 
@@ -79,14 +78,17 @@ async function startFeedback(
   const feedbackId = await ctx.db.insert("clientFeedback", {
     projectId,
     prototypeId: prototype.id,
-    transcript: "",
     items: [],
     status: "pending",
     createdAt: Date.now(),
     ...input,
   })
 
-  await ctx.scheduler.runAfter(0, internal.clientFeedback.transcribeAndSplit, { feedbackId })
+  await ctx.scheduler.runAfter(0, internal.clientFeedback.transcribeAndSplit, {
+    feedbackId,
+    transcript: input.transcript,
+    audioFileId: input.audioFileId,
+  })
 }
 
 export const voiceEnabled = publicQuery({
@@ -173,27 +175,11 @@ export const submitVoice = clientMutation("feedback")({
     await spendUsage(ctx, "sttSeconds", seconds)
     await startFeedback(ctx, ctx.client.project._id, {
       mode: "voice",
+      transcript: "",
       audioFileId: args.audioFileId,
     })
 
     return null
-  },
-})
-
-export const load = internalQuery({
-  args: { feedbackId: v.id("clientFeedback") },
-  returns: v.object({
-    transcript: v.string(),
-    audioFileId: v.optional(v.id("_storage")),
-  }),
-  handler: async (ctx, args) => {
-    const feedback = await ctx.db.get(args.feedbackId)
-
-    if (!feedback) {
-      throw new Error(`No feedback ${args.feedbackId}`)
-    }
-
-    return { transcript: feedback.transcript, audioFileId: feedback.audioFileId }
   },
 })
 
@@ -276,15 +262,18 @@ async function splitFeedback(ctx: ActionCtx, transcript: string) {
 }
 
 export const transcribeAndSplit = internalAction({
-  args: { feedbackId: v.id("clientFeedback") },
+  args: {
+    feedbackId: v.id("clientFeedback"),
+    transcript: v.string(),
+    audioFileId: v.optional(v.id("_storage")),
+  },
   returns: v.null(),
-  handler: async (ctx, { feedbackId }) => {
-    const feedback = await ctx.runQuery(internal.clientFeedback.load, { feedbackId })
-    let transcript = feedback.transcript
+  handler: async (ctx, { feedbackId, audioFileId, ...args }) => {
+    let { transcript } = args
 
     try {
-      if (feedback.audioFileId !== undefined) {
-        transcript = await transcribe(ctx, feedback.audioFileId)
+      if (audioFileId !== undefined) {
+        transcript = await transcribe(ctx, audioFileId)
       }
 
       const items = await splitFeedback(ctx, transcript)
