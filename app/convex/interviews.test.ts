@@ -24,6 +24,7 @@ beforeEach(() => {
 
 afterEach(() => {
   vi.unstubAllEnvs()
+  vi.unstubAllGlobals()
   vi.useRealTimers()
 })
 
@@ -49,6 +50,36 @@ describe("the text interview", () => {
 
     expect(view).toMatchObject({ mode: "text", status: "done", isRecorded: true })
     expect(view?.turns).toEqual(FIXTURE_TRANSCRIPT)
+  })
+
+  it("opens with a non-empty user message, which the model provider requires", async () => {
+    vi.stubEnv("OPENROUTER_API_KEY", "test-key")
+    const fetchMock = vi.fn(
+      async (_url: string | URL | Request, _init?: RequestInit) =>
+        new Response(
+          JSON.stringify({
+            choices: [
+              { message: { content: '{"question":"What should the app do?","done":false}' } },
+            ],
+          }),
+        ),
+    )
+    vi.stubGlobal("fetch", fetchMock)
+    const { t, token } = await fixture()
+
+    await t.mutation(api.interviews.startText, { token })
+    await settle(t)
+
+    const body = JSON.parse(fetchMock.mock.calls[0]?.[1]?.body as string) as {
+      messages: { role: string; content: string }[]
+    }
+
+    expect(body.messages.find((message) => message.role === "user")?.content).not.toBe("")
+    expect(await t.query(api.interviews.current, { token })).toMatchObject({
+      status: "live",
+      isRecorded: false,
+      turns: [{ seq: 1, speaker: "agent", text: "What should the app do?" }],
+    })
   })
 
   it("refuses a second answer before the next question", async () => {
