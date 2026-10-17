@@ -14,6 +14,7 @@ import type * as auth from "../auth.js";
 import type * as backup from "../backup.js";
 import type * as feedback from "../feedback.js";
 import type * as http from "../http.js";
+import type * as interviews from "../interviews.js";
 import type * as lib_access from "../lib/access.js";
 import type * as lib_accounts from "../lib/accounts.js";
 import type * as lib_appConfig from "../lib/appConfig.js";
@@ -60,6 +61,7 @@ const fullApi: ApiFromModules<{
   backup: typeof backup;
   feedback: typeof feedback;
   http: typeof http;
+  interviews: typeof interviews;
   "lib/access": typeof lib_access;
   "lib/accounts": typeof lib_accounts;
   "lib/appConfig": typeof lib_appConfig;
