@@ -1,42 +1,70 @@
-import { useMutation } from "convex/react"
-import { useRef } from "react"
+import { useMutation, useQuery } from "convex/react"
+import { useState } from "react"
 import { useParams } from "react-router-dom"
+import { TextInterview } from "./TextInterview"
 import { api } from "../../convex/_generated/api"
-import type { Id } from "../../convex/_generated/dataModel"
 import { VOICE_AGENT_JOIN_TIMEOUT_MS } from "../app.config"
-import { PageColumn, PageHeader } from "../ui"
+import { useErrorState } from "../lib/errors"
+import { Button, ButtonVariant, Card, PageColumn, PageHeader, Text, TextTone } from "../ui"
 import { VoiceSession } from "../voice/VoiceSession"
+import { interviewFailure, type VoiceProblem } from "../voice/voiceStatus"
 
 export function InterviewPage() {
   const token = useParams().token ?? ""
+  const voiceEnabled = useQuery(api.voice.enabled)
+  const view = useQuery(api.interviews.current, { token })
   const startSession = useMutation(api.livekit.startSession)
-  const saveTypedMessage = useMutation(api.voice.saveTypedMessage)
-  const interviewId = useRef<Id<"interviews"> | null>(null)
+  const startText = useMutation(api.interviews.startText)
+  const [isStarting, setIsStarting] = useState(false)
+  const { error, showError } = useErrorState()
 
-  const connect = async () => {
-    const connection = await startSession({ token })
+  const start = async (problem?: VoiceProblem) => {
+    setIsStarting(true)
 
-    interviewId.current = connection.interviewId
-
-    return connection
-  }
-
-  const sendTyped = async (text: string) => {
-    if (interviewId.current === null) {
-      throw new Error("Start the interview first.")
+    try {
+      await startText({ token, failure: problem && interviewFailure(problem) })
+    } catch (caught) {
+      showError(caught)
+    } finally {
+      setIsStarting(false)
     }
-
-    await saveTypedMessage({ token, interviewId: interviewId.current, text })
   }
+
+  const isLoading = voiceEnabled === undefined || view === undefined
+  const showsTranscript = view && (view.mode === "text" || view.status === "done")
 
   return (
     <PageColumn>
       <PageHeader title="Interview" />
-      <VoiceSession
-        connect={connect}
-        onTypedMessage={sendTyped}
-        agentJoinTimeoutMs={VOICE_AGENT_JOIN_TIMEOUT_MS}
-      />
+      <Text tone={TextTone.Muted}>
+        A few questions about the app you want: the idea first, then your business and constraints.
+      </Text>
+      {isLoading ? null : showsTranscript ? (
+        <TextInterview token={token} view={view} />
+      ) : voiceEnabled ? (
+        <VoiceSession
+          connect={() => startSession({ token })}
+          onTypeInstead={(problem) => void start(problem)}
+          agentJoinTimeoutMs={VOICE_AGENT_JOIN_TIMEOUT_MS}
+        />
+      ) : (
+        <Card label="Text interview">
+          <div>
+            <Button
+              variant={ButtonVariant.Primary}
+              disabled={isStarting}
+              onClick={() => void start()}
+            >
+              Start the interview
+            </Button>
+          </div>
+        </Card>
+      )}
+      {error ? (
+        <Text tone={TextTone.Danger} alert>
+          {error}
+        </Text>
+      ) : null}
     </PageColumn>
   )
 }

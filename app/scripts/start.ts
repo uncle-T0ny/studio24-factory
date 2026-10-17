@@ -29,12 +29,14 @@ import {
   authKeys,
   CONVEX_ENV_FILE,
   demoEmail,
+  demoLinkLine,
   isVoiceEnabled,
   loadSettings,
   OPTIONAL_KEYS,
   ownerEmails,
   pick,
   VOICE_KEYS,
+  type DemoLink,
   type Settings,
 } from "./start/settings.ts"
 
@@ -124,7 +126,7 @@ function track(started: Started): Started {
   return started
 }
 
-async function provision(settings: Settings): Promise<void> {
+async function provision(settings: Settings): Promise<DemoLink> {
   const desired: Record<string, string> = {
     ...pick(settings, OPTIONAL_KEYS),
     SITE_URL: APP_URL,
@@ -145,9 +147,11 @@ async function provision(settings: Settings): Promise<void> {
       : `the deployment's env: set ${changes.set.join(", ") || "nothing"}; removed ${changes.removed.join(", ") || "nothing"}`,
   )
 
-  const seeded = (await runFunction("seed:run")) as { created?: boolean } | null
+  const seeded = (await runFunction("seed:run")) as { created: boolean; link: DemoLink }
 
-  say(seeded?.created === true ? "seeded the demo owner" : "the demo owner is already there")
+  say(seeded.created ? "seeded the demo owner" : "the demo owner is already there")
+
+  return seeded.link
 }
 
 function startAgent(settings: Settings, siteUrl: string): Started {
@@ -166,7 +170,7 @@ function startAgent(settings: Settings, siteUrl: string): Started {
   )
 }
 
-function printSummary(settings: Settings, isCheck: boolean): void {
+function printSummary(settings: Settings, isCheck: boolean, link: DemoLink): void {
   const password = isCheck
     ? "DEMO_OWNER_PASSWORD in .env.local"
     : `${settings.values.DEMO_OWNER_PASSWORD ?? ""}   (saved in .env.local)`
@@ -181,6 +185,7 @@ function printSummary(settings: Settings, isCheck: boolean): void {
       `  App:       ${APP_URL}`,
       `  Sign in:   ${demoEmail(settings)}`,
       `  Password:  ${password}`,
+      `  Client:    ${demoLinkLine(link)}`,
       `  Voice:     ${voice}`,
       "  Stop with Ctrl+C. Start again with npm start; npm run reset deletes the local data.",
       "",
@@ -224,7 +229,7 @@ async function startAll(isCheck: boolean): Promise<void> {
   const convex = track(startConvexDev())
 
   await waitForLine(convex, FUNCTIONS_READY, CONVEX_READY_MS, PUSH_FAILED)
-  await provision(settings)
+  const link = await provision(settings)
 
   const { cloudUrl, siteUrl } = deploymentUrls()
 
@@ -247,7 +252,7 @@ async function startAll(isCheck: boolean): Promise<void> {
     say(`the voice agent registered with LiveKit as "${agentName(settings)}"`)
   }
 
-  printSummary(settings, isCheck)
+  printSummary(settings, isCheck, link)
 
   if (isCheck) {
     await verify(settings)

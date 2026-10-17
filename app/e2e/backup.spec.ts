@@ -31,13 +31,11 @@ test("backup: the owner exports a project and imports it back as a new project",
 
   const exported: unknown = JSON.parse(await readFile(filePath, "utf8"))
 
-  expect(exported).toMatchObject({ version: 1, data: { project: { name } } })
+  expect(exported).toMatchObject({ version: 1, data: { project: { clientName: name } } })
 
   await page.getByRole("link", { name: "All projects" }).click()
   await importFile(page, filePath)
-  await expect(
-    page.getByText(`Imported "${name}" as a new one with its own share link.`),
-  ).toBeVisible()
+  await expect(page.getByText(`Imported "${name}" as a new project.`)).toBeVisible()
   await expect(page.getByRole("list", { name: "Projects" }).getByText(name)).toHaveCount(2)
 })
 

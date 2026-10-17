@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest"
 import {
   agentStatus,
+  interviewFailure,
   microphoneProblem,
   Speaker,
   transcriptLines,
@@ -19,10 +20,16 @@ describe("microphoneProblem", () => {
     expect(microphoneProblem(new Error("odd"))).toBe(VoiceProblem.MicUnavailable)
   })
 
-  it("offers the typed message for every problem", () => {
+  it("offers typing the answers for every problem", () => {
     for (const problem of Object.values(VoiceProblem)) {
-      expect(VOICE_PROBLEMS[problem].body).toMatch(/type your message below\.$/)
+      expect(VOICE_PROBLEMS[problem].body).toMatch(/type your answers instead/i)
     }
+  })
+
+  it("records a mic problem, a missing agent and the cap as the interview's failure", () => {
+    expect(interviewFailure(VoiceProblem.MicBusy)).toBe("micDenied")
+    expect(interviewFailure(VoiceProblem.AgentDidNotJoin)).toBe("agentUnavailable")
+    expect(interviewFailure(VoiceProblem.CapReached)).toBe("capReached")
   })
 })
 

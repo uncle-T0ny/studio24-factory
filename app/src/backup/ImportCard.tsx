@@ -55,7 +55,7 @@ export function ImportCard<Content, ResourceId>({
       </FormRow>
       {imported ? (
         <Text tone={TextTone.Accent} size={TextSize.Small}>
-          Imported "{imported.title}" as a new one with its own share link.
+          Imported "{imported.title}" as a new project.
         </Text>
       ) : null}
       {error ? (

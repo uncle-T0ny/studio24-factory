@@ -6,7 +6,7 @@ import {
   prepareE2eDir,
   runConvex,
 } from "./support/localDeployment"
-import { ALLOWLISTED_OWNER_EMAIL } from "./support/owners"
+import { ALLOWLISTED_OWNER_EMAIL, DEMO_DEVELOPER_EMAIL, OWNER_PASSWORD } from "./support/owners"
 import { APP_URL, CONVEX_CLOUD_PORT, CONVEX_SITE_PORT, CONVEX_URL } from "./support/ports"
 
 const READY_LINE = "E2E backend ready"
@@ -16,6 +16,8 @@ const BACKEND_ENV: Record<string, string> = {
   SITE_URL: APP_URL,
   OWNER_EMAILS: ALLOWLISTED_OWNER_EMAIL,
   ALLOW_TEST_FUNCTIONS: "true",
+  DEMO_OWNER_EMAIL: DEMO_DEVELOPER_EMAIL,
+  DEMO_OWNER_PASSWORD: OWNER_PASSWORD,
 }
 
 function log(message: string): void {
@@ -55,6 +57,8 @@ function ensureBackendEnv(): void {
       runConvex(["env", "set", name, value])
     }
   }
+
+  runConvex(["run", "seed:run"])
 }
 
 async function isBackendUp(): Promise<boolean> {

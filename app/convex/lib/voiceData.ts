@@ -1,6 +1,7 @@
+import type { TranscriptLine } from "./transcript"
 import { cleanTurnText, MAX_TURNS, VoiceRole, type AgentEvent, type Turn } from "./voice"
-import type { Doc } from "../_generated/dataModel"
-import type { MutationCtx } from "../_generated/server"
+import type { Doc, Id } from "../_generated/dataModel"
+import type { MutationCtx, QueryCtx } from "../_generated/server"
 
 async function interviewByRoom(
   ctx: MutationCtx,
@@ -84,4 +85,39 @@ export async function recordAgentEvent(ctx: MutationCtx, event: AgentEvent): Pro
   }
 
   return true
+}
+
+export async function interviewTurns(
+  ctx: QueryCtx,
+  interviewId: Id<"interviews">,
+): Promise<TranscriptLine[]> {
+  const rows = await ctx.db
+    .query("transcriptTurns")
+    .withIndex("by_interview", (q) => q.eq("interviewId", interviewId))
+    .collect()
+
+  return rows.map(({ seq, speaker, text }) => ({ seq, speaker, text }))
+}
+
+// Numbered from 1, like the fixture transcript the recorded PRD cites.
+export async function appendTurn(
+  ctx: MutationCtx,
+  interview: Doc<"interviews">,
+  speaker: TranscriptLine["speaker"],
+  text: string,
+): Promise<void> {
+  const last = await ctx.db
+    .query("transcriptTurns")
+    .withIndex("by_interview", (q) => q.eq("interviewId", interview._id))
+    .order("desc")
+    .first()
+
+  await ctx.db.insert("transcriptTurns", {
+    interviewId: interview._id,
+    projectId: interview.projectId,
+    seq: (last?.seq ?? 0) + 1,
+    speaker,
+    text,
+    at: Date.now(),
+  })
 }

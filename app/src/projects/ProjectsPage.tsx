@@ -4,7 +4,6 @@ import { useState, type SubmitEvent } from "react"
 import { useNavigate } from "react-router-dom"
 import { api } from "../../convex/_generated/api"
 import type { Doc } from "../../convex/_generated/dataModel"
-import { BRAND } from "../app.config"
 import { ImportCard } from "../backup/ImportCard"
 import { projectBackup } from "../backup/projectBackup"
 import { FeedbackButton } from "../feedback/FeedbackButton"
@@ -31,6 +30,7 @@ import {
   Tone,
   Toolbar,
 } from "../ui"
+import { STAGE_LABELS } from "./stages"
 
 const DELETE_ERROR_VISIBLE_MS = 5000
 
@@ -98,7 +98,7 @@ function ProjectRow({ project, onDeleteError }: ProjectRowProps) {
     <ListRow
       to={`/project/${project._id}`}
       title={project.title}
-      meta={`Created ${formatTimestamp(project._creationTime)}`}
+      meta={`${STAGE_LABELS[project.stage]}. Created ${formatTimestamp(project._creationTime)}`}
       actions={
         <Button variant={ButtonVariant.Danger} onClick={remove}>
           Delete
@@ -116,7 +116,6 @@ export function ProjectsPage() {
   return (
     <PageColumn>
       <PageHeader
-        eyebrow={BRAND}
         title="Projects"
         actions={
           <Toolbar>

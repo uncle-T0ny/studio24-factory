@@ -1,4 +1,5 @@
-import { type GenericValidator } from "convex/values"
+import { type GenericValidator, type Infer } from "convex/values"
+import { validate } from "convex-helpers/validators"
 import { RECORDED_ANSWERS } from "./recordedAnswers"
 
 // Every model call in the app goes through askLlm. Without OPENROUTER_API_KEY it returns the
@@ -23,6 +24,13 @@ export interface LlmRequest {
 export interface LlmAnswer {
   json: unknown
   model: string
+}
+
+export type Ask = (request: LlmRequest) => Promise<LlmAnswer>
+
+export interface Checked<Answer> {
+  answer: Answer | null
+  problems: string[]
 }
 
 // Bound to the daily usage check: throws once today's model calls are used up.
@@ -61,8 +69,6 @@ export function jsonSchemaOf(validator: GenericValidator): JsonSchema {
       return { type: "number" }
     case "boolean":
       return { type: "boolean" }
-    case "literal":
-      return { enum: [validator.value] }
     case "array":
       return { type: "array", items: jsonSchemaOf(validator.element) }
     case "union": {
@@ -143,4 +149,38 @@ export async function askLlm(request: LlmRequest, countCall: CountLlmCall): Prom
     }
     throw error
   }
+}
+
+export function checkAnswer<V extends GenericValidator>(
+  validator: V,
+  json: unknown,
+  contentProblems: (answer: Infer<V>) => string[],
+): Checked<Infer<V>> {
+  try {
+    validate(validator, json, { throw: true })
+  } catch (error) {
+    return { answer: null, problems: [error instanceof Error ? error.message : "Wrong shape."] }
+  }
+  const answer = json as Infer<V>
+  return { answer, problems: contentProblems(answer) }
+}
+
+// One retry, told what was wrong; a second invalid answer is kept as it is and flagged.
+export async function askChecked<Answer>(
+  request: LlmRequest,
+  check: (json: unknown) => Checked<Answer>,
+  ask: Ask,
+): Promise<Checked<Answer> & { model: string }> {
+  const first = await ask(request)
+  const firstCheck = check(first.json)
+
+  if (firstCheck.problems.length === 0) {
+    return { ...firstCheck, model: first.model }
+  }
+  const problems = firstCheck.problems.join("\n- ")
+  const second = await ask({
+    ...request,
+    instructions: `${request.instructions}\nYour previous answer had these problems; fix them:\n- ${problems}`,
+  })
+  return { ...check(second.json), model: second.model }
 }

@@ -143,27 +143,6 @@ describe("the agent events route", () => {
   })
 })
 
-describe("voice.saveTypedMessage", () => {
-  it("saves the client's typed message in order, and refuses a wrong link", async () => {
-    const { t, token, interviewId } = await fixture()
-
-    await t.mutation(api.voice.saveTypedMessage, { token, interviewId, text: " My mic is broken " })
-    await t.mutation(api.voice.saveTypedMessage, { token, interviewId, text: "Second" })
-
-    await expect(
-      t.mutation(api.voice.saveTypedMessage, { token: "wrong", interviewId, text: "Hijack" }),
-    ).rejects.toThrow("isn't valid")
-    await expect(
-      t.mutation(api.voice.saveTypedMessage, { token, interviewId, text: "   " }),
-    ).rejects.toThrow("Write a message first.")
-
-    expect(await transcript(t)).toEqual([
-      { seq: 0, speaker: "client", text: "My mic is broken" },
-      { seq: 1, speaker: "client", text: "Second" },
-    ])
-  })
-})
-
 describe("projects.remove", () => {
   it("deletes the project's links, interviews and transcript with it", async () => {
     const { t, owner, projectId, roomName } = await fixture()

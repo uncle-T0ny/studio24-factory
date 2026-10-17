@@ -1,5 +1,5 @@
 {
-  "name": "client-app-starter",
+  "name": "studio24-factory",
   "private": true,
   "version": "0.4.0",
   "type": "module",
@@ -10,6 +10,7 @@
   "scripts": {
     "start": "node --experimental-strip-types --disable-warning=ExperimentalWarning app/scripts/start.ts",
     "reset": "node --experimental-strip-types --disable-warning=ExperimentalWarning app/scripts/start.ts --reset",
-    "start:check": "node --experimental-strip-types --disable-warning=ExperimentalWarning app/scripts/start.ts --check"
+    "start:check": "node --experimental-strip-types --disable-warning=ExperimentalWarning app/scripts/start.ts --check",
+    "reseed": "node --experimental-strip-types --disable-warning=ExperimentalWarning app/scripts/reseed.ts"
   }
 }

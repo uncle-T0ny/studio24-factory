@@ -10,3 +10,5 @@ My instructions to the AI, one line per 5 minutes:
 - 17:10 (T+15): Strip template comments; commit the README re-wrap.
 - 17:15 (T+20): Keep the dev app; skills in parallel.
 - 17:20 (T+25): PRD approved; owner email; keep voice feedback.
+- 17:30 (T+35): An orchestrator skill that launches sessions.
+- 17:45 (T+50): Speed up: fixed merge order, no new features.

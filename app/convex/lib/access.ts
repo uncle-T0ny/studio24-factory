@@ -2,7 +2,7 @@ import { getAuthUserId } from "@convex-dev/auth/server"
 import { ConvexError } from "convex/values"
 import { isOwnerEmail, ownerEnv } from "./owners"
 import { hashToken } from "./shareToken"
-import type { Stage } from "./validators"
+import { STAGES, type Stage } from "./validators"
 import type { Doc, Id } from "../_generated/dataModel"
 import type { MutationCtx, QueryCtx } from "../_generated/server"
 
@@ -17,6 +17,10 @@ export const NOT_ALLOWED = "Not allowed"
 export const LINK_NOT_VALID = "This link isn't valid any more. Ask the developer for a new one."
 export const WRONG_STAGE = "This link doesn't open this stage."
 export const SIGN_IN_FIRST = "Sign in to open this stage."
+
+export function notAtStage(current: Stage): string {
+  return `This stage isn't open: the project is at the ${current} stage now.`
+}
 
 export async function findOwner(ctx: ReadCtx): Promise<Id<"users"> | null> {
   const userId = await getAuthUserId(ctx)
@@ -97,6 +101,10 @@ export async function requireClientStage(
 
   if (!access.link.stages.includes(stage)) {
     throw new ConvexError(WRONG_STAGE)
+  }
+
+  if (STAGES.indexOf(stage) > STAGES.indexOf(access.project.stage)) {
+    throw new ConvexError(notAtStage(access.project.stage))
   }
 
   if (access.link.requiresLogin && (await getAuthUserId(ctx)) === null) {
