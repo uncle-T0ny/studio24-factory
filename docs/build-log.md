@@ -51,3 +51,27 @@ Each merge to `main`, in order: the merge commit, its time (MDT), the branch, an
 - Decision: one fixture holding the client after every stage, and the test deletes what the skill makes; rejected: chaining skills (slow, flaky).
 - Gaps: prototype registration calls S4's `prototypes:registerPrototype` in a follow-up commit; the dev-app path is untested (the test runs the mockup only).
 - Gates: app check (187 tests) and build, green; merged without conflicts.
+
+## c314721, 17:29; 35b569e, 17:35; 96a3bb2, 17:39: f1-foundation (a1d5fa0, 551b2a8, 5e9f5c0)
+
+- Gives: Studio24 Factory sign-in, a one-click demo developer, an empty demo client with a printed client link, and the access, usage and schema every stage builds on.
+- Entry points: `convex/schema.ts:21`, `convex/lib/functions.ts:17` and `:23`, `convex/lib/access.ts:87`, `convex/lib/usage.ts:19`, `convex/seed.ts:141` and `:154`, `convex/auth.ts:28`.
+- Tables: all; writes `projects`, `stageEvents`, `clientLinks`, `usage`.
+- Decision: client tokens stored as SHA-256 hashes, so each start renews the printed link; rejected: plain tokens.
+- Gap: a link opens its stages without checking the project reached them (S1 fixes).
+- Integrator: d6abd4b regenerates `convex/_generated/api.ts` over S3's lib files; f0e4dad fixes `e2e/backup.spec.ts` for the plan's project fields. Gates on each: check, build, e2e green (e2e 9/9, then 10/10).
+
+## 5cd35e0, 17:39, s2-voice (2db5b15, the text interview)
+
+- Gives: the text interview at `/c/:token/interview` when voice is off or fails; recorded questions labelled; "Use the sample answer" fills `FIXTURE_TRANSCRIPT`.
+- Entry points: `src/interview/InterviewPage.tsx:12`, `convex/interviews.ts:84` startText, `:114` answer, `:143` ask (InterviewTurn).
+- Tables: writes `interviews`, `transcriptTurns`.
+- Decision: the voice fallback starts a new text interview with the failure recorded.
+- Gaps: text interviews don't spend the interviews cap; a failed model turn ends the interview as failed.
+- Gates: check (187 tests), build, e2e 10/10. Deployed with F1's name commit at 17:40.
+
+## 9d2ccb7, 17:47, s2-voice (0d8cfcc, the opening-question fix)
+
+- Gives: the text interview works with a real key: the opening question sends a placeholder instead of an empty user message, which the provider refused (400), ending the interview as failed on prod.
+- Entry point: `convex/interviews.ts:157`; a regression test in `convex/interviews.test.ts`.
+- Gates: check (188 tests), build, e2e 10/10.
