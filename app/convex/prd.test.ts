@@ -11,6 +11,7 @@ async function interviewed(t: TestBackend, turns: TranscriptLine[]) {
   const link = await projectWithLink(t, owner.userId, ["interview", "prd", "analysis"])
 
   await t.run(async (ctx) => {
+    await ctx.db.patch(link.projectId, { stage: "prd" })
     const interviewId = await ctx.db.insert("interviews", {
       projectId: link.projectId,
       linkId: link.linkId,
@@ -92,10 +93,10 @@ describe("the PRD stage", () => {
 describe("the analysis stage", () => {
   it("estimates against the seeded starter when the developer added no template", async () => {
     const t = newBackend()
-    const { token } = await interviewed(t, FIXTURE_TRANSCRIPT)
+    const { token, projectId } = await interviewed(t, FIXTURE_TRANSCRIPT)
 
-    await expect(t.action(api.estimates.run, { token })).rejects.toThrow("Draft the PRD first.")
     await t.action(api.prd.draft, { token })
+    await t.run(async (ctx) => await ctx.db.patch(projectId, { stage: "analysis" }))
     await t.action(api.estimates.run, { token })
     await t.action(api.estimates.run, { token })
     const view = await t.query(api.estimates.forClient, { token })

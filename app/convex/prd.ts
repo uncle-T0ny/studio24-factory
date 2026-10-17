@@ -2,13 +2,13 @@ import { ConvexError, v } from "convex/values"
 import { omit } from "convex-helpers"
 import { internal } from "./_generated/api"
 import { action, internalMutation, internalQuery } from "./_generated/server"
-import { requireClientStage } from "./lib/access"
+import { findClientAccess, requireClientStage } from "./lib/access"
 import { FIXTURE_TRANSCRIPT } from "./lib/fixtureTranscript"
 import { clientQuery } from "./lib/functions"
 import { RECORDED_MODEL } from "./lib/llm"
 import { askCounted } from "./lib/llmUsage"
 import { draftPrd, verifyQuote } from "./lib/prd"
-import { requirementFields } from "./lib/validators"
+import { requirementFields, stageValidator } from "./lib/validators"
 import { requireTestFunctions } from "./testing"
 
 const requirementAnswerFields = omit(requirementFields, ["prdId", "projectId"])
@@ -116,19 +116,32 @@ export const forClient = clientQuery("prd")({
   },
 })
 
-// The e2e's interview: the PRD stage tested without the interview stage's UI.
-export const insertFixtureInterview = internalMutation({
-  args: { token: v.string() },
-  handler: async (ctx, { token }) => {
+// The e2e's project: the sample interview, then the stage under test, without the stages' UI.
+export const seedFixtureInterview = internalMutation({
+  args: { token: v.string(), stage: stageValidator },
+  handler: async (ctx, { token, stage }) => {
     requireTestFunctions(process.env.ALLOW_TEST_FUNCTIONS)
-    const { project, link } = await requireClientStage(ctx, token, "prd")
+    const access = await findClientAccess(ctx, token)
+
+    if (!access) {
+      throw new ConvexError("No project for this token.")
+    }
+    const { project, link } = access
+    await ctx.db.patch(project._id, { stage })
+    const turns = await ctx.db
+      .query("transcriptTurns")
+      .withIndex("by_project", (q) => q.eq("projectId", project._id))
+      .first()
+
+    if (turns) {
+      return
+    }
     const interviewId = await ctx.db.insert("interviews", {
       projectId: project._id,
       linkId: link._id,
       mode: "text",
       status: "done",
     })
-
     for (const turn of FIXTURE_TRANSCRIPT) {
       await ctx.db.insert("transcriptTurns", {
         ...turn,

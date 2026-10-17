@@ -25,7 +25,7 @@ test.describe("the PRD and the estimate, with no OPENROUTER_API_KEY", () => {
   }) => {
     owners.push(suffix())
     const token = clientLink(owners[0] ?? "", ["prd", "analysis"])
-    runConvex(["run", "prd:insertFixtureInterview", JSON.stringify({ token })])
+    runConvex(["run", "prd:seedFixtureInterview", JSON.stringify({ token, stage: "prd" })])
 
     await page.goto(`/c/${token}/prd`)
     await page.getByRole("button", { name: "Draft the PRD" }).click()
@@ -35,6 +35,7 @@ test.describe("the PRD and the estimate, with no OPENROUTER_API_KEY", () => {
     await expect(page.getByText("unverified", { exact: true })).toHaveCount(1)
     await expect(page.getByText("verified", { exact: true })).toHaveCount(8)
 
+    runConvex(["run", "prd:seedFixtureInterview", JSON.stringify({ token, stage: "analysis" })])
     await page.goto(`/c/${token}/analysis`)
     await page.getByRole("button", { name: "Run the analysis" }).click()
 

@@ -1,5 +1,5 @@
 import { ConvexError, v } from "convex/values"
-import { omit } from "convex-helpers"
+import { omit, pick } from "convex-helpers"
 import { internal } from "./_generated/api"
 import { action, internalMutation, internalQuery } from "./_generated/server"
 import { requireClientStage } from "./lib/access"
@@ -74,13 +74,9 @@ export const run = action({
         status: "ready",
       }))
     const manifest = input.template?.manifest ?? SEEDED_TEMPLATE.manifest
-    const requirements = input.requirements.map(({ code, kind, title, detail, priority }) => ({
-      code,
-      kind,
-      title,
-      detail,
-      priority,
-    }))
+    const requirements = input.requirements.map((requirement) =>
+      pick(requirement, ["code", "kind", "title", "detail", "priority"]),
+    )
     const { answer, problems } = await analyse(manifest, requirements, askCounted(ctx))
 
     if (answer === null || problems.length > 0) {
@@ -125,15 +121,17 @@ export const forClient = clientQuery("analysis")({
         q.eq("projectId", estimate.projectId).eq("templateId", estimate.templateId),
       )
       .collect()
-    const rows = await Promise.all(
-      verdicts.map(async (verdict) => ({
-        ...verdict,
-        requirement: await ctx.db.get(verdict.requirementId),
-      })),
-    )
+    const withRequirements = verdicts.map(async (verdict) => ({
+      ...verdict,
+      requirement: await ctx.db.get(verdict.requirementId),
+    }))
 
-    // Estimates keep no model name; the deployment's key tells whether its answers are recorded.
-    const recorded = !process.env.OPENROUTER_API_KEY
-    return { estimate, templateName: template?.name ?? "", verdicts: rows, recorded }
+    return {
+      estimate,
+      templateName: template?.name ?? "",
+      verdicts: await Promise.all(withRequirements),
+      // Estimates keep no model name; the deployment's key tells whether answers are recorded.
+      recorded: !process.env.OPENROUTER_API_KEY,
+    }
   },
 })

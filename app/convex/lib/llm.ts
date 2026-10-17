@@ -69,8 +69,6 @@ export function jsonSchemaOf(validator: GenericValidator): JsonSchema {
       return { type: "number" }
     case "boolean":
       return { type: "boolean" }
-    case "literal":
-      return { enum: [validator.value] }
     case "array":
       return { type: "array", items: jsonSchemaOf(validator.element) }
     case "union": {

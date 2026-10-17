@@ -1,26 +1,22 @@
 import { useState } from "react"
-import { errorMessage } from "../lib/errors"
+import { useErrorState } from "../lib/errors"
 import { Button, ButtonVariant, Text, TextTone } from "../ui"
 
 export function RunButton({ label, run }: { label: string; run: () => Promise<unknown> }) {
   const [busy, setBusy] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const { error, setError, showError } = useErrorState()
 
-  const onClick = async () => {
+  const onClick = () => {
     setBusy(true)
     setError(null)
-    try {
-      await run()
-    } catch (caught) {
-      setError(errorMessage(caught))
-    } finally {
-      setBusy(false)
-    }
+    run()
+      .catch(showError)
+      .finally(() => setBusy(false))
   }
 
   return (
     <>
-      <Button variant={ButtonVariant.Primary} disabled={busy} onClick={() => void onClick()}>
+      <Button variant={ButtonVariant.Primary} disabled={busy} onClick={onClick}>
         {busy ? "Working..." : label}
       </Button>
       {error && (
