@@ -28,35 +28,28 @@ describe("registering a prototype", () => {
 
     await t.mutation(internal.prototypes.registerPrototype, {
       slug,
-      kind: "mockup",
-      url: "/prototypes/demo.html",
-    })
-    await t.mutation(internal.prototypes.registerPrototype, {
-      slug,
       kind: "devApp",
       url: "https://demo-dev.example.com",
     })
+    await t.action(internal.prototypes.uploadMockup, { slug, html: "<h1>Floor plan</h1>" })
 
-    expect(await t.query(api.prototypes.forClient, { token })).toEqual({
-      kind: "devApp",
-      url: "https://demo-dev.example.com",
-    })
+    const shown = await t.query(api.prototypes.forClient, { token })
+
+    expect(shown?.kind).toBe("mockup")
+    expect(shown?.url).toMatch(/^https?:\/\//)
   })
 
-  it("rejects an unknown slug and a URL that isn't a web link", async () => {
+  it("rejects an unknown slug, without keeping its mockup, and a URL that isn't a web link", async () => {
     const { t, slug } = await fixture()
 
     await expect(
-      t.mutation(internal.prototypes.registerPrototype, {
-        slug: "nobody",
-        kind: "mockup",
-        url: "/",
-      }),
+      t.action(internal.prototypes.uploadMockup, { slug: "nobody", html: "<p>x</p>" }),
     ).rejects.toThrow("No project has this slug.")
+    expect(await t.run(async (ctx) => await ctx.db.system.query("_storage").collect())).toEqual([])
     await expect(
       t.mutation(internal.prototypes.registerPrototype, {
         slug,
-        kind: "mockup",
+        kind: "devApp",
         url: "javascript:alert(1)",
       }),
     ).rejects.toThrow("starts with https://")
