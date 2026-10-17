@@ -99,3 +99,12 @@ test("an email outside the allowlist is offered sign-up, which refuses it", asyn
     page.getByText("Couldn't sign up. Only the owners' emails can make an account."),
   ).toBeVisible()
 })
+
+test("Demo as developer signs in to the demo developer's projects, with the demo client", async ({
+  page,
+}) => {
+  await page.goto("/")
+  await page.getByRole("button", { name: "Demo as developer" }).click()
+  await expectProjectsPage(page)
+  await expect(page.getByRole("list", { name: "Projects" }).getByText("Demo client")).toBeVisible()
+})

@@ -17,6 +17,7 @@ import {
   TextField,
   TextTone,
 } from "../ui"
+import { DemoSignIn } from "./DemoSignIn"
 import { PasswordReset } from "./PasswordReset"
 import {
   AUTH_PROBLEM_ACTION_LABELS,
@@ -170,6 +171,7 @@ export function SignInPage() {
         >
           {isSignUp ? "I have an account: sign in" : "First time here? Sign up"}
         </Button>
+        <DemoSignIn />
       </Card>
     </CenteredPage>
   )

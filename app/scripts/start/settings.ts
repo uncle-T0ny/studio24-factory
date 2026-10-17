@@ -12,6 +12,15 @@ export const CONVEX_ENV_FILE = path.join(APP_DIR, ".env.local")
 
 export const APP_PORT = 5173
 export const APP_URL = `http://localhost:${String(APP_PORT)}`
+
+export interface DemoLink {
+  stage: string
+  token: string
+}
+
+export function demoLinkLine(link: DemoLink): string {
+  return `${APP_URL}/c/${link.token}   (the demo client's ${link.stage} link)`
+}
 export const DEFAULT_DEMO_EMAIL = "demo@example.com"
 export const DEFAULT_AGENT_NAME = "voice-assistant"
 

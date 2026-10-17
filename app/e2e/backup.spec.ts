@@ -35,9 +35,7 @@ test("backup: the owner exports a project and imports it back as a new project",
 
   await page.getByRole("link", { name: "All projects" }).click()
   await importFile(page, filePath)
-  await expect(
-    page.getByText(`Imported "${name}" as a new one with its own share link.`),
-  ).toBeVisible()
+  await expect(page.getByText(`Imported "${name}" as a new project.`)).toBeVisible()
   await expect(page.getByRole("list", { name: "Projects" }).getByText(name)).toHaveCount(2)
 })
 

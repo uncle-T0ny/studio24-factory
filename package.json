@@ -10,6 +10,7 @@
   "scripts": {
     "start": "node --experimental-strip-types --disable-warning=ExperimentalWarning app/scripts/start.ts",
     "reset": "node --experimental-strip-types --disable-warning=ExperimentalWarning app/scripts/start.ts --reset",
-    "start:check": "node --experimental-strip-types --disable-warning=ExperimentalWarning app/scripts/start.ts --check"
+    "start:check": "node --experimental-strip-types --disable-warning=ExperimentalWarning app/scripts/start.ts --check",
+    "reseed": "node --experimental-strip-types --disable-warning=ExperimentalWarning app/scripts/reseed.ts"
   }
 }
