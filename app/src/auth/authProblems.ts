@@ -30,8 +30,6 @@ export const AUTH_PROBLEM_ACTION_LABELS: Record<AuthProblemAction, string> = {
   [AuthProblemAction.ResetPassword]: "Forgot password?",
 }
 
-// accounts:status never says an email is off the allowlist (see AccountStatus): such an email
-// reads as one with no account, is offered sign-up, and sign-up refuses it (SignUpRefused).
 export function signInProblemOf(status: AccountStatus | null): AuthProblem {
   switch (status) {
     case AccountStatus.Missing:

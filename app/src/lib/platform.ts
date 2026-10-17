@@ -1,5 +1,3 @@
-// The keyboard's platform, for shortcut labels (⌘ on a Mac, Ctrl elsewhere), and whether a key
-// press belongs to a text control rather than to a page-wide shortcut or paste handler.
 export enum Platform {
   Mac = "mac",
   Other = "other",
@@ -15,8 +13,6 @@ export function currentPlatform(): Platform {
       platform: string
     }
   }
-  // userAgentData is Chromium only; elsewhere the user agent names the platform too ("Macintosh",
-  // "iPhone", "Windows"), which replaces the deprecated navigator.platform.
   const platformName = navigatorWithData.userAgentData?.platform ?? navigator.userAgent
 
   return platformOf(platformName)

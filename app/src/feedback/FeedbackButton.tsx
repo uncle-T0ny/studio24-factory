@@ -9,11 +9,9 @@ const ICON_SIZE = 14
 const SAVED_VISIBLE_MS = 4000
 
 export interface FeedbackButtonProps {
-  // The project the page shows; none on the projects and feedback pages.
   target?: FeedbackTarget
 }
 
-// "Feedback" for signed-in owners: the projects page and a project's page, never a guest.
 export function FeedbackButton({ target }: FeedbackButtonProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [isSaved, setIsSaved] = useTimedState(false, SAVED_VISIBLE_MS)

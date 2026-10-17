@@ -9,8 +9,6 @@ import {
 import type { Doc, Id } from "../_generated/dataModel"
 import type { MutationCtx } from "../_generated/server"
 
-// The database side of feedback; lib/feedback.ts is pure and shared with src.
-
 const LIST_LIMIT = 500
 const SCREENSHOT_MISSING = "The screenshot didn't upload. Try again."
 const SCREENSHOT_REFUSED = "The screenshot must be a PNG or JPG under 3 MB."
@@ -47,7 +45,6 @@ async function newestFeedback(
     .take(LIST_LIMIT)
 }
 
-// Newest first, each with its author's email and a URL for its screenshot.
 export async function readFeedbackEntries(
   ctx: ReadCtx,
   status: FeedbackStatus | undefined,

@@ -2,8 +2,6 @@ import type { AgentState } from "@livekit/components-react"
 import { MediaDeviceFailure } from "livekit-client"
 import { Tone } from "../ui"
 
-// The voice card's words and rules, kept apart from the component so they can be tested.
-
 export enum VoiceProblem {
   MicBlocked = "mic-blocked",
   MicMissing = "mic-missing",
@@ -40,7 +38,6 @@ export const VOICE_PROBLEMS: Record<VoiceProblem, ProblemText> = {
   },
 }
 
-// The problem a failed microphone request names (getUserMedia, or LiveKit's own request).
 export function microphoneProblem(error: unknown): VoiceProblem {
   switch (MediaDeviceFailure.getFailure(error)) {
     case MediaDeviceFailure.PermissionDenied:
@@ -54,8 +51,6 @@ export function microphoneProblem(error: unknown): VoiceProblem {
   }
 }
 
-// Asks for the microphone, then lets it go again: the session starts only once it works, so a
-// blocked microphone costs no token, no session and no agent minutes.
 export async function checkMicrophone(): Promise<VoiceProblem | null> {
   if (typeof navigator === "undefined" || !("mediaDevices" in navigator)) {
     return VoiceProblem.MicUnavailable
@@ -104,7 +99,6 @@ export enum Speaker {
   Assistant = "Assistant",
 }
 
-// One transcription stream as useTranscriptions gives it (TextStreamData).
 export interface TranscriptionStream {
   text: string
   participantInfo: { identity: string }
@@ -117,8 +111,6 @@ export interface TranscriptLine {
   text: string
 }
 
-// The live transcript in the order it was spoken. The agent publishes both sides; the user's
-// own words carry the user's identity, the way components-react's useSessionMessages tells them.
 export function transcriptLines(
   streams: readonly TranscriptionStream[],
   localIdentity: string,

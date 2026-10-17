@@ -4,10 +4,6 @@ import { isOwnerEmail, ownerEnv } from "./owners"
 import type { Doc, Id } from "../_generated/dataModel"
 import type { MutationCtx, QueryCtx } from "../_generated/server"
 
-// Who may read and change what. An owner is a signed-in user whose email is on OWNER_EMAILS; she
-// works on her own projects. A guest holds a project's share token and works on that project
-// only. lib/functions.ts applies these rules to every public function.
-
 export type ReadCtx = QueryCtx | MutationCtx
 
 export enum Actor {
@@ -26,8 +22,6 @@ export const accessArgs = {
 
 const NOT_ALLOWED = "Not allowed"
 
-// The signed-in user, if she is an owner. The allowlist is checked on every call, not only at
-// sign-up (auth.ts), so taking an email off OWNER_EMAILS locks that account out at once.
 export async function findOwner(ctx: ReadCtx): Promise<Id<"users"> | null> {
   const userId = await getAuthUserId(ctx)
 
@@ -45,7 +39,6 @@ export async function requireOwner(ctx: ReadCtx): Promise<Id<"users">> {
   return allowed(await findOwner(ctx))
 }
 
-// The project a share link opens, or null for an empty or unknown token.
 export async function findSharedProject(
   ctx: ReadCtx,
   shareToken: string,
@@ -60,11 +53,6 @@ export async function findSharedProject(
     .unique()
 }
 
-// ctx.access (lib/functions.ts): finds a project for the caller, or null; the require* methods
-// throw "Not allowed" instead. With a share token the caller is that project's guest and nobody
-// else, even when an owner is signed in; without one she is the signed-in owner. The
-// *OwnedProject methods refuse a guest. A resource that belongs to a project (a project's tasks,
-// files, ...) gets its own find/require pair here that checks its project with findProject.
 export interface Access {
   findProject(projectId: Id<"projects">): Promise<ProjectAccess | null>
   requireProject(projectId: Id<"projects">): Promise<ProjectAccess>
@@ -83,7 +71,6 @@ function allowed<T>(access: T | null): T {
 export function accessFor(ctx: ReadCtx, shareToken: string | undefined): Access {
   let owner: Promise<Id<"users"> | null> | undefined
 
-  // Looked up once per call, however many projects the call checks.
   const ownerOnce = () => {
     owner ??= findOwner(ctx)
 

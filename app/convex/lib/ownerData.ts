@@ -1,10 +1,6 @@
 import type { Id, TableNames } from "../_generated/dataModel"
 import type { MutationCtx } from "../_generated/server"
 
-// Every table that holds an owner's data, with the storage files each row holds. Deleting an
-// owner (testing:deleteTestOwner) walks this list, so a new owner-scoped table goes here too;
-// convex/testing.test.ts fails when a table with an ownerId field is missing from it.
-
 export interface OwnerRow {
   id: Id<TableNames>
   files: Id<"_storage">[]
@@ -65,7 +61,6 @@ export const OWNER_SCOPED_TABLES: readonly OwnerScopedTable[] = [
   },
 ]
 
-// Deletes the owner's rows in every owner-scoped table, with their files.
 export async function deleteOwnerData(ctx: MutationCtx, ownerId: Id<"users">): Promise<void> {
   for (const { rows } of OWNER_SCOPED_TABLES) {
     for (const row of await rows(ctx, ownerId)) {

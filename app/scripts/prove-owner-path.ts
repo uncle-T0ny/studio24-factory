@@ -1,7 +1,3 @@
-// An optional smoke test against the dev deployment that .env.local names (never prod): checks
-// the OWNER_EMAILS sign-up gate and the owner's path, then deletes its test owner. The deployment
-// needs ALLOW_TEST_FUNCTIONS=true. `npm run prove:owner`.
-
 import { ConvexHttpClient } from "convex/browser"
 import { convexRun, readConvexUrl } from "./lib/convex"
 import { testOwnerSuffix } from "./testOwner"

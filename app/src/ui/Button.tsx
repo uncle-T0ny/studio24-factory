@@ -14,7 +14,6 @@ export interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement
   size?: ControlSize
   icon?: ReactNode
   stretch?: boolean
-  // A toggle: shows whether it is on and tells assistive tech (aria-pressed).
   pressed?: boolean
 }
 

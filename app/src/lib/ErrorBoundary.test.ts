@@ -4,7 +4,6 @@ import { describe, expect, it, vi } from "vitest"
 import { ErrorBoundary, type ErrorBoundaryProps } from "./ErrorBoundary"
 import { errorMessage } from "./errors"
 
-// The node test environment has no DOM, so these drive the class's own lifecycle methods.
 function boundaryOf(props: Partial<ErrorBoundaryProps> = {}): ErrorBoundary {
   return new ErrorBoundary({
     fallback: (error) => createElement("p", null, errorMessage(error)),

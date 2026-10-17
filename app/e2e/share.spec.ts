@@ -32,7 +32,6 @@ test("share: a guest opens the link and renames the project, a new link revokes 
     await renameProject(guest, renamed)
     await expect(guest.getByRole("heading", { name: renamed, exact: true })).toBeVisible()
 
-    // The owner's page follows the guest's edit live.
     await expect(page.getByRole("heading", { name: renamed, exact: true })).toBeVisible()
 
     await shareButton(page).click()

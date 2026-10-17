@@ -2,9 +2,6 @@ import { readdirSync, readFileSync } from "node:fs"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
 
-// English only: fails on any Cyrillic letter in the code, comments included, which ESLint can't
-// see. `npm run check:english`. Written in Node because macOS grep has no -P.
-
 const APP_DIR = fileURLToPath(new URL("..", import.meta.url))
 const SOURCE_DIRS = ["src", "convex", "scripts", "e2e"]
 const EXTENSIONS = new Set([".ts", ".tsx", ".css"])

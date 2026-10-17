@@ -5,13 +5,6 @@ import type { DataModel, Id } from "./_generated/dataModel"
 import { internalAction, internalMutation, internalQuery } from "./_generated/server"
 import { isOwnerEmail, normalizeEmail, ownerEnv } from "./lib/owners"
 
-// The local demo data `npm start` seeds on every run (app/scripts/start.ts): a demo owner who
-// can sign in, then the app's own demo records. It is idempotent: a re-run creates nothing new
-// and only keeps the demo owner's password equal to DEMO_OWNER_PASSWORD. The start script sets
-// DEMO_OWNER_EMAIL, DEMO_OWNER_PASSWORD and OWNER_EMAILS (with the demo email in it) on the
-// local deployment first, through stdin, so the password is never on a command line.
-
-// The Password provider's id (convex/auth.ts), which keys its accounts.
 const PASSWORD_PROVIDER = "password"
 
 const SEED_NOT_SET_UP =
@@ -45,7 +38,6 @@ function demoOwner(): DemoOwner {
   return { email, password }
 }
 
-// The user behind a password account, or null. `npm run start:check` runs it to prove the seed.
 export const owner = internalQuery({
   args: {
     email: v.optional(v.string()),
@@ -64,11 +56,6 @@ export const owner = internalQuery({
   },
 })
 
-// =====================================================================================
-// THE APP'S SEED HOOK. Put the app's own demo records for the demo owner here (for example a
-// demo client with a few records), with ctx.db and the owner's id. It runs on every `npm start`,
-// so keep it idempotent: look a record up before you insert it. The starter seeds nothing here.
-// =====================================================================================
 export const demoData = internalMutation({
   args: {
     ownerId: v.id("users"),
@@ -77,9 +64,7 @@ export const demoData = internalMutation({
   handler: () => null,
 })
 
-// The seed: creates the demo owner's account once (with the Password provider's own hashing),
-// keeps its password in step on later runs, then runs the app's hook. An action, because
-// Convex Auth creates password accounts only from an action.
+// An action: Convex Auth creates password accounts only from an action.
 export const run = internalAction({
   args: {},
   returns: v.object({ email: v.string(), ownerId: v.id("users"), created: v.boolean() }),

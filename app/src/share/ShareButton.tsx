@@ -55,7 +55,6 @@ export interface ShareButtonProps {
   shareToken: string
 }
 
-// The owner's share popover: the project's link, Copy, and New link, which revokes the old one.
 export function ShareButton({ projectId, shareToken }: ShareButtonProps) {
   const [isOpen, setIsOpen] = useState(false)
   const regenerate = useMutation(api.share.regenerate)

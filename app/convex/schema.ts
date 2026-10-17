@@ -16,7 +16,6 @@ export default defineSchema({
     .index("by_status", ["status", "createdAt"])
     .index("by_owner", ["ownerId"]),
 
-  // The optional voice module (lib/voice.ts). Remove these three with it.
   voiceSessions: defineTable(voiceSessionFields)
     .index("by_owner", ["ownerId"])
     .index("by_project", ["projectId"])

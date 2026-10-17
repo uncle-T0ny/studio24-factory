@@ -6,8 +6,6 @@ import { api } from "../../convex/_generated/api"
 import { APP_NAME } from "../app.config"
 import { PageColumn, PageHeader, PageMessage, Text, TextTone } from "../ui"
 
-// /p/:token, the share link: a guest opens one project with no account. Every call passes the
-// token, and the server checks it (lib/access.ts).
 export function SharedProjectPage() {
   const { token } = useParams()
   const shareToken = token ?? ""

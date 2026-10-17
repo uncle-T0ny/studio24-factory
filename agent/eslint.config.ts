@@ -4,9 +4,6 @@ import { createNodeResolver, importX } from "eslint-plugin-import-x"
 import globals from "globals"
 import tseslint from "typescript-eslint"
 
-// The app's rules (app/eslint.config.ts) without the React and UI-kit ones: this package is a
-// Node worker.
-
 const CYRILLIC = "/[\\u0400-\\u04FF]/"
 const ENGLISH_ONLY = [
   { selector: `Literal[value=${CYRILLIC}]`, message: "English only: no Cyrillic in code." },
@@ -65,7 +62,6 @@ export default defineConfig([
       "max-lines": ["error", { max: 400, skipBlankLines: true, skipComments: true }],
       "max-lines-per-function": ["error", { max: 120, skipBlankLines: true, skipComments: true }],
       complexity: ["error", 15],
-      // The worker logs through the agents logger (log() from @livekit/agents), as JSON.
       "no-console": "error",
       "no-restricted-syntax": ["error", ...ENGLISH_ONLY],
     },

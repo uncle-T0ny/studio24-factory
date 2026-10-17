@@ -12,9 +12,6 @@ import {
 } from "./lib/voice"
 import { newBackend, OWNER_EMAILS, signedIn, type TestBackend, type TestCaller } from "./test.setup"
 
-// The token mint (convex/livekit.ts): who may start a session, the daily cap, and what the token
-// grants. The keys are made up; nothing here reaches LiveKit.
-
 const LIVEKIT_URL = "wss://example.livekit.cloud"
 const API_KEY = "APIexample"
 const API_SECRET = "example-secret-that-is-long-enough-for-hs256"

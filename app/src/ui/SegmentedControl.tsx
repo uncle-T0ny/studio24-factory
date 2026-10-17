@@ -14,7 +14,6 @@ enum SegmentKey {
 
 const isSegmentKey = enumGuard(SegmentKey)
 
-// The option a key moves to from `index` (-1 when none is selected), wrapping at both ends.
 function targetIndex(key: SegmentKey, index: number, count: number): number {
   switch (key) {
     case SegmentKey.Next:

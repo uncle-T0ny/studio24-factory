@@ -1,9 +1,7 @@
 import { Component, type ErrorInfo, type ReactNode } from "react"
 
 export interface ErrorBoundaryProps {
-  // What to render instead of the children once one of them throws while rendering.
   fallback: (error: unknown) => ReactNode
-  // A change of this value (the page's path) drops a caught error and renders the children again.
   resetKey?: string
   children: ReactNode
 }

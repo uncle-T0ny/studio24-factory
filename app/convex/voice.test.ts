@@ -3,9 +3,6 @@ import { api } from "./_generated/api"
 import { AGENT_EVENTS_PATH, TranscriptSource, VoiceRole } from "./lib/voice"
 import { newBackend, OWNER_EMAILS, signedIn, type TestBackend } from "./test.setup"
 
-// The transcript ingest (convex/http.ts, lib/voiceData.ts) and the typed fallback
-// (voice.saveTypedMessage). The agent's side of the contract is agent/src/transcript.ts.
-
 const SECRET = "agent-secret-for-tests"
 
 async function fixture() {

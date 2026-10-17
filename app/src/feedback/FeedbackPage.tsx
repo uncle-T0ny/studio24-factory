@@ -206,7 +206,6 @@ function FeedbackInbox() {
   )
 }
 
-// Every owner's feedback, newest first: every owner sees all of it.
 export function FeedbackPage() {
   return (
     <>

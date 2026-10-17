@@ -22,8 +22,6 @@
   --focus-ring-offset: 2px;
   --shadow-overlay: 0 8px 24px color-mix(in srgb, var(--ink) 16%, transparent);
 
-  /* System fonts: nothing to load, and each platform's own UI face. To use a web font, put its
-     family first here and load it in index.html. */
   --font-display:
     ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-body:

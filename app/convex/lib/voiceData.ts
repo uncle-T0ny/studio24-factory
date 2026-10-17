@@ -2,9 +2,6 @@ import { cleanTurnText, MAX_TURNS, TranscriptSource, type AgentEvent, type Turn 
 import type { Doc, Id } from "../_generated/dataModel"
 import type { MutationCtx } from "../_generated/server"
 
-// The voice module's writes: storing what the agent sends, and deleting a project's voice rows
-// with the project (projects.remove).
-
 async function sessionByRoom(
   ctx: MutationCtx,
   roomName: string,
@@ -38,8 +35,6 @@ function turnRow(session: Doc<"voiceSessions">, turn: Turn) {
   }
 }
 
-// One turn, stored once however often it is sent: a turn with the same index replaces the
-// stored one. Ignored once the session has ended, since the end's history is final.
 async function storeTurn(ctx: MutationCtx, session: Doc<"voiceSessions">, turn: Turn) {
   if (session.endedAt !== undefined || turn.index < 0 || turn.index >= MAX_TURNS) {
     return
@@ -57,8 +52,6 @@ async function storeTurn(ctx: MutationCtx, session: Doc<"voiceSessions">, turn: 
   }
 }
 
-// The end: the history replaces whatever the turns stored, and the session is closed. Sending
-// it twice gives the same rows.
 async function endSession(
   ctx: MutationCtx,
   session: Doc<"voiceSessions">,
@@ -78,7 +71,6 @@ async function endSession(
   })
 }
 
-// Stores an agent event; false when the app has no session for its room.
 export async function recordAgentEvent(ctx: MutationCtx, event: AgentEvent): Promise<boolean> {
   const session = await sessionByRoom(ctx, event.roomName)
 

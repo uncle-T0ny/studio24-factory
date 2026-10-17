@@ -53,7 +53,6 @@ function OwnerProjectLoader({ projectId }: { projectId: string }) {
   return <OwnerProject project={project} />
 }
 
-// /project/:id, the owner's page of one project.
 export function ProjectPage() {
   const { id } = useParams()
 
