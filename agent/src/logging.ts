@@ -1,12 +1,3 @@
-// The framework logs what a user said at info: its records carry the words in fields named
-// lk.pii.* (such as "received user input" with lk.pii.user_input). A worker at `start`'s default
-// level, info, would print every transcript to its logs. quietTranscripts moves those records to
-// debug, so `npm run dev` (debug) still shows them and `start` doesn't.
-//
-// It sets pino's logMethod hook on the job's root logger and re-applies the level. Every child
-// logger made after that inherits the hook (the session's are made in session.start). If pino's
-// internals ever differ, it changes nothing and returns false.
-
 const PII_PREFIX = "lk.pii."
 const INFO_LEVEL = 30
 const HOOKS_SYMBOL = "pino.hooks"
@@ -25,7 +16,6 @@ interface QuietableLogger {
   level: string
 }
 
-// Whether a log call's first argument, its fields, carries something a user said.
 export function carriesTranscript(args: readonly unknown[]): boolean {
   const fields = args[0]
 

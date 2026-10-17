@@ -5,7 +5,6 @@ import { expect, test } from "./support/fixtures"
 
 type ChosenFile = string | { name: string; mimeType: string; buffer: Buffer }
 
-// Clicks "Import project" and picks the file in the file chooser it opens.
 async function importFile(page: Page, file: ChosenFile): Promise<void> {
   const choosing = page.waitForEvent("filechooser")
 
@@ -32,7 +31,7 @@ test("backup: the owner exports a project and imports it back as a new project",
 
   const exported: unknown = JSON.parse(await readFile(filePath, "utf8"))
 
-  expect(exported).toMatchObject({ version: 1, data: { project: { name } } })
+  expect(exported).toMatchObject({ version: 1, data: { project: { clientName: name } } })
 
   await page.getByRole("link", { name: "All projects" }).click()
   await importFile(page, filePath)

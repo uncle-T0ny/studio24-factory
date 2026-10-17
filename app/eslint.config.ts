@@ -85,7 +85,6 @@ export default defineConfig([
       "react-refresh/only-export-components": "off",
     },
   },
-  // Kit enforcement: raw controls and deep kit imports only inside src/ui.
   // A later block replaces no-restricted-syntax's whole list, so it repeats the entries it keeps.
   {
     files: ["src/**/*.tsx"],
@@ -115,7 +114,6 @@ export default defineConfig([
       ],
     },
   },
-  // The kit and lib import no feature code.
   {
     files: ["src/ui/**", "src/lib/**"],
     rules: {
@@ -132,7 +130,6 @@ export default defineConfig([
       ],
     },
   },
-  // The kit page's sections sit one folder deeper, in src/ui/kit-page.
   {
     files: ["src/ui/kit-page/**"],
     rules: {
@@ -149,7 +146,6 @@ export default defineConfig([
       ],
     },
   },
-  // Convex function files declare their public functions with the access wrappers.
   {
     files: ["convex/*.ts"],
     rules: {
@@ -173,7 +169,6 @@ export default defineConfig([
       "@typescript-eslint/no-non-null-assertion": "off",
       "no-restricted-syntax": "off",
       "max-lines-per-function": "off",
-      // A suite is a list of cases, and its fakes implement async interfaces without awaiting.
       "max-lines": "off",
       "@typescript-eslint/require-await": "off",
     },

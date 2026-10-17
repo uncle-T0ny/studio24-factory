@@ -1,13 +1,6 @@
-// The worker's settings, read once from the environment (.env.example lists them). The LiveKit
-// SDK reads LIVEKIT_URL, LIVEKIT_API_KEY and LIVEKIT_API_SECRET itself; they are checked here
-// too, so a missing one stops the worker with one clear message instead of a connection error.
-
 export const DEFAULT_OPENROUTER_MODEL = "anthropic/claude-haiku-5.5"
 export const OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 export const DEFAULT_MAX_SECONDS = 300
-// The name the worker registers under when AGENT_NAME is unset. The app's token dispatches the
-// same AGENT_NAME (app/convex/lib/voice.ts), so two workers in one LiveKit project, each with
-// its own name, never take each other's jobs.
 export const DEFAULT_AGENT_NAME = "voice-assistant"
 const MAX_MAX_SECONDS = 3600
 
@@ -23,11 +16,9 @@ const REQUIRED = [
 
 export interface AgentConfig {
   agentName: string
-  // Speech in (Nova-3) and out (Aura-2) through the Deepgram plugin.
   deepgramApiKey: string
   openRouterApiKey: string
   openRouterModel: string
-  // The Convex deployment's HTTP actions origin, https://<deployment-name>.convex.site.
   convexSiteUrl: string
   agentSecret: string
   maxSessionMs: number

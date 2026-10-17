@@ -13,8 +13,6 @@ export interface FloatingToolbarProps {
   children: ReactNode
 }
 
-// A small group of controls floating over the canvas, in one of its corners. The parent must be
-// positioned (the canvas is).
 export function FloatingToolbar({ label, placement, children }: FloatingToolbarProps) {
   return (
     <div

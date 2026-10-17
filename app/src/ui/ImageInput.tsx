@@ -16,14 +16,11 @@ export interface ImageInputProps {
   accept: string
   onFile: (file: File) => void
   onRemove: () => void
-  // Shown while empty, e.g. "Paste a screenshot with ⌘V, or choose a PNG or JPG."
   hint: ReactNode
   chooseLabel?: string
   busy?: boolean
 }
 
-// An optional image: a dashed box with a hint and a file button, or the image's thumbnail with
-// Remove. Pasting is the caller's: it listens for paste and calls onFile.
 export function ImageInput({
   image,
   accept,

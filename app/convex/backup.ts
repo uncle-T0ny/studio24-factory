@@ -1,12 +1,7 @@
 import { v } from "convex/values"
 import { ownerMutation, ownerQuery } from "./lib/functions"
-import { cleanProjectName } from "./lib/projects"
-import { newShareToken } from "./lib/shareToken"
+import { insertProject } from "./lib/projects"
 import { projectContentValidator } from "./lib/validators"
-
-// Project export and import, owner only. The browser wraps the content in the versioned envelope
-// (lib/backup.ts) and saves it as one JSON file; importing makes a new project with its own share
-// link. A resource with files adds them here as URLs on export and upload ids on import.
 
 export const exportProject = ownerQuery({
   args: {
@@ -14,23 +9,14 @@ export const exportProject = ownerQuery({
   },
   returns: projectContentValidator,
   handler: async (ctx, args) => {
-    const { project } = await ctx.access.requireOwnedProject(args.projectId)
+    const { clientName, title } = await ctx.requireProject(args.projectId)
 
-    return {
-      project: {
-        name: project.name,
-      },
-    }
+    return { project: { clientName, title } }
   },
 })
 
 export const importProject = ownerMutation({
   args: projectContentValidator,
   returns: v.id("projects"),
-  handler: async (ctx, args) =>
-    await ctx.db.insert("projects", {
-      ownerId: ctx.ownerId,
-      name: cleanProjectName(args.project.name),
-      shareToken: newShareToken(),
-    }),
+  handler: async (ctx, args) => await insertProject(ctx, ctx.ownerId, args.project),
 })

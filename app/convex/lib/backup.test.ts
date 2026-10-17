@@ -3,7 +3,7 @@ import { BACKUP_FORMAT } from "./appConfig"
 import { BACKUP_VERSION, backupEnvelopeOf, backupFileName, parseProjectBackup } from "./backup"
 
 const EXPORTED_AT = "2026-10-17T10:00:00.000Z"
-const CONTENT = { project: { name: "Spring launch" } }
+const CONTENT = { project: { clientName: "Spring Bakery", title: "Spring launch" } }
 
 function fileText(value: unknown): string {
   return JSON.stringify(value)
@@ -44,11 +44,14 @@ describe("parseProjectBackup", () => {
   })
 
   it("refuses damaged data and says where", () => {
-    const damaged = backupEnvelopeOf({ project: { name: 42 } }, EXPORTED_AT)
-    const extra = backupEnvelopeOf({ project: { name: "A", ownerId: "x" } }, EXPORTED_AT)
+    const damaged = backupEnvelopeOf({ project: { clientName: 42, title: "A" } }, EXPORTED_AT)
+    const extra = backupEnvelopeOf(
+      { project: { clientName: "A", title: "A", ownerId: "x" } },
+      EXPORTED_AT,
+    )
 
     expect(() => parseProjectBackup(fileText(damaged))).toThrow("damaged")
-    expect(() => parseProjectBackup(fileText(damaged))).toThrow("project.name")
+    expect(() => parseProjectBackup(fileText(damaged))).toThrow("project.clientName")
     expect(() => parseProjectBackup(fileText(extra))).toThrow("damaged")
   })
 })

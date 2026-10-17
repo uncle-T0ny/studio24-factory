@@ -20,7 +20,6 @@ function freeBackupPath(date: string): string {
   return candidate
 }
 
-// The arguments choose the deployment: `--prod`, `--deployment <name>`, or none for .env.local.
 const { values } = parseArgs({ options: DEPLOYMENT_OPTIONS })
 const zipPath = freeBackupPath(localDate())
 

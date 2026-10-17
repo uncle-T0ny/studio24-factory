@@ -11,7 +11,6 @@ export interface Imported<ResourceId> {
   title: string
 }
 
-// Downloads one resource as a JSON export file: the versioned envelope around its content.
 export async function exportBackup<Content, ResourceId>(
   convex: ConvexReactClient,
   adapter: BackupAdapter<Content, ResourceId>,
@@ -27,7 +26,6 @@ export async function exportBackup<Content, ResourceId>(
   )
 }
 
-// Makes a new resource from an export file.
 export async function importBackup<Content, ResourceId>(
   convex: ConvexReactClient,
   adapter: BackupAdapter<Content, ResourceId>,

@@ -10,13 +10,6 @@ import {
   type FeedbackEntry,
 } from "../convex/lib/feedback"
 
-// Prints the feedback for triage by Claude, as Markdown:
-//   npm run feedback -- [--prod] [--all]
-// New entries only, newest first; --all adds the done ones. It reads the deployment that
-// `npx convex run` reads: .env.local's, production with --prod, or --deployment <name>. It prints
-// only the entries (type, message, context, a screenshot URL), never an environment variable,
-// key or token.
-
 interface Options {
   deployment: DeploymentChoice
   includeDone: boolean

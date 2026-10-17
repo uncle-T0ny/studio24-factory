@@ -14,7 +14,6 @@ const cryptoRandom: RandomReader = {
   },
 }
 
-// The sender: AUTH_EMAIL_FROM on the deployment, on a domain verified in Resend.
 export function resetEmailFrom(emailFromEnv: string | undefined): string {
   const from = emailFromEnv?.trim() ?? ""
 

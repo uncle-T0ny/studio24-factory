@@ -10,7 +10,6 @@ export interface MetaListProps {
   label?: string
 }
 
-// Label and value pairs in small text, e.g. the context sent with a feedback entry.
 export function MetaList({ entries, label }: MetaListProps) {
   return (
     <dl className="ui-meta-list" aria-label={label}>

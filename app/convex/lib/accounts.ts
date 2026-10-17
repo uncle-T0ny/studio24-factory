@@ -1,7 +1,6 @@
 import { PASSWORD_PROVIDER, type FoundAccount } from "./signIn"
 import type { QueryCtx } from "../_generated/server"
 
-// The password account of an email, with its sign-in rate limit, or null.
 export async function findPasswordAccount(
   ctx: QueryCtx,
   email: string,

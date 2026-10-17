@@ -19,8 +19,6 @@ export function storageIdOf(body: unknown): StorageId {
   return body.storageId as StorageId
 }
 
-// POSTs the blob to a Convex upload URL (from a generateUploadUrl mutation) and returns the
-// stored file's id. `failureMessage` is what the user sees when the upload is refused.
 export async function uploadFile(
   uploadUrl: string,
   blob: Blob,

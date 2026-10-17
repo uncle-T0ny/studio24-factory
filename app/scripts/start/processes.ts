@@ -1,10 +1,5 @@
 import { spawn, spawnSync, type ChildProcess } from "node:child_process"
 
-// Child processes for `npm start`, the same on macOS, Linux and Windows: every tool runs as
-// `node <its script>` (process.execPath), so no shell, no `npx` and no `.cmd` lookup is needed,
-// and paths with spaces pass as they are. Stopping kills the whole tree: the Convex CLI starts
-// the local backend as its own child.
-
 const IS_WINDOWS = process.platform === "win32"
 const STOP_GRACE_MS = 5_000
 const POLL_MS = 500
@@ -13,14 +8,12 @@ export interface Started {
   name: string
   child: ChildProcess
   exited: Promise<number | null>
-  // Called with every line it prints, prefix included.
   listeners: Set<(line: string) => void>
 }
 
 export interface RunOptions {
   cwd: string
   env: NodeJS.ProcessEnv
-  // Written to the child's stdin, then closed: how values reach the Convex CLI.
   input?: string
 }
 
@@ -38,7 +31,6 @@ function prefixLines(name: string, write: (text: string) => void) {
   }
 }
 
-// Runs a command to its end and returns its stdout; a failure throws with its stderr.
 export function run(command: string, args: string[], options: RunOptions): Promise<string> {
   return new Promise((resolve, reject) => {
     const child = spawn(command, args, {
@@ -64,8 +56,6 @@ export function run(command: string, args: string[], options: RunOptions): Promi
   })
 }
 
-// Runs a command with its output on this terminal, such as `npm ci`. `shell` only for a bare
-// `npm` on Windows, which is npm.cmd there.
 export function runVisible(
   command: string,
   args: string[],
@@ -86,8 +76,6 @@ export function runVisible(
   })
 }
 
-// Starts a long-running process, its output prefixed with its name. On POSIX it leads its own
-// process group, so stop() reaches its children too; Windows kills the tree with taskkill.
 export function start(name: string, command: string, args: string[], options: RunOptions): Started {
   const child = spawn(command, args, {
     cwd: options.cwd,
@@ -142,7 +130,6 @@ function signalTree(started: Started, signal: NodeJS.Signals): void {
   }
 }
 
-// Stops a process and everything it started: SIGTERM, then SIGKILL after a grace period.
 export async function stop(started: Started): Promise<void> {
   signalTree(started, "SIGTERM")
 
@@ -161,8 +148,6 @@ export function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-// Resolves on a line matching `pattern`; throws on one matching `failure`, on exit, or after the
-// timeout.
 export function waitForLine(
   started: Started,
   pattern: RegExp,
@@ -198,7 +183,6 @@ export function waitForLine(
   })
 }
 
-// Polls a URL until it answers 200.
 export async function waitForUrl(url: string, timeoutMs: number): Promise<void> {
   const deadline = Date.now() + timeoutMs
 

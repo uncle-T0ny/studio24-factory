@@ -13,7 +13,6 @@ export function Badge({ tone = Tone.Neutral, children }: BadgeProps) {
 export interface ChipProps {
   tone?: Tone
   children: ReactNode
-  // Makes the label a button, e.g. the trigger of a Popover: `expanded` says whether it is open.
   onClick?: () => void
   expanded?: boolean
   title?: string

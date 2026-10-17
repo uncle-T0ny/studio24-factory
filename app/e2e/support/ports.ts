@@ -1,6 +1,3 @@
-// The e2e suite runs its own local Convex backend and Vite server on ports picked to stay clear
-// of a dev server on 5173 and a `convex dev` local backend on its default ports.
-// E2E_BACKEND_PORT, E2E_SITE_PORT and E2E_VITE_PORT move them, so two checkouts can run side by side.
 const DEFAULT_BACKEND_PORT = 3290
 const DEFAULT_SITE_PORT = 3291
 const DEFAULT_VITE_PORT = 5288

@@ -1,50 +1,43 @@
+import { v } from "convex/values"
 import { customCtx, customMutation, customQuery } from "convex-helpers/server/customFunctions"
-import { accessArgs, accessFor, requireOwner } from "./access"
+import { requireClientStage, requireOwnedProject, requireOwner, type ReadCtx } from "./access"
+import type { Stage } from "./validators"
+import type { Id } from "../_generated/dataModel"
 import { mutation, query } from "../_generated/server"
 
-// Every public function is declared with one of these builders, so none can skip the access
-// rules in lib/access.ts. Function files don't import query or mutation from _generated/server.
+async function ownerCtx(ctx: ReadCtx) {
+  const ownerId = await requireOwner(ctx)
 
-// A signed-in owner, or "Not allowed". ctx.ownerId is hers, and ctx.access finds her own
-// projects.
-export const ownerQuery = customQuery(
-  query,
-  customCtx(async (ctx) => ({
-    ownerId: await requireOwner(ctx),
-    access: accessFor(ctx, undefined),
-  })),
-)
+  return {
+    ownerId,
+    requireProject: (projectId: Id<"projects">) => requireOwnedProject(ctx, ownerId, projectId),
+  }
+}
 
-export const ownerMutation = customMutation(
-  mutation,
-  customCtx(async (ctx) => ({
-    ownerId: await requireOwner(ctx),
-    access: accessFor(ctx, undefined),
-  })),
-)
+export const ownerQuery = customQuery(query, customCtx(ownerCtx))
 
-// The owner, or a guest with the project's share token. They take the optional `shareToken`
-// arg and add ctx.access, which checks it; the handler doesn't see the token.
-export const projectQuery = customQuery(query, {
-  args: accessArgs,
-  input: (ctx, { shareToken }) => ({
-    ctx: {
-      access: accessFor(ctx, shareToken),
-    },
-    args: {},
-  }),
-})
+export const ownerMutation = customMutation(mutation, customCtx(ownerCtx))
 
-export const projectMutation = customMutation(mutation, {
-  args: accessArgs,
-  input: (ctx, { shareToken }) => ({
-    ctx: {
-      access: accessFor(ctx, shareToken),
-    },
-    args: {},
-  }),
-})
+const clientArgs = { token: v.string() }
 
-// No access rule, for the functions anyone may call: accounts.status before sign-in, and
-// projects.getByShareToken, which opens only the project its token names.
+export function clientQuery(stage: Stage) {
+  return customQuery(query, {
+    args: clientArgs,
+    input: async (ctx, { token }) => ({
+      ctx: { client: await requireClientStage(ctx, token, stage) },
+      args: {},
+    }),
+  })
+}
+
+export function clientMutation(stage: Stage) {
+  return customMutation(mutation, {
+    args: clientArgs,
+    input: async (ctx, { token }) => ({
+      ctx: { client: await requireClientStage(ctx, token, stage) },
+      args: {},
+    }),
+  })
+}
+
 export const publicQuery = query

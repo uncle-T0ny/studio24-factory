@@ -9,9 +9,6 @@ const http = httpRouter()
 
 auth.addHttpRoutes(http)
 
-// The voice agent's transcript (agent/src/transcript.ts): one event per POST, with the shared
-// VOICE_AGENT_SECRET as a bearer token. Convex doesn't retry an HTTP action, so the agent does,
-// and storing an event twice changes nothing (lib/voiceData.ts).
 http.route({
   path: AGENT_EVENTS_PATH,
   method: "POST",

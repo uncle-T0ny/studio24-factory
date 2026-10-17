@@ -1,17 +1,3 @@
-// `npm start` at the repo root: the whole app on this machine, with no Convex account and no
-// keys. Plain Node (22.6+, run with type stripping), no dependency of its own, the same on
-// macOS, Linux and Windows. Each run is idempotent:
-//   1. checks Node, and installs app/ (and agent/, when voice is on) if node_modules is missing;
-//   2. reads the settings: the environment first, then the root .env.local; generates the demo
-//      owner's password and a local VOICE_AGENT_SECRET once, into .env.local;
-//   3. starts `convex dev` on a local anonymous deployment (made once, then reused);
-//   4. sets the deployment's env through stdin: the Convex Auth keys (made here once), SITE_URL,
-//      OWNER_EMAILS, the demo owner, AGENT_NAME and every optional key found (removing the gone);
-//   5. runs the seed (convex/seed.ts: the demo owner, then the app's own hook);
-//   6. starts Vite and, when the five voice keys are set, the voice agent;
-//   7. prints the URL and the sign-in.
-// `npm run start:check` does the same, proves the app answers and the seed is there, and stops
-// (CI). `npm run reset` deletes the local deployment's data.
 import { existsSync, readFileSync, rmSync, writeFileSync } from "node:fs"
 import path from "node:path"
 import { parseArgs } from "node:util"
@@ -86,7 +72,6 @@ function checkNode(): void {
   }
 }
 
-// The npm that runs this script (npm 10 or 11 alike), as `node npm-cli.js`; plain `npm` if not.
 function npm(args: string[]): [string, string[], boolean] {
   const cli = process.env.npm_execpath ?? ""
 
@@ -182,7 +167,6 @@ function startAgent(settings: Settings, siteUrl: string): Started {
 }
 
 function printSummary(settings: Settings, isCheck: boolean): void {
-  // Printed only to your own terminal; a CI log gets the file's name instead.
   const password = isCheck
     ? "DEMO_OWNER_PASSWORD in .env.local"
     : `${settings.values.DEMO_OWNER_PASSWORD ?? ""}   (saved in .env.local)`
@@ -272,8 +256,6 @@ async function startAll(isCheck: boolean): Promise<void> {
   }
 }
 
-// Deletes the local deployment (its data in app/.convex/ and its lines in app/.env.local). The
-// root .env.local, with the demo password and your keys, stays.
 async function reset(): Promise<void> {
   const url = existsSync(CONVEX_ENV_FILE) ? deploymentUrls().cloudUrl : null
 
