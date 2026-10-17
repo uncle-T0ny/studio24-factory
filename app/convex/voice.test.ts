@@ -1,27 +1,28 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { api } from "./_generated/api"
-import { AGENT_EVENTS_PATH, TranscriptSource, VoiceRole } from "./lib/voice"
-import { newBackend, OWNER_EMAILS, signedIn, type TestBackend } from "./test.setup"
+import { AGENT_EVENTS_PATH, VoiceRole } from "./lib/voice"
+import { newBackend, OWNER_EMAILS, projectWithLink, signedIn, type TestBackend } from "./test.setup"
 
 const SECRET = "agent-secret-for-tests"
 
 async function fixture() {
   const t = newBackend()
   const owner = await signedIn(t, "owner@example.com")
-  const projectId = await owner.as.mutation(api.projects.create, { name: "Spring launch" })
-  const project = await t.run(async (ctx) => await ctx.db.get(projectId))
+  const { projectId, linkId, token } = await projectWithLink(t, owner.userId, ["interview"])
   const roomName = "voice-room-1"
-  const sessionId = await t.run(
+  const interviewId = await t.run(
     async (ctx) =>
-      await ctx.db.insert("voiceSessions", {
-        ownerId: owner.userId,
+      await ctx.db.insert("interviews", {
         projectId,
+        linkId,
+        mode: "voice",
+        status: "live",
         roomName,
         startedAt: 1,
       }),
   )
 
-  return { t, owner, projectId, shareToken: project!.shareToken, roomName, sessionId }
+  return { t, owner, projectId, token, roomName, interviewId }
 }
 
 function post(t: TestBackend, body: unknown, authorization: string | null = `Bearer ${SECRET}`) {
@@ -43,11 +44,11 @@ function turn(roomName: string, index: number, text: string, role = VoiceRole.Us
 }
 
 async function transcript(t: TestBackend) {
-  const rows = await t.run(async (ctx) => await ctx.db.query("voiceTranscripts").collect())
+  const rows = await t.run(async (ctx) => await ctx.db.query("transcriptTurns").collect())
 
   return rows
-    .sort((a, b) => (a.index ?? 0) - (b.index ?? 0))
-    .map(({ index, role, text, source }) => ({ index, role, text, source }))
+    .sort((a, b) => a.seq - b.seq)
+    .map(({ seq, speaker, text }) => ({ seq, speaker, text }))
 }
 
 beforeEach(() => {
@@ -95,8 +96,8 @@ describe("the agent events route", () => {
     expect((await post(t, turn(roomName, 1, "Hi there"))).status).toBe(204)
 
     expect(await transcript(t)).toEqual([
-      { index: 0, role: VoiceRole.Assistant, text: "Hello!", source: TranscriptSource.Voice },
-      { index: 1, role: VoiceRole.User, text: "Hi there", source: TranscriptSource.Voice },
+      { seq: 0, speaker: "agent", text: "Hello!" },
+      { seq: 1, speaker: "client", text: "Hi there" },
     ])
   })
 
@@ -110,8 +111,8 @@ describe("the agent events route", () => {
     expect(await transcript(t)).toEqual([])
   })
 
-  it("replaces the turns with the history at the end, closes the session, and stays put", async () => {
-    const { t, roomName, sessionId } = await fixture()
+  it("replaces the turns with the history at the end, closes the interview, and stays put", async () => {
+    const { t, roomName, interviewId } = await fixture()
     const history = [
       { index: 0, role: VoiceRole.Assistant, text: "Hello! How can I help?", at: 100 },
       { index: 1, role: VoiceRole.User, text: "What's the time?", at: 101 },
@@ -131,56 +132,51 @@ describe("the agent events route", () => {
     expect((await post(t, end)).status).toBe(204)
     expect((await post(t, turn(roomName, 2, "Too late"))).status).toBe(204)
 
-    expect(await transcript(t)).toEqual(
-      history.map(({ index, role, text }) => ({
-        index,
-        role,
-        text,
-        source: TranscriptSource.Voice,
-      })),
-    )
+    expect(await transcript(t)).toEqual([
+      { seq: 0, speaker: "agent", text: "Hello! How can I help?" },
+      { seq: 1, speaker: "client", text: "What's the time?" },
+    ])
 
-    const session = await t.run(async (ctx) => await ctx.db.get(sessionId))
+    const interview = await t.run(async (ctx) => await ctx.db.get(interviewId))
 
-    expect(session).toMatchObject({ endedAt: 200, endReason: "participant_disconnected" })
+    expect(interview).toMatchObject({ status: "done", endedAt: 200, durationSec: 0 })
   })
 })
 
 describe("voice.saveTypedMessage", () => {
-  it("saves the owner's and a guest's typed message, and refuses everyone else", async () => {
-    const { t, owner, projectId, shareToken } = await fixture()
-    const stranger = await signedIn(t, "stranger@example.com")
+  it("saves the client's typed message in order, and refuses a wrong link", async () => {
+    const { t, token, interviewId } = await fixture()
 
-    await owner.as.mutation(api.voice.saveTypedMessage, { projectId, text: " My mic is broken " })
-    await t.mutation(api.voice.saveTypedMessage, { projectId, text: "Guest here", shareToken })
+    await t.mutation(api.voice.saveTypedMessage, { token, interviewId, text: " My mic is broken " })
+    await t.mutation(api.voice.saveTypedMessage, { token, interviewId, text: "Second" })
 
     await expect(
-      stranger.as.mutation(api.voice.saveTypedMessage, { projectId, text: "Hijack" }),
-    ).rejects.toThrow("Not allowed")
+      t.mutation(api.voice.saveTypedMessage, { token: "wrong", interviewId, text: "Hijack" }),
+    ).rejects.toThrow("isn't valid")
     await expect(
-      owner.as.mutation(api.voice.saveTypedMessage, { projectId, text: "   " }),
+      t.mutation(api.voice.saveTypedMessage, { token, interviewId, text: "   " }),
     ).rejects.toThrow("Write a message first.")
 
-    expect((await transcript(t)).map(({ text, source }) => ({ text, source }))).toEqual([
-      { text: "My mic is broken", source: TranscriptSource.Typed },
-      { text: "Guest here", source: TranscriptSource.Typed },
+    expect(await transcript(t)).toEqual([
+      { seq: 0, speaker: "client", text: "My mic is broken" },
+      { seq: 1, speaker: "client", text: "Second" },
     ])
   })
 })
 
 describe("projects.remove", () => {
-  it("deletes the project's voice sessions and transcript with it", async () => {
+  it("deletes the project's links, interviews and transcript with it", async () => {
     const { t, owner, projectId, roomName } = await fixture()
 
     await post(t, turn(roomName, 0, "Hello"))
-    await owner.as.mutation(api.voice.saveTypedMessage, { projectId, text: "Typed" })
     await owner.as.mutation(api.projects.remove, { projectId })
 
-    const left = await t.run(async (ctx) => ({
-      sessions: await ctx.db.query("voiceSessions").collect(),
-      transcripts: await ctx.db.query("voiceTranscripts").collect(),
-    }))
+    const left = await t.run(async (ctx) => [
+      ...(await ctx.db.query("clientLinks").collect()),
+      ...(await ctx.db.query("interviews").collect()),
+      ...(await ctx.db.query("transcriptTurns").collect()),
+    ])
 
-    expect(left).toEqual({ sessions: [], transcripts: [] })
+    expect(left).toEqual([])
   })
 })

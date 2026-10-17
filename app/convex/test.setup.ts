@@ -1,6 +1,9 @@
 /// <reference types="vite/client" />
 import { convexTest } from "convex-test"
 import type { Id } from "./_generated/dataModel"
+import { insertClientLink } from "./lib/clientLinks"
+import { insertProject } from "./lib/projects"
+import type { Stage } from "./lib/validators"
 import schema from "./schema"
 
 // The two dots in this file's name keep `convex deploy` from bundling it.
@@ -51,5 +54,16 @@ export async function storedFile(
     await rows.patch(fileId, { contentType })
 
     return fileId
+  })
+}
+
+export async function projectWithLink(t: TestBackend, ownerId: Id<"users">, stages: Stage[]) {
+  return await t.run(async (ctx) => {
+    const projectId = await insertProject(ctx, ownerId, {
+      clientName: "Demo client",
+      title: "Wedding planner",
+    })
+
+    return { projectId, ...(await insertClientLink(ctx, projectId, stages)) }
   })
 }

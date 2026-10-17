@@ -1,9 +1,11 @@
 import { ConvexError, v } from "convex/values"
 import type { Id } from "./_generated/dataModel"
 import { internalMutation, type MutationCtx } from "./_generated/server"
+import { insertClientLink } from "./lib/clientLinks"
 import { deleteOwnerData } from "./lib/ownerData"
 import { areTestFunctionsAllowed, isTestOwnerEmail, testOwnerEmail } from "./lib/owners"
-import { newShareToken } from "./lib/shareToken"
+import { insertProject } from "./lib/projects"
+import { stageValidator } from "./lib/validators"
 
 const TEST_FUNCTIONS_OFF =
   "Test functions are off on this deployment: they run only where ALLOW_TEST_FUNCTIONS=true (dev)."
@@ -63,12 +65,13 @@ async function deleteUserWithAuth(ctx: MutationCtx, userId: Id<"users">): Promis
 export const createTestProject = internalMutation({
   args: {
     ownerSuffix: v.string(),
-    name: v.string(),
+    clientName: v.string(),
+    stages: v.array(stageValidator),
   },
   returns: v.object({
     ownerId: v.id("users"),
     projectId: v.id("projects"),
-    shareToken: v.string(),
+    token: v.string(),
   }),
   handler: async (ctx, args) => {
     requireTestDeployment()
@@ -77,18 +80,13 @@ export const createTestProject = internalMutation({
       email: testOwnerEmail(args.ownerSuffix),
       name: "Test owner",
     })
-    const shareToken = newShareToken()
-    const projectId = await ctx.db.insert("projects", {
-      ownerId,
-      name: args.name,
-      shareToken,
+    const projectId = await insertProject(ctx, ownerId, {
+      clientName: args.clientName,
+      title: args.clientName,
     })
+    const { token } = await insertClientLink(ctx, projectId, args.stages)
 
-    return {
-      ownerId,
-      projectId,
-      shareToken,
-    }
+    return { ownerId, projectId, token }
   },
 })
 

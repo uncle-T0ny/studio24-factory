@@ -1,11 +1,5 @@
 import { describe, expect, it } from "vitest"
-import {
-  bearerSecret,
-  DEFAULT_SESSIONS_PER_DAY,
-  isAgentRequest,
-  secretsMatch,
-  sessionsPerDay,
-} from "./voice"
+import { bearerSecret, isAgentRequest, secretsMatch } from "./voice"
 
 describe("the agent secret", () => {
   it("is read from a bearer header only", () => {
@@ -28,18 +22,5 @@ describe("the agent secret", () => {
     expect(await isAgentRequest("Bearer x", undefined)).toBe(false)
     expect(await isAgentRequest("Bearer x", "  ")).toBe(false)
     expect(await isAgentRequest("Bearer x", "x")).toBe(true)
-  })
-})
-
-describe("sessionsPerDay", () => {
-  it("reads a whole number, with a default when unset", () => {
-    expect(sessionsPerDay(undefined)).toBe(DEFAULT_SESSIONS_PER_DAY)
-    expect(sessionsPerDay(" ")).toBe(DEFAULT_SESSIONS_PER_DAY)
-    expect(sessionsPerDay("0")).toBe(0)
-    expect(sessionsPerDay("15")).toBe(15)
-
-    for (const raw of ["-1", "2.5", "ten"]) {
-      expect(() => sessionsPerDay(raw)).toThrow("VOICE_SESSIONS_PER_DAY must be a whole number.")
-    }
   })
 })

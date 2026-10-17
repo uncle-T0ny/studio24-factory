@@ -26,7 +26,6 @@ export const VOICE_KEYS = [
 export const OPTIONAL_KEYS = [
   ...VOICE_KEYS,
   "OPENROUTER_MODEL",
-  "VOICE_SESSIONS_PER_DAY",
   "AUTH_RESEND_KEY",
   "AUTH_EMAIL_FROM",
 ] as const

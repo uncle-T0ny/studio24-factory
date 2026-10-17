@@ -1,41 +1,43 @@
+import { v } from "convex/values"
 import { customCtx, customMutation, customQuery } from "convex-helpers/server/customFunctions"
-import { accessArgs, accessFor, requireOwner } from "./access"
+import { requireClientStage, requireOwnedProject, requireOwner, type ReadCtx } from "./access"
+import type { Stage } from "./validators"
+import type { Id } from "../_generated/dataModel"
 import { mutation, query } from "../_generated/server"
 
-export const ownerQuery = customQuery(
-  query,
-  customCtx(async (ctx) => ({
-    ownerId: await requireOwner(ctx),
-    access: accessFor(ctx, undefined),
-  })),
-)
+async function ownerCtx(ctx: ReadCtx) {
+  const ownerId = await requireOwner(ctx)
 
-export const ownerMutation = customMutation(
-  mutation,
-  customCtx(async (ctx) => ({
-    ownerId: await requireOwner(ctx),
-    access: accessFor(ctx, undefined),
-  })),
-)
+  return {
+    ownerId,
+    requireProject: (projectId: Id<"projects">) => requireOwnedProject(ctx, ownerId, projectId),
+  }
+}
 
-export const projectQuery = customQuery(query, {
-  args: accessArgs,
-  input: (ctx, { shareToken }) => ({
-    ctx: {
-      access: accessFor(ctx, shareToken),
-    },
-    args: {},
-  }),
-})
+export const ownerQuery = customQuery(query, customCtx(ownerCtx))
 
-export const projectMutation = customMutation(mutation, {
-  args: accessArgs,
-  input: (ctx, { shareToken }) => ({
-    ctx: {
-      access: accessFor(ctx, shareToken),
-    },
-    args: {},
-  }),
-})
+export const ownerMutation = customMutation(mutation, customCtx(ownerCtx))
+
+const clientArgs = { token: v.string() }
+
+export function clientQuery(stage: Stage) {
+  return customQuery(query, {
+    args: clientArgs,
+    input: async (ctx, { token }) => ({
+      ctx: { client: await requireClientStage(ctx, token, stage) },
+      args: {},
+    }),
+  })
+}
+
+export function clientMutation(stage: Stage) {
+  return customMutation(mutation, {
+    args: clientArgs,
+    input: async (ctx, { token }) => ({
+      ctx: { client: await requireClientStage(ctx, token, stage) },
+      args: {},
+    }),
+  })
+}
 
 export const publicQuery = query

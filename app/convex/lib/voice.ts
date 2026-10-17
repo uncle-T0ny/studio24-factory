@@ -12,57 +12,18 @@ export const VOICE_KEYS = [
 
 export const AGENT_EVENTS_PATH = "/voice/agent-events"
 
-export const DEFAULT_SESSIONS_PER_DAY = 20
-
 export const MAX_TURN_LENGTH = 4000
 export const MAX_TURNS = 500
 
 export const VOICE_NOT_SET_UP =
   "Voice is off on this deployment: it needs its LiveKit, Deepgram and OpenRouter keys."
-export const VOICE_CAP_REACHED =
-  "Today's voice sessions are used up. They start again at 00:00 UTC."
 
 export enum VoiceRole {
   User = "user",
   Assistant = "assistant",
 }
 
-export enum TranscriptSource {
-  Voice = "voice",
-  Typed = "typed",
-}
-
 export const voiceRoleValidator = v.union(v.literal(VoiceRole.User), v.literal(VoiceRole.Assistant))
-
-export const transcriptSourceValidator = v.union(
-  v.literal(TranscriptSource.Voice),
-  v.literal(TranscriptSource.Typed),
-)
-
-export const voiceSessionFields = {
-  ownerId: v.id("users"),
-  projectId: v.id("projects"),
-  roomName: v.string(),
-  startedAt: v.number(),
-  endedAt: v.optional(v.number()),
-  endReason: v.optional(v.string()),
-}
-
-export const voiceTranscriptFields = {
-  ownerId: v.id("users"),
-  projectId: v.id("projects"),
-  sessionId: v.optional(v.id("voiceSessions")),
-  index: v.optional(v.number()),
-  role: voiceRoleValidator,
-  text: v.string(),
-  at: v.number(),
-  source: transcriptSourceValidator,
-}
-
-export const voiceUsageFields = {
-  day: v.string(),
-  sessions: v.number(),
-}
 
 export const turnValidator = v.object({
   index: v.number(),
@@ -93,7 +54,7 @@ export const voiceConnectionValidator = v.object({
   serverUrl: v.string(),
   participantToken: v.string(),
   roomName: v.string(),
-  sessionId: v.id("voiceSessions"),
+  interviewId: v.id("interviews"),
 })
 
 export type Turn = Infer<typeof turnValidator>
@@ -132,26 +93,6 @@ export function liveKitKeys(env: Env): LiveKitKeys {
     apiKey: envValue(env, "LIVEKIT_API_KEY"),
     apiSecret: envValue(env, "LIVEKIT_API_SECRET"),
   }
-}
-
-export function sessionsPerDay(raw: string | undefined): number {
-  const value = raw?.trim() ?? ""
-
-  if (value.length === 0) {
-    return DEFAULT_SESSIONS_PER_DAY
-  }
-
-  const cap = Number(value)
-
-  if (!Number.isInteger(cap) || cap < 0) {
-    throw new ConvexError("VOICE_SESSIONS_PER_DAY must be a whole number.")
-  }
-
-  return cap
-}
-
-export function usageDay(now: number): string {
-  return new Date(now).toISOString().slice(0, 10)
 }
 
 export function cleanTurnText(text: string): string {
