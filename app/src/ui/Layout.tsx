@@ -4,7 +4,6 @@ import { classNames } from "./types"
 
 export enum CardElement {
   Div = "div",
-  // One entry of a feed, e.g. a feedback entry: an article named by `label`.
   Article = "article",
 }
 
@@ -53,7 +52,6 @@ export interface CardHeaderProps {
   actions?: ReactNode
 }
 
-// A card's first row: what it is on the left, its controls on the right; wraps when narrow.
 export function CardHeader({ children, actions }: CardHeaderProps) {
   return (
     <div className="ui-card-header">

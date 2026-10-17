@@ -5,7 +5,6 @@ import { expect, test } from "./support/fixtures"
 
 type ChosenFile = string | { name: string; mimeType: string; buffer: Buffer }
 
-// Clicks "Import project" and picks the file in the file chooser it opens.
 async function importFile(page: Page, file: ChosenFile): Promise<void> {
   const choosing = page.waitForEvent("filechooser")
 

@@ -17,9 +17,7 @@ export interface DialogProps {
   children: ReactNode
   footer?: ReactNode
   size?: DialogSize
-  // A click on the dimmed backdrop closes it: for viewers, never for forms with typed text.
   closeOnBackdrop?: boolean
-  // With onSubmit, the body and the footer are one form, so a submit button can sit in the footer.
   onSubmit?: (event: SubmitEvent<HTMLFormElement>) => void
 }
 
@@ -134,8 +132,6 @@ function OpenDialog({
   )
 }
 
-// A modal dialog on the native <dialog>: it traps focus, Escape closes it, the page behind is inert.
-// It focuses the element marked `data-autofocus` when it opens, else its first focusable one.
 export function Dialog({ open, ...rest }: DialogProps) {
   if (!open) {
     return null
@@ -151,7 +147,6 @@ export interface DialogSurfaceProps {
   size?: DialogSize
 }
 
-// The dialog's look, drawn in place with no modal behaviour: for /ui-kit.
 export function DialogSurface({
   title,
   children,

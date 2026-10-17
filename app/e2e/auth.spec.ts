@@ -84,8 +84,6 @@ test("an email that has an account is told to sign in instead", async ({ page })
   }
 })
 
-// accounts:status doesn't reveal the allowlist, so the email reads as one with no account; the
-// sign-up it offers refuses the email.
 test("an email outside the allowlist is offered sign-up, which refuses it", async ({ page }) => {
   const email = strangerEmail()
 

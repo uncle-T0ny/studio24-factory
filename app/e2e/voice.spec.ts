@@ -1,8 +1,6 @@
 import { createProject } from "./support/app"
 import { expect, test } from "./support/fixtures"
 
-// Voice is off on the e2e backend (it has no LiveKit, Deepgram or OpenRouter keys), so the
-// project page shows no voice card and no mic, and the owner works through the typed message.
 test("voice off: no mic or voice card, and a typed message is saved", async ({ page, owner }) => {
   await createProject(page, `Voice (${owner.suffix})`)
 

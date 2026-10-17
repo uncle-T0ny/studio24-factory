@@ -1,7 +1,3 @@
-// Starts (or reuses) the e2e suite's own local anonymous Convex backend, pushes the functions,
-// sets the auth environment, then prints READY_LINE and stays up until it gets SIGTERM/SIGINT.
-// Playwright runs it as a webServer; run it by hand with `npm run e2e:backend`. The Convex CLI
-// runs in app/.e2e/ (E2E_DIR), so it never writes app/.env.local.
 import { execFileSync, spawn } from "node:child_process"
 import {
   assertLocalDeployment,
@@ -139,9 +135,6 @@ async function main(): Promise<void> {
   prepareE2eDir()
 
   if (await isBackendUp()) {
-    // A backend already answers on our port: it must be this worktree's own (runConvex checks
-    // app/.e2e/.env.local, and the admin key only works on our deployment). Its convex dev keeps the
-    // functions in sync, so only the environment is checked here.
     log(`reusing the local backend at ${CONVEX_URL}`)
     ensureBackendEnv()
     console.log(READY_LINE)

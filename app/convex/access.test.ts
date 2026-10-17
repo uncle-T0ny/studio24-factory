@@ -3,10 +3,6 @@ import { api } from "./_generated/api"
 import { AccountStatus } from "./lib/signIn"
 import { newBackend, OWNER_EMAILS, signedIn, type TestCaller } from "./test.setup"
 
-// The access rules end to end, through the public functions (lib/functions.ts, lib/access.ts):
-// the owner, another owner, a signed-in user off the allowlist, nobody, the project's share
-// token, a wrong token and a revoked one.
-
 async function fixture() {
   const t = newBackend()
   const owner = await signedIn(t, "owner@example.com")

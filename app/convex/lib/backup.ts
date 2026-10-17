@@ -3,11 +3,6 @@ import { validate, ValidationError } from "convex-helpers/validators"
 import { APP_NAME, BACKUP_FORMAT } from "./appConfig"
 import { projectContentValidator, type ProjectContent } from "./validators"
 
-// A project export: one JSON file, a versioned envelope {format, version, exportedAt, data}
-// around the resource's own content. The envelope is generic; `data` is checked against the
-// resource's validator (projectContentValidator for the example). Shared by convex/backup.ts and
-// the browser (src/backup/), which builds and reads the file.
-
 export const BACKUP_VERSION = 1
 
 const NOT_AN_EXPORT = `This file isn't a ${APP_NAME} project export.`
@@ -62,7 +57,6 @@ function assertData<T>(validator: Validator<T, "required", string>, data: unknow
   return data as T
 }
 
-// Reads an export's text: the envelope's format and version first, then its data's shape.
 export function parseBackup<T>(
   text: string,
   validator: Validator<T, "required", string>,
@@ -86,7 +80,6 @@ export function parseProjectBackup(text: string): BackupEnvelope<ProjectContent>
   return parseBackup(text, projectContentValidator)
 }
 
-// "<name> - Project export - <date>.json", with the characters a file name can't hold dropped.
 export function backupFileName(name: string, exportedAt: string): string {
   const safeName = name.replace(FILE_NAME_FORBIDDEN, "").replace(/\s+/g, " ").trim()
   const date = exportedAt.slice(0, "yyyy-mm-dd".length)

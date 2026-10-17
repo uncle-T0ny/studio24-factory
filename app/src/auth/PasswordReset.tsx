@@ -32,7 +32,6 @@ interface PasswordResetProps {
   onBack: () => void
 }
 
-// A text field's value; a file input or a missing field reads as empty.
 function formText(formData: FormData, name: string): string {
   const value = formData.get(name)
 

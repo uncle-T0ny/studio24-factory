@@ -36,26 +36,14 @@ import {
 } from "../ui"
 import "./voice.css"
 
-// A voice session with the agent (agent/), on the UI kit. Start asks for the microphone first,
-// then calls `connect`, which mints the LiveKit token (convex/livekit.ts), and joins the room;
-// the token dispatches the agent. The page shows the agent's state and the live transcript, and
-// a typed fallback when the microphone is blocked or the agent doesn't join in time.
-//
-// It manages the Room itself instead of components-react's useSession: useSession fetches a
-// token as soon as it mounts (prepareConnection), and here every token counts against the
-// deployment's daily cap, so a token is minted only on a Start click.
-
 export interface VoiceConnectionDetails {
   serverUrl: string
   participantToken: string
 }
 
 export interface VoiceSessionProps {
-  // Mints a token for a new session; called once per Start, after the microphone works.
   connect: () => Promise<VoiceConnectionDetails>
-  // Saves a message typed in the fallback form.
   onTypedMessage: (text: string) => Promise<void>
-  // How long to wait for the agent to join before offering the fallback.
   agentJoinTimeoutMs: number
 }
 
@@ -86,7 +74,6 @@ function useVoiceAttempt(room: Room, { connect, agentJoinTimeoutMs }: VoiceSessi
       clearAgentTimer()
       setAttempt((current) => (current === Attempt.InRoom ? Attempt.Ended : current))
     }
-    // The agent leaving ends the session (its time limit, or an error on its side).
     const onParticipantDisconnected = (participant: RemoteParticipant) => {
       if (participant.isAgent) {
         void room.disconnect()
@@ -251,6 +238,7 @@ function VoiceCard({ room, ...props }: VoiceSessionProps & { room: Room }) {
   )
 }
 
+// Not components-react's useSession: it mints a token on mount, and each token counts against the daily cap.
 export function VoiceSession(props: VoiceSessionProps) {
   const [room] = useState(() => new Room())
 

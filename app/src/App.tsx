@@ -28,7 +28,6 @@ function HomePage() {
   )
 }
 
-// The kit page is a working tool for the owner, so it sits behind sign-in like the projects.
 function UiKitRoute() {
   return (
     <>

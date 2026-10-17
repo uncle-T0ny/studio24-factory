@@ -73,7 +73,6 @@ interface ScreenshotState {
   remove: () => void
 }
 
-// The optional screenshot: a chosen file, or an image pasted anywhere while the dialog is open.
 function useScreenshot(
   setError: ErrorState["setError"],
   showError: ErrorState["showError"],
@@ -110,7 +109,6 @@ function useScreenshot(
     [setError, showError],
   )
 
-  // A paste anywhere while the dialog is open: an image on the clipboard becomes the screenshot.
   useEffect(() => {
     const handlePaste = (event: ClipboardEvent) => {
       const data = event.clipboardData
@@ -259,7 +257,6 @@ export interface FeedbackDialogProps extends FeedbackFormProps {
   open: boolean
 }
 
-// Mounted fresh on every open, so a closed dialog forgets its draft.
 export function FeedbackDialog({ open, ...form }: FeedbackDialogProps) {
   return open ? <FeedbackForm {...form} /> : null
 }

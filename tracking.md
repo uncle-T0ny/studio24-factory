@@ -9,3 +9,4 @@ My instructions to the AI, one line per 5 minutes:
 - 17:05 (T+10): NFR rules in a pre-commit skill.
 - 17:10 (T+15): Strip template comments; add the Studio24 logo.
 - 17:15 (T+20): Commit README re-wrap; more parallel work.
+- 17:20 (T+25): Skills in parallel, tested separately; keep the dev app.

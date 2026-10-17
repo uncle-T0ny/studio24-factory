@@ -3,11 +3,9 @@ import { Dialog, DialogSize } from "./Dialog"
 
 export interface ThumbnailProps {
   src: string
-  // What the image shows, e.g. "Screenshot". The button reads "Enlarge <alt>".
   alt: string
 }
 
-// A small image; a click opens it full size in a dialog.
 export function Thumbnail({ src, alt }: ThumbnailProps) {
   const [isOpen, setIsOpen] = useState(false)
 

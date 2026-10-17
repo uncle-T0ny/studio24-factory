@@ -1,6 +1,5 @@
 import { systemClipboard } from "../lib/clipboard"
 
-// The share link's path is /p/<token> (App.tsx routes it to the share-link page).
 export function shareLinkOf(origin: string, shareToken: string): string {
   const base = origin.replace(/\/+$/, "")
 

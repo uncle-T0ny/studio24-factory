@@ -5,10 +5,6 @@ import { deleteOwnerData } from "./lib/ownerData"
 import { areTestFunctionsAllowed, isTestOwnerEmail, testOwnerEmail } from "./lib/owners"
 import { newShareToken } from "./lib/shareToken"
 
-// Internal functions for the e2e suite and the prove scripts. Each caller uses its own test owner
-// (test-owner+<suffix>@example.com), and every function throws unless the deployment sets
-// ALLOW_TEST_FUNCTIONS=true (dev and the e2e backend; never prod).
-
 const TEST_FUNCTIONS_OFF =
   "Test functions are off on this deployment: they run only where ALLOW_TEST_FUNCTIONS=true (dev)."
 const NOT_A_TEST_OWNER = "Only a test owner's data can be deleted here."
@@ -32,7 +28,6 @@ async function requireTestOwner(ctx: MutationCtx, ownerId: Id<"users">): Promise
   }
 }
 
-// The user with her data (lib/ownerData.ts), sessions, refresh tokens and accounts.
 async function deleteUserWithAuth(ctx: MutationCtx, userId: Id<"users">): Promise<void> {
   await deleteOwnerData(ctx, userId)
 

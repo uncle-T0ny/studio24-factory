@@ -3,15 +3,8 @@ import { parseEnv } from "node:util"
 import { run, start, type Started } from "./processes.ts"
 import { APP_DIR, envLine, readConvexEnvFile } from "./settings.ts"
 
-// The local Convex deployment, through the app's own Convex CLI run as `node <its script>`.
-// CONVEX_AGENT_MODE=anonymous makes the CLI use a local anonymous deployment even in an
-// interactive terminal and even when you are logged in to Convex (convex 1.47,
-// cli/lib/deploymentSelection.js: no login prompt, no cloud project). The deployment's state
-// lives in app/.convex/ and app/.env.local names it, so a re-run reuses it.
-
 const CONVEX_BIN = path.join(APP_DIR, "node_modules", "convex", "bin", "main.js")
 const LOCAL_DEPLOYMENT = /^(anonymous|local):/
-// Shell variables that would choose another deployment; never passed to the CLI.
 const DEPLOYMENT_ENV_NAMES = new Set([
   "CONVEX_DEPLOYMENT",
   "CONVEX_DEPLOY_KEY",
@@ -22,7 +15,6 @@ const DEPLOYMENT_ENV_NAMES = new Set([
 ])
 
 export const FUNCTIONS_READY = /Convex functions ready/
-// The first push failed (a type error, a bad schema): convex dev would wait for a fix.
 export const PUSH_FAILED = /Found \d+ errors? in|✖/
 
 function convexEnv(): NodeJS.ProcessEnv {
@@ -35,7 +27,6 @@ function convex(args: string[], input?: string): Promise<string> {
   return run(process.execPath, [CONVEX_BIN, ...args], { cwd: APP_DIR, env: convexEnv(), input })
 }
 
-// npm start never touches a cloud deployment: it refuses when app/.env.local names one.
 export function assertLocalDeployment(): void {
   const deployment = readConvexEnvFile().CONVEX_DEPLOYMENT
 
@@ -83,10 +74,7 @@ export interface EnvChanges {
   removed: string[]
 }
 
-// Makes the deployment's env match: sets what differs (every value through stdin, none on a
-// command line) and removes the managed names that have no value any more. The `once` values
-// (the auth key pair) are made and set only when one of them is missing: a new pair on every
-// run would sign everyone out.
+// The auth key pair is set only when missing: a new pair on every run would sign everyone out.
 export async function syncEnv(
   desired: Record<string, string>,
   managed: readonly string[],

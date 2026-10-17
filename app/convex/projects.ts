@@ -12,9 +12,6 @@ import { newShareToken } from "./lib/shareToken"
 import { deleteProjectVoiceData } from "./lib/voiceData"
 import schema from "./schema"
 
-// The example resource: an owner's projects, each with a share link (/p/<token>) that lets a
-// guest open and rename that one project, with no account.
-
 export const create = ownerMutation({
   args: {
     name: v.string(),
@@ -41,7 +38,6 @@ export const listMine = ownerQuery({
   },
 })
 
-// The owner's own project, or null for any other caller or a malformed id.
 export const get = projectQuery({
   args: {
     projectId: v.string(),
@@ -60,7 +56,6 @@ export const get = projectQuery({
   },
 })
 
-// The share link: anyone with the token may open the project, without its owner's id.
 export const getByShareToken = publicQuery({
   args: {
     shareToken: v.string(),
@@ -79,7 +74,6 @@ export const getByShareToken = publicQuery({
   },
 })
 
-// The owner, or a guest with the project's share token.
 export const rename = projectMutation({
   args: {
     projectId: v.id("projects"),

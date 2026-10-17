@@ -3,7 +3,6 @@ import { classNames, Tone } from "./types"
 
 export interface ToastProps {
   tone?: Tone
-  // Pinned to the bottom of the window instead of its positioned parent (e.g. the editor).
   fixed?: boolean
   children: ReactNode
 }
