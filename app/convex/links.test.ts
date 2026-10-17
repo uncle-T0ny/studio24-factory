@@ -67,8 +67,9 @@ describe("client links", () => {
   it("opens the final app only to a signed-in client", async () => {
     const t = newBackend()
     const { as, userId } = await signedIn(t, "owner@example.com")
-    const { token } = await projectWithLink(t, userId, ["final"])
+    const { projectId, token } = await projectWithLink(t, userId, ["final"])
 
+    await as.mutation(api.projects.moveStage, { projectId, stage: "final" })
     await expect(t.query(api.links.finalApp, { token })).rejects.toThrow("Sign in")
     expect(await as.query(api.links.finalApp, { token })).toEqual({
       title: "Wedding planner",

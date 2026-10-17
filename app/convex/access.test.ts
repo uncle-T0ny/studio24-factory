@@ -1,6 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { api } from "./_generated/api"
-import { LINK_NOT_VALID, requireClientStage, SIGN_IN_FIRST, WRONG_STAGE } from "./lib/access"
+import {
+  LINK_NOT_VALID,
+  notAtStage,
+  requireClientStage,
+  SIGN_IN_FIRST,
+  WRONG_STAGE,
+} from "./lib/access"
 import { insertClientLink } from "./lib/clientLinks"
 import { hashToken } from "./lib/shareToken"
 import { AccountStatus } from "./lib/signIn"
@@ -67,6 +73,13 @@ describe("client link access", () => {
     await expect(open(t, token, "prd")).rejects.toThrow(WRONG_STAGE)
   })
 
+  it("refuses a stage the link opens while the project is at another stage, naming that stage", async () => {
+    const { t, projectId } = await fixture()
+    const { token } = await t.run(async (ctx) => await insertClientLink(ctx, projectId, ["prd"]))
+
+    await expect(open(t, token, "prd")).rejects.toThrow(notAtStage("interview"))
+  })
+
   it("rejects an unknown, an empty, a revoked and an expired link", async () => {
     const { t, linkId, token } = await fixture()
 
@@ -82,7 +95,11 @@ describe("client link access", () => {
 
   it("asks for a sign-in on a link to the final app", async () => {
     const { t, owner, projectId } = await fixture()
-    const { token } = await t.run(async (ctx) => await insertClientLink(ctx, projectId, ["final"]))
+    const { token } = await t.run(async (ctx) => {
+      await ctx.db.patch(projectId, { stage: "final" })
+
+      return await insertClientLink(ctx, projectId, ["final"])
+    })
 
     await expect(open(t, token, "final")).rejects.toThrow(SIGN_IN_FIRST)
     expect(
