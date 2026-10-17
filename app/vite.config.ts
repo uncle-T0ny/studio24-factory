@@ -26,7 +26,7 @@ export default defineConfig({
     __APP_VERSION__: JSON.stringify(gitShortCommit()),
   },
   test: {
-    include: ["src/**/*.test.ts", "convex/**/*.test.ts"],
+    include: ["src/**/*.test.ts", "convex/**/*.test.ts", "scripts/**/*.test.ts"],
     environment: "node",
   },
 })
