@@ -70,7 +70,7 @@ describe("the text interview", () => {
     await t.mutation(api.interviews.startText, { token })
     await settle(t)
 
-    const body = JSON.parse(String(fetchMock.mock.calls[0]?.[1]?.body)) as {
+    const body = JSON.parse(fetchMock.mock.calls[0]?.[1]?.body as string) as {
       messages: { role: string; content: string }[]
     }
 
