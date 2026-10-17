@@ -1,109 +1,87 @@
-import { cleanTurnText, MAX_TURNS, TranscriptSource, type AgentEvent, type Turn } from "./voice"
-import type { Doc, Id } from "../_generated/dataModel"
+import { cleanTurnText, MAX_TURNS, VoiceRole, type AgentEvent, type Turn } from "./voice"
+import type { Doc } from "../_generated/dataModel"
 import type { MutationCtx } from "../_generated/server"
 
-async function sessionByRoom(
+async function interviewByRoom(
   ctx: MutationCtx,
   roomName: string,
-): Promise<Doc<"voiceSessions"> | null> {
+): Promise<Doc<"interviews"> | null> {
   return await ctx.db
-    .query("voiceSessions")
+    .query("interviews")
     .withIndex("by_roomName", (q) => q.eq("roomName", roomName))
     .unique()
 }
 
-async function sessionTurns(
-  ctx: MutationCtx,
-  sessionId: Id<"voiceSessions">,
-): Promise<Doc<"voiceTranscripts">[]> {
-  return await ctx.db
-    .query("voiceTranscripts")
-    .withIndex("by_session", (q) => q.eq("sessionId", sessionId))
-    .collect()
-}
-
-function turnRow(session: Doc<"voiceSessions">, turn: Turn) {
+function turnRow(interview: Doc<"interviews">, turn: Turn) {
   return {
-    ownerId: session.ownerId,
-    projectId: session.projectId,
-    sessionId: session._id,
-    index: turn.index,
-    role: turn.role,
+    interviewId: interview._id,
+    projectId: interview.projectId,
+    seq: turn.index,
+    speaker: turn.role === VoiceRole.User ? ("client" as const) : ("agent" as const),
     text: cleanTurnText(turn.text),
     at: turn.at,
-    source: TranscriptSource.Voice,
   }
 }
 
-async function storeTurn(ctx: MutationCtx, session: Doc<"voiceSessions">, turn: Turn) {
-  if (session.endedAt !== undefined || turn.index < 0 || turn.index >= MAX_TURNS) {
+async function storeTurn(ctx: MutationCtx, interview: Doc<"interviews">, turn: Turn) {
+  if (interview.endedAt !== undefined || turn.index < 0 || turn.index >= MAX_TURNS) {
     return
   }
 
   const stored = await ctx.db
-    .query("voiceTranscripts")
-    .withIndex("by_session", (q) => q.eq("sessionId", session._id).eq("index", turn.index))
+    .query("transcriptTurns")
+    .withIndex("by_interview", (q) => q.eq("interviewId", interview._id).eq("seq", turn.index))
     .unique()
 
   if (stored) {
-    await ctx.db.patch(stored._id, turnRow(session, turn))
+    await ctx.db.patch(stored._id, turnRow(interview, turn))
   } else {
-    await ctx.db.insert("voiceTranscripts", turnRow(session, turn))
+    await ctx.db.insert("transcriptTurns", turnRow(interview, turn))
   }
 }
 
-async function endSession(
+async function endInterview(
   ctx: MutationCtx,
-  session: Doc<"voiceSessions">,
+  interview: Doc<"interviews">,
   event: Extract<AgentEvent, { type: "end" }>,
 ) {
-  for (const row of await sessionTurns(ctx, session._id)) {
+  const stored = await ctx.db
+    .query("transcriptTurns")
+    .withIndex("by_interview", (q) => q.eq("interviewId", interview._id))
+    .collect()
+
+  for (const row of stored) {
     await ctx.db.delete(row._id)
   }
 
   for (const turn of event.turns.slice(0, MAX_TURNS)) {
-    await ctx.db.insert("voiceTranscripts", turnRow(session, turn))
+    await ctx.db.insert("transcriptTurns", turnRow(interview, turn))
   }
 
-  await ctx.db.patch(session._id, {
-    endedAt: session.endedAt ?? event.at,
-    endReason: event.reason,
+  const endedAt = interview.endedAt ?? event.at
+
+  await ctx.db.patch(interview._id, {
+    status: "done",
+    endedAt,
+    durationSec: Math.round((endedAt - (interview.startedAt ?? endedAt)) / 1000),
   })
 }
 
 export async function recordAgentEvent(ctx: MutationCtx, event: AgentEvent): Promise<boolean> {
-  const session = await sessionByRoom(ctx, event.roomName)
+  const interview = await interviewByRoom(ctx, event.roomName)
 
-  if (!session) {
+  if (!interview) {
     return false
   }
 
   switch (event.type) {
     case "turn":
-      await storeTurn(ctx, session, event)
+      await storeTurn(ctx, interview, event)
       break
     case "end":
-      await endSession(ctx, session, event)
+      await endInterview(ctx, interview, event)
       break
   }
 
   return true
-}
-
-export async function deleteProjectVoiceData(
-  ctx: MutationCtx,
-  projectId: Id<"projects">,
-): Promise<void> {
-  const transcripts = await ctx.db
-    .query("voiceTranscripts")
-    .withIndex("by_project", (q) => q.eq("projectId", projectId))
-    .collect()
-  const sessions = await ctx.db
-    .query("voiceSessions")
-    .withIndex("by_project", (q) => q.eq("projectId", projectId))
-    .collect()
-
-  for (const row of [...transcripts, ...sessions]) {
-    await ctx.db.delete(row._id)
-  }
 }

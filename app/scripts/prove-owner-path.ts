@@ -52,26 +52,22 @@ async function prove(convexUrl: string) {
 
   owner.setAuth(ownerToken)
 
-  const projectId = await owner.mutation(api.projects.create, { name: "Proof project" })
+  const projectId = await owner.mutation(api.projects.create, {
+    clientName: "Proof client",
+    title: "Proof project",
+  })
   const projects = await owner.query(api.projects.listMine, {})
-  const project = projects.find((candidate) => candidate._id === projectId)
 
-  check(project !== undefined, "the owner lists the new project")
-  check(project.shareToken.length >= 32, "the project has a long random share token")
-
-  await owner.mutation(api.projects.rename, { projectId, name: "Proof project, renamed" })
   check(
-    (await owner.query(api.projects.get, { projectId }))?.name === "Proof project, renamed",
-    "the owner renames the project",
+    projects.some((candidate) => candidate._id === projectId),
+    "the owner lists the new project",
   )
   check(
-    (await anonymous.query(api.projects.get, { projectId })) === null,
+    await anonymous.query(api.projects.get, { projectId }).then(
+      () => false,
+      () => true,
+    ),
     "a signed-out client can't read the project",
-  )
-  check(
-    (await anonymous.query(api.projects.getByShareToken, { shareToken: project.shareToken }))
-      ?._id === projectId,
-    "the share token opens the project",
   )
 }
 

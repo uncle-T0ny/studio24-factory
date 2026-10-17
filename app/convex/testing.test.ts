@@ -3,6 +3,7 @@ import { internal } from "./_generated/api"
 import { FeedbackStatus, FeedbackType } from "./lib/feedback"
 import { OWNER_SCOPED_TABLES } from "./lib/ownerData"
 import { testOwnerEmail } from "./lib/owners"
+import { PROJECT_SCOPED_TABLES } from "./lib/projectData"
 import schema from "./schema"
 import { newBackend, storedFile } from "./test.setup"
 
@@ -29,6 +30,16 @@ describe("the owner-scoped table list", () => {
   })
 })
 
+describe("the project-scoped table list", () => {
+  it("names every table with a projectId field, so deleting a project misses none", () => {
+    const withProject = Object.keys(schema.tables).filter((table) =>
+      fieldsOf(table).includes("projectId"),
+    )
+
+    expect([...PROJECT_SCOPED_TABLES].sort()).toEqual(withProject.sort())
+  })
+})
+
 describe("testing functions", () => {
   it("refuse to run unless ALLOW_TEST_FUNCTIONS=true", async () => {
     const t = newBackend()
@@ -47,7 +58,8 @@ describe("testing functions", () => {
     const t = newBackend()
     const { ownerId } = await t.mutation(internal.testing.createTestProject, {
       ownerSuffix: SUFFIX,
-      name: "Spring launch",
+      clientName: "Spring Bakery",
+      stages: ["interview"],
     })
     const screenshotId = await storedFile(t, "image/png", 10)
 

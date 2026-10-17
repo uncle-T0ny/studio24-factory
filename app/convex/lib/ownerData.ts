@@ -1,3 +1,4 @@
+import { deleteProjectData } from "./projectData"
 import type { Id, TableNames } from "../_generated/dataModel"
 import type { MutationCtx } from "../_generated/server"
 
@@ -20,6 +21,10 @@ export const OWNER_SCOPED_TABLES: readonly OwnerScopedTable[] = [
         .withIndex("by_owner", (q) => q.eq("ownerId", ownerId))
         .collect()
 
+      for (const project of projects) {
+        await deleteProjectData(ctx, project._id)
+      }
+
       return projects.map((project) => ({ id: project._id, files: [] }))
     },
   },
@@ -38,25 +43,14 @@ export const OWNER_SCOPED_TABLES: readonly OwnerScopedTable[] = [
     },
   },
   {
-    table: "voiceSessions",
+    table: "templates",
     rows: async (ctx, ownerId) => {
-      const sessions = await ctx.db
-        .query("voiceSessions")
+      const templates = await ctx.db
+        .query("templates")
         .withIndex("by_owner", (q) => q.eq("ownerId", ownerId))
         .collect()
 
-      return sessions.map((session) => ({ id: session._id, files: [] }))
-    },
-  },
-  {
-    table: "voiceTranscripts",
-    rows: async (ctx, ownerId) => {
-      const turns = await ctx.db
-        .query("voiceTranscripts")
-        .withIndex("by_owner", (q) => q.eq("ownerId", ownerId))
-        .collect()
-
-      return turns.map((turn) => ({ id: turn._id, files: [] }))
+      return templates.map((template) => ({ id: template._id, files: [] }))
     },
   },
 ]

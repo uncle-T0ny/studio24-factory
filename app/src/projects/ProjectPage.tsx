@@ -1,36 +1,27 @@
 import { Authenticated, AuthLoading, Unauthenticated, useQuery } from "convex/react"
 import { Navigate, useParams } from "react-router-dom"
-import { ProjectAssistant } from "./ProjectAssistant"
-import { RenameForm } from "./RenameForm"
 import { api } from "../../convex/_generated/api"
 import type { Doc } from "../../convex/_generated/dataModel"
-import { BRAND } from "../app.config"
 import { ExportButton } from "../backup/ExportButton"
 import { projectBackup } from "../backup/projectBackup"
 import { FeedbackButton } from "../feedback/FeedbackButton"
-import { ShareButton } from "../share/ShareButton"
 import { PageColumn, PageHeader, PageMessage, Text, TextLink, TextTone, Toolbar } from "../ui"
 
 function OwnerProject({ project }: { project: Doc<"projects"> }) {
   return (
     <PageColumn>
       <PageHeader
-        eyebrow={BRAND}
-        title={project.name}
+        eyebrow={project.clientName}
+        title={project.title}
         actions={
           <Toolbar>
             <TextLink to="/">All projects</TextLink>
             <FeedbackButton target={{ projectId: project._id }} />
             <ExportButton adapter={projectBackup} id={project._id} />
-            <ShareButton projectId={project._id} shareToken={project.shareToken} />
           </Toolbar>
         }
       />
-      <Text tone={TextTone.Muted}>
-        The example resource. Replace this page with your app's own screen.
-      </Text>
-      <RenameForm key={project.name} projectId={project._id} name={project.name} />
-      <ProjectAssistant projectId={project._id} />
+      <Text tone={TextTone.Muted}>Stage: {project.stage}</Text>
     </PageColumn>
   )
 }
