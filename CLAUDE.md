@@ -8,7 +8,13 @@ Run `/pre-commit` ([.claude/skills/pre-commit/SKILL.md](.claude/skills/pre-commi
 
 ## The stages
 
-A project moves through six stages, the timeline in the app. Each skill works in the client's folder and then sets the project's stage in Convex.
+A project moves through six stages, the timeline in the app. Each skill takes the client's slug, works in the client's folder, and then sets the stage it is named for, which decides what the client's link opens:
+
+```sh
+node --experimental-strip-types app/scripts/client-state.ts --slug <slug> --stage <stage> [--prod] [--dry-run]
+```
+
+From the repo root: it sets the stage in Convex with `npx convex run projects:setStage` (in `app/`, under the developer's own Convex login, so no key sits in the repo), then mirrors it in the folder's `state.json`. `--prod` targets the live app; `--dry-run` writes `state.json` and prints the command without running it.
 
 | Stage     | Skill                                 | Produces                                                                                    |
 | --------- | ------------------------------------- | ------------------------------------------------------------------------------------------- |
@@ -21,22 +27,34 @@ A project moves through six stages, the timeline in the app. Each skill works in
 
 ### interview: `/interview`
 
+Sets `interview` first, so the client's link opens the interview. Once the client has talked, it saves the transcript to `interview/<yyyy-mm-dd>.md`, verbatim.
+
 ### PRD: `/prd`
+
+Reads `interview/`; writes `prd.md`: numbered FRs and NFRs with priorities, each citing a verbatim quote from the transcript, and an out-of-scope list. A quote not in the transcript is flagged, never invented. Appends its decisions to `decisions.md`. Sets `prd`, so the client can read the PRD.
 
 ### analysis: `/analyze-template`, `/estimate`
 
+`/analyze-template` takes the template's repo link and writes `analysis.md`: what the template is, what to configure, where it deploys, its limits and monthly cost, and a verdict per requirement of `prd.md` (in the template, needs an extension, or not supported, with an alternative). It leaves the stage. `/estimate` reads both and writes `estimate.md`: hours plus infrastructure $/month, with why usage past a free tier raises it. It sets `analysis`.
+
 ### prototype: `/prototype`
+
+Builds the mockup, then a dev app from the template if time allows; writes `prototype.md` with what was built and its links, and registers the prototype on the project. Sets `prototype`.
 
 ### feedback: `/feedback`
 
+Sets `feedback` first, so the client can leave a voice note or text on the prototype. Then saves it to `feedback/<yyyy-mm-dd>.md`, split into what works and what doesn't, and appends the decisions it leads to in `decisions.md`.
+
 ### final: `/handover`
+
+Writes `handover.md`: the final app behind a login, and the steps that move it to the client's own accounts. Sets `final`.
 
 ## Client folders
 
-- `clients/<slug>/` holds only the made-up public demo client, `clients/demo-client/`. Real clients live in `clients-private/<slug>/`: gitignored, its own git repo with no remote.
+- `clients/<slug>/` holds only the made-up public demo client, [clients/demo-client/](clients/demo-client/). Real clients live in `clients-private/<slug>/`, with the same layout: gitignored, its own git repository with no remote (`git init clients-private` once).
 - A skill looks the slug up in `clients-private/` first, then `clients/`, and writes only in the folder it read from.
-- Details stay in the folder; Convex holds the high-level state, set with `npx convex run` under the developer's own login.
-- No email address and no deny-listed name under `clients/`; the deny list lives in `clients-private/`.
+- Details stay in the folder; Convex holds the high-level state, the stage.
+- No email address and no deny-listed name under `clients/`: `npm run check:privacy` fails on either, and runs in `npm run check`. The deny list is `clients-private/deny-list.txt`, one name per line, never in the repo; add each real client's names there.
 
 ## Code rules
 
@@ -61,6 +79,7 @@ The app lives in `app/`; run every command from there, except `npm start` (the w
 ```sh
 npm run dev            # Vite on http://localhost:5173 (with `npx convex dev` running)
 npm run check          # format:check, typecheck, lint, check:english, check:colors, knip, tests
+npm run check:privacy  # no email address or deny-listed name under clients/
 npm test               # Vitest
 npm run build          # typecheck and production build
 npm run e2e            # Playwright on its own local anonymous Convex backend
