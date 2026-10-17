@@ -1,13 +1,9 @@
+import { type TranscriptLine } from "./transcript"
+
 // A made-up interview: an event planner asks for a seating and floor plan app. The recorded
 // answers (recordedAnswers.ts) and the tests are made on it.
 
-export interface FixtureTurn {
-  seq: number
-  speaker: "agent" | "client"
-  text: string
-}
-
-export const FIXTURE_TRANSCRIPT: FixtureTurn[] = [
+export const FIXTURE_TRANSCRIPT: TranscriptLine[] = [
   { seq: 1, speaker: "agent", text: "Thanks for joining. What should the app do for your events?" },
   {
     seq: 2,

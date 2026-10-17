@@ -1,6 +1,9 @@
+import { FIXTURE_TRANSCRIPT } from "./fixtureTranscript"
+import { clientTurnCount } from "./transcript"
+
 // The answers askLlm returns without OPENROUTER_API_KEY, one per task, made on the fixture
-// transcript (fixtureTranscript.ts). The tests mock the model with the same answers. NFR-2's
-// quote is a paraphrase on purpose: quote verification marks it unverified.
+// transcript. The tests mock the model with the same answers. NFR-2's quote is a paraphrase on
+// purpose: quote verification marks it unverified.
 
 const prd = {
   summary:
@@ -229,9 +232,21 @@ const feedbackSplit = {
   ],
 }
 
+const interviewLines = FIXTURE_TRANSCRIPT.filter((turn) => turn.speaker === "agent").map(
+  (turn) => turn.text,
+)
+
+// The fixture's questions in order, one per client answer so far, then its closing line.
+function interviewTurn(data: string) {
+  const answered = Math.min(clientTurnCount(data), interviewLines.length - 1)
+
+  return { question: interviewLines[answered], done: answered === interviewLines.length - 1 }
+}
+
 export const RECORDED_ANSWERS = {
-  prd,
-  manifest,
-  analysis,
-  feedbackSplit,
+  prd: () => prd,
+  manifest: () => manifest,
+  analysis: () => analysis,
+  feedbackSplit: () => feedbackSplit,
+  interviewTurn,
 }

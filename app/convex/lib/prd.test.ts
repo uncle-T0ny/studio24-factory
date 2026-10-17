@@ -5,7 +5,7 @@ import { checkPrd, draftPrd, type PrdAnswer, verifyQuote } from "./prd"
 import { RECORDED_ANSWERS } from "./recordedAnswers"
 
 const turns = FIXTURE_TRANSCRIPT.map((turn) => ({ ...turn, _id: `turn-${turn.seq}` }))
-const recorded = RECORDED_ANSWERS.prd as PrdAnswer
+const recorded = RECORDED_ANSWERS.prd() as PrdAnswer
 
 function modelAnswering(...answers: unknown[]) {
   const ask = vi.fn<(request: LlmRequest) => Promise<LlmAnswer>>()

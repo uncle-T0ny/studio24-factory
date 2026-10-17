@@ -1,6 +1,7 @@
 import { type Infer, v } from "convex/values"
 import { validate } from "convex-helpers/validators"
 import { type LlmAnswer, type LlmRequest, LlmTask } from "./llm"
+import { type TranscriptLine, transcriptAsData } from "./transcript"
 
 export const prdAnswerValidator = v.object({
   summary: v.string(),
@@ -25,11 +26,8 @@ export const prdAnswerValidator = v.object({
 
 export type PrdAnswer = Infer<typeof prdAnswerValidator>
 
-export interface Turn<TurnId> {
+export interface Turn<TurnId> extends TranscriptLine {
   _id: TurnId
-  seq: number
-  speaker: "agent" | "client"
-  text: string
 }
 
 export interface PrdDraft {
@@ -52,7 +50,7 @@ function prdRequest<TurnId>(turns: Turn<TurnId>[], problems: string[]): LlmReque
   return {
     task: LlmTask.Prd,
     instructions: INSTRUCTIONS + retry,
-    data: turns.map((turn) => `[${turn.seq}] ${turn.speaker}: ${turn.text}`).join("\n"),
+    data: transcriptAsData(turns),
     answer: prdAnswerValidator,
   }
 }

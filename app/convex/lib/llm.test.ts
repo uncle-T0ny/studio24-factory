@@ -1,7 +1,9 @@
 import { v } from "convex/values"
 import { afterEach, describe, expect, it, vi } from "vitest"
+import { FIXTURE_TRANSCRIPT } from "./fixtureTranscript"
 import { askLlm, jsonSchemaOf, LlmTask, RECORDED_MODEL } from "./llm"
 import { RECORDED_ANSWERS } from "./recordedAnswers"
+import { transcriptAsData } from "./transcript"
 
 const answer = v.object({ title: v.string(), note: v.optional(v.string()) })
 
@@ -36,8 +38,26 @@ describe("askLlm", () => {
 
     const result = await askLlm(request(LlmTask.Prd), countCall)
 
-    expect(result).toEqual({ json: RECORDED_ANSWERS.prd, model: RECORDED_MODEL })
+    expect(result).toEqual({ json: RECORDED_ANSWERS.prd(), model: RECORDED_MODEL })
     expect(countCall).not.toHaveBeenCalled()
+  })
+
+  it("plays the recorded interview: the next fixture question per client answer, then done", async () => {
+    vi.stubEnv("OPENROUTER_API_KEY", "")
+    const turnAfter = async (turnCount: number) =>
+      (
+        await askLlm(
+          {
+            ...request(LlmTask.InterviewTurn),
+            data: transcriptAsData(FIXTURE_TRANSCRIPT.slice(0, turnCount)),
+          },
+          () => Promise.resolve(),
+        )
+      ).json
+
+    expect(await turnAfter(0)).toEqual({ question: FIXTURE_TRANSCRIPT[0]?.text, done: false })
+    expect(await turnAfter(2)).toEqual({ question: FIXTURE_TRANSCRIPT[2]?.text, done: false })
+    expect(await turnAfter(14)).toEqual({ question: FIXTURE_TRANSCRIPT[14]?.text, done: true })
   })
 
   it("asks Sonnet with low reasoning effort and a strict JSON schema for the PRD", async () => {

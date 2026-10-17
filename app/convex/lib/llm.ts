@@ -9,6 +9,7 @@ export enum LlmTask {
   Manifest = "manifest",
   Analysis = "analysis",
   FeedbackSplit = "feedbackSplit",
+  InterviewTurn = "interviewTurn",
 }
 
 export interface LlmRequest {
@@ -38,6 +39,7 @@ const TASK_MODEL: Record<LlmTask, string> = {
   [LlmTask.Analysis]: SONNET,
   [LlmTask.Manifest]: HAIKU,
   [LlmTask.FeedbackSplit]: HAIKU,
+  [LlmTask.InterviewTurn]: HAIKU,
 }
 
 type JsonSchema = Record<string, unknown>
@@ -125,7 +127,7 @@ export async function askLlm(request: LlmRequest, countCall: CountLlmCall): Prom
   const key = process.env.OPENROUTER_API_KEY
 
   if (!key) {
-    return { json: RECORDED_ANSWERS[request.task], model: RECORDED_MODEL }
+    return { json: RECORDED_ANSWERS[request.task](request.data), model: RECORDED_MODEL }
   }
 
   const model = TASK_MODEL[request.task]
