@@ -210,7 +210,6 @@ const interviewLines = FIXTURE_TRANSCRIPT.filter((turn) => turn.speaker === "age
   (turn) => turn.text,
 )
 
-// The fixture's questions in order, one per client answer so far, then its closing line.
 function interviewTurn(data: string) {
   const answered = Math.min(clientTurnCount(data), interviewLines.length - 1)
 
