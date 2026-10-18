@@ -42,7 +42,7 @@ function speech() {
       apiKey: config.deepgramApiKey,
       model: "nova-3",
       language: "en",
-      // Smart formatting wrote a spoken number as "12:30" (lesson 1).
+      // Smart formatting turns a spoken number into a time, such as "12:30".
       smartFormat: false,
       keyterm: [...KEYTERMS],
     }),
@@ -66,7 +66,7 @@ function languageModel() {
   })
 }
 
-// A longer pause before the turn ends keeps a sentence with a pause in it as one answer (lesson 2).
+// A longer wait before the turn ends keeps an answer with a pause in it as one answer.
 const TURN_HANDLING = {
   turnDetection: "vad",
   endpointing: { minDelay: 800 },

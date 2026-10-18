@@ -54,8 +54,7 @@ function spoken(message: Message): Pick<Turn, "role" | "text"> | null {
   return { role: message.role, text: text.slice(0, MAX_TURN_LENGTH) }
 }
 
-// One spoken answer can arrive as several user messages (lesson 2 of the mic test): consecutive
-// messages of one speaker share a turn, so a re-post of that turn replaces its text.
+// One spoken answer can arrive as several messages, so one speaker's run of them is one turn.
 function nextTurn(last: Turn | null, turn: Pick<Turn, "role" | "text">, at: number): Turn {
   return last?.role === turn.role
     ? { ...last, text: `${last.text} ${turn.text}`.slice(0, MAX_TURN_LENGTH) }
