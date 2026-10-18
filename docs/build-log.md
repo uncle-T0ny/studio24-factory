@@ -126,3 +126,10 @@ Each merge to `main`, in order: the merge commit, its time (MDT), the branch, an
 - Gives: from the developer's live interview: at most five questions, never about deadlines, dates or budget; after the fifth answer the interviewer thanks the client and stops, in text and in voice.
 - Entry points: `app/convex/interviews.ts` (`MAX_QUESTIONS`, `CLOSE_NOW`), `agent/src/prompts.ts`.
 - Gates: app check (223 tests), build, e2e 16/16; agent check (20 tests) and `tsc`.
+
+## 79c4177, 18:04; 2297694, 18:05; 0e0c2e3, 18:06: s2-voice (c85ee27, bea471f, e1181cd)
+
+- Gives: from the developer's live interview: the transcript as chat bubbles in regular weight, in text and in voice; an empty interviewer turn is never stored or shown.
+- Entry points: `app/src/interview/interview.css`, `app/src/interview/TextInterview.tsx`, `app/src/voice/VoiceSession.tsx`, `app/convex/interviews.ts` saveQuestion, `app/convex/lib/voiceData.ts`.
+- Gates: check (224 tests), build, e2e 16/16 on each.
+- Integrator: the agent on the host is now built with `npm run build` (`tsconfig.build.json`); `tsc -p .` emits nothing, so the first two agent deploys ran the template's earlier build until 18:04.
