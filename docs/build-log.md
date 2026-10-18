@@ -155,3 +155,9 @@ Each merge to `main`, in order: the merge commit, its time (MDT), the branch, an
 
 - Gives: the client's feedback, sent on production through the feedback link and sorted by the model into one broken point and one request; `/feedback` recorded it in `clients/demo-client/feedback/2026-10-17.md` and as decision D-10 (show the prototype on the whole screen).
 - Checks: the privacy check passes; no email address or person name.
+
+## a3320c2, 18:38, s2-voice (4f3656c and 20558e6, on the developer's word after the freeze)
+
+- Gives: the client's prototype spans the page, a full viewport high, on the prototype and feedback pages (the client's feedback D-10); the developer's project page shows each reached stage's output in place (transcript excerpt, PRD summary, estimate, prototype preview and link, feedback items) and an example card for a stage with no data.
+- Entry points: `app/convex/stageOutputs.ts`, `app/src/projects/StageOutputs.tsx`, `app/src/prototype/PrototypeFrame.tsx`.
+- Gates: check (225 tests), build, e2e 16/16.
