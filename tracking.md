@@ -17,3 +17,7 @@ My instructions to the AI, one line per 5 minutes:
 - 18:00 (T+65): Interview done on prod; run the demo pipeline.
 - 18:05 (T+70): Prod commands only through the integrator.
 - 18:10 (T+75): Voice works; transcript layout to the next version.
+- 18:15 (T+80): Prototype first; mockup must match the template.
+- 18:20 (T+85): Full-screen prototype; README gaps; public after review.
+- 18:25 (T+90): Skip mockup design; local run check with credentials.
+- 18:30 (T+95): Freeze: README, deploy, checks; fresh-clone rerun.
