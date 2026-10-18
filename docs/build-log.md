@@ -150,3 +150,8 @@ Each merge to `main`, in order: the merge commit, its time (MDT), the branch, an
 - Gives: the demo client's mockup redone with the template's own `tokens.css`, `components.css` and `ui-` classes, so the prototype looks like the app it would become; `/prototype` now inlines the kit.
 - Prod: the integrator uploaded it with `prototypes:uploadMockup` at 18:18; the client's link shows the newest upload. No stage change.
 - Gates: check (225 tests); the privacy check passes, no email address or person name.
+
+## 0a0bca9, 18:21, p1-feedback (29527b8, the demo client's feedback)
+
+- Gives: the client's feedback, sent on production through the feedback link and sorted by the model into one broken point and one request; `/feedback` recorded it in `clients/demo-client/feedback/2026-10-17.md` and as decision D-10 (show the prototype on the whole screen).
+- Checks: the privacy check passes; no email address or person name.
