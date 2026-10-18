@@ -34,7 +34,7 @@ in production that does its job.
 - The voice agent runs on a 2 vCPU host: it works, but turn-taking lags and speech recognition slips; it needs a bigger host and a sharper interview agent.
 - The voice interview's transcript grows at the end of the page; it should stay in view without scrolling.
 - Adding a template by link from the UI: the backend exists, the screen doesn't.
-- The prototype is a mockup in the template's look; building it from the client's own design reference is the next step.
+- The design is weak and needs real work, above all in the templates: a template should carry a finished design, so the mockup and the app built on it look good from the start; the mockup should also follow the client's own design reference.
 
 ## How to run the project
 
