@@ -67,14 +67,16 @@ export function TextInterview({ token, view }: { token: string; view: InterviewV
   return (
     <Card label="Interview">
       <ol className="interview-chat" aria-label="Transcript">
-        {view.turns.map((turn) => (
-          <li key={turn.seq} className={`interview-turn interview-turn--${turn.speaker}`}>
-            <span className="interview-speaker">
-              {turn.speaker === "agent" ? interviewer : "You"}
-            </span>
-            <p className="interview-bubble">{turn.text}</p>
-          </li>
-        ))}
+        {view.turns
+          .filter((turn) => turn.text.trim())
+          .map((turn) => (
+            <li key={turn.seq} className={`interview-turn interview-turn--${turn.speaker}`}>
+              <span className="interview-speaker">
+                {turn.speaker === "agent" ? interviewer : "You"}
+              </span>
+              <p className="interview-bubble">{turn.text}</p>
+            </li>
+          ))}
       </ol>
       <Status view={view} isAwaiting={isAwaiting} />
       {isAwaiting ? (

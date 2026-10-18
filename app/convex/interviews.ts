@@ -223,10 +223,15 @@ export const saveQuestion = internalMutation({
   handler: async (ctx, args) => {
     const interview = await liveInterview(ctx, args.interviewId)
 
-    if (interview) {
-      await appendTurn(ctx, interview, "agent", args.question)
+    // A live model's closing turn can come back empty: nothing to store, the interview ends.
+    const question = args.question.trim()
 
-      if (args.done) {
+    if (interview) {
+      if (question) {
+        await appendTurn(ctx, interview, "agent", question)
+      }
+
+      if (args.done || !question) {
         await finish(ctx, interview, { status: "done" })
       }
     }

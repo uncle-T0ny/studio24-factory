@@ -25,7 +25,9 @@ function turnRow(interview: Doc<"interviews">, turn: Turn) {
 }
 
 async function storeTurn(ctx: MutationCtx, interview: Doc<"interviews">, turn: Turn) {
-  if (interview.endedAt !== undefined || turn.index < 0 || turn.index >= MAX_TURNS) {
+  const isOutOfRange = turn.index < 0 || turn.index >= MAX_TURNS
+
+  if (interview.endedAt !== undefined || isOutOfRange || cleanTurnText(turn.text) === "") {
     return
   }
 
@@ -59,7 +61,7 @@ async function endInterview(
     await ctx.db.delete(row._id)
   }
 
-  for (const turn of event.turns.slice(0, MAX_TURNS)) {
+  for (const turn of event.turns.slice(0, MAX_TURNS).filter((t) => cleanTurnText(t.text))) {
     await ctx.db.insert("transcriptTurns", turnRow(interview, turn))
   }
 

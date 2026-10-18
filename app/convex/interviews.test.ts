@@ -113,6 +113,35 @@ describe("the text interview", () => {
     expect(view?.turns.filter((turn) => turn.speaker === "agent")).toHaveLength(6)
   })
 
+  it("stores no empty interviewer turn when the model closes with no words", async () => {
+    vi.stubEnv("OPENROUTER_API_KEY", "test-key")
+    const answers = [
+      '{"question":"What should the app do?","done":false}',
+      '{"question":" ","done":true}',
+    ]
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(
+        async () =>
+          new Response(JSON.stringify({ choices: [{ message: { content: answers.shift() } }] })),
+      ),
+    )
+    const { t, token } = await fixture()
+    const interviewId = await t.mutation(api.interviews.startText, { token })
+
+    await settle(t)
+    await t.mutation(api.interviews.answer, { token, interviewId, text: "A booking app" })
+    await settle(t)
+
+    expect(await t.query(api.interviews.current, { token })).toMatchObject({
+      status: "done",
+      turns: [
+        { speaker: "agent", text: "What should the app do?" },
+        { speaker: "client", text: "A booking app" },
+      ],
+    })
+  })
+
   it("refuses a second answer before the next question", async () => {
     const { t, token } = await fixture()
     const interviewId = await t.mutation(api.interviews.startText, { token })
