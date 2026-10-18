@@ -1,4 +1,4 @@
-# The voice worker as a container, for your own server (README, "Optional: voice (LiveKit)").
+# The voice worker as a container, for your own server (agent/README.md, "Deploy").
 #   docker build -t voice-agent .
 #   docker run -d --name voice-agent --env-file .env.production --restart unless-stopped voice-agent
 # The worker only makes outbound connections (LiveKit, OpenRouter, Convex): publish no ports.

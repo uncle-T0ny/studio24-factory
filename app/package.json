@@ -1,10 +1,11 @@
 {
-  "name": "client-app-starter",
+  "name": "studio24-factory-app",
+  "description": "Studio24 Factory: the web app (Vite, React, Convex)",
   "private": true,
   "version": "0.4.0",
   "type": "module",
   "engines": {
-    "node": ">=22"
+    "node": ">=22.6"
   },
   "packageManager": "npm@10.9.8",
   "scripts": {

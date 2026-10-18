@@ -39,9 +39,7 @@ every rule passes.
 
 ## Decisions log
 
-- D-1: built on a pre-existing starter template (Convex, Convex Auth, Vite, React, Cloudflare Workers, a LiveKit voice worker), linked from the README, not part of the 2 hours.
-- D-2: the cut order, if time runs short: voice feedback becomes text; the dev prototype becomes the mockup only; template analysis by link becomes a pre-seeded manifest. Never cut: login, the client link, the voice interview, the PRD, the timeline.
-- D-3: the demo client is made up; real client data never enters the repo.
+The decisions, among them the starter template, the cut order and the made-up demo client, are in [DECISIONS.md](DECISIONS.md).
 
 ## Out of scope
 

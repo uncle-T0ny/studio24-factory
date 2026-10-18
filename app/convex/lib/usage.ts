@@ -5,6 +5,7 @@ import type { MutationCtx } from "../_generated/server"
 export const DAILY_CAPS: Partial<Record<UsageKind, number>> = {
   interviews: 10,
   llmCalls: 30,
+  sttSeconds: 30 * 60,
 }
 
 export const MAX_INTERVIEW_SEC = 10 * 60

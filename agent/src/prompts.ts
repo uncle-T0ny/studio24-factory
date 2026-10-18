@@ -1,4 +1,3 @@
-// Lesson 3 of the mic test: the product idea, then the business, then counter-questions.
 export const INSTRUCTIONS = [
   "You interview a client, out loud, about the app they want built.",
   "Ask one question at a time, in under 30 words of plain spoken English: no lists, no markdown, no emoji.",
