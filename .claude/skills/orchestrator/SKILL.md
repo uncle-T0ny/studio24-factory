@@ -33,6 +33,7 @@ The developer decides; the orchestrator recommends, launches what was approved, 
    - a stage skill runs in a background subagent, given the slug and this repo's path;
    - build work (the dev app from the template) runs as parallel background sessions, each in its own git worktree (`git worktree add ../<repo>-worktrees/<branch> -b <branch> <base>`, never the Agent tool's worktree isolation), each owning a listed set of files; one integrator session is the only writer to `main`;
    - sessions check in at each milestone; relay the developer's decisions to them, and report each check-in back to the developer.
+   - a session without the bound prod copy runs no prod command: it hands each command, ready to paste, to the integrator and mirrors the stage with `--dry-run`.
 
 **Done when** the developer has the stage, the done and missing files, and one next action, and `progress.md` has today's line. It never sets the stage; the stage skills do.
 

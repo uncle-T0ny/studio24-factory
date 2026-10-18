@@ -11,7 +11,7 @@ description: Opens a client's interview and saves its transcript into their fold
 
 1. Resolve the folder: `clients-private/<slug>/` first, then `clients/<slug>/`; read and write only there. No folder yet: a real client gets `clients-private/<slug>/` with the demo client's layout (`README.md`, `interview/`, `feedback/`, `decisions.md`); `clients/` holds only the made-up demo client.
 2. Set the stage first, so the client's link opens the interview: from the repo root, `node --experimental-strip-types app/scripts/client-state.ts --slug <slug> --stage interview`. With no transcript yet, stop here.
-3. Write the transcript to `interview/<yyyy-mm-dd>.md` (today; `-2` for a second one that day): a `# Interview, <yyyy-mm-dd>` title, a `Source:` line, then each turn as `**Agent:** …` or `**Client:** …`, one paragraph per turn. Copy the words verbatim: no fixing, no summarising, no merged turns; every later quote is checked against this file.
+3. Write the transcript to `interview/<yyyy-mm-dd>.md` (today; `-2` for a second one that day): a `# Interview, <yyyy-mm-dd>` title, a `Source:` line, then each turn as `**Agent:** …` or `**Client:** …`, one paragraph per turn. Copy the words verbatim: no fixing, no summarising, no merged turns; every later quote is checked against this file. Build the file from the stored turns with a script, skip empty turns and name them in `Source:`.
 4. Under `clients/`, stop if the transcript holds an email address or a real person's name: it belongs in `clients-private/`.
 
 **Outputs.** The stage `interview`, then `interview/<yyyy-mm-dd>.md`.

@@ -29,3 +29,4 @@ From the repo root: it sets the stage in Convex with `npx convex run projects:se
 - A skill looks the slug up in `clients-private/` first, then `clients/`, and writes only in the folder it read from.
 - Details stay in the folder; Convex holds the high-level state, the stage.
 - No email address and no deny-listed name under `clients/`: `npm run check:privacy` fails on either, and runs in `npm run check`. The deny list is `clients-private/deny-list.txt`, one name per line, never in the repo; add each real client's names there.
+- Format a client folder's files with Prettier from `app/` by hand (`npm run format:check` doesn't reach `clients/`), never a transcript; say when `npm run check:privacy` ran without the deny list.

@@ -13,7 +13,7 @@ description: Turns a client's template analysis into an estimate: build hours pl
 2. Infrastructure: one row per service in the manifest, with its plan and $/month at the usage the PRD implies.
 3. Free tiers: for each service on a free plan, the limit that breaks it, the client's usage that reaches it, and the $/month after. Take each limit from the provider's pricing page and name the page; a limit you can't verify is marked `unverified`, never guessed.
 4. Write `estimate.md`: `## Hours` (table and total), `## Infrastructure` (table and total $/month), `## Free tier breaks`, and one `**Total:**` line: hours, and $/month now and past the free tiers.
-5. From the repo root: `node --experimental-strip-types app/scripts/client-state.ts --slug <slug> --stage analysis`, so the client's link opens the analysis and the estimate.
+5. From the repo root: `node --experimental-strip-types app/scripts/client-state.ts --slug <slug> --stage analysis`, so the client's link opens the analysis and the estimate. Skip it when the project is already past `analysis`: a stage never moves back.
 
 **Outputs.** `estimate.md`, the stage `analysis`.
 
