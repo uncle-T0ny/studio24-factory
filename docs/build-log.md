@@ -133,3 +133,9 @@ Each merge to `main`, in order: the merge commit, its time (MDT), the branch, an
 - Entry points: `app/src/interview/interview.css`, `app/src/interview/TextInterview.tsx`, `app/src/voice/VoiceSession.tsx`, `app/convex/interviews.ts` saveQuestion, `app/convex/lib/voiceData.ts`.
 - Gates: check (224 tests), build, e2e 16/16 on each.
 - Integrator: the agent on the host is now built with `npm run build` (`tsconfig.build.json`); `tsc -p .` emits nothing, so the first two agent deploys ran the template's earlier build until 18:04.
+
+## 8e45947, 18:12, p1-demo-pipeline (8c5499d, the demo client end to end)
+
+- Gives: the made-up demo client carried from the live interview to the prototype: the transcript, the PRD, the decisions, the template analysis, the estimate and a clickable mockup, all in `clients/demo-client/`.
+- Prod: the integrator ran the stage moves and the mockup upload (`prototypes:uploadMockup`, `projects:setStage` to prototype, then feedback); the stage is feedback.
+- Checks: the privacy check passes; no email address or person name in the folder.

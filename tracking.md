@@ -14,3 +14,6 @@ My instructions to the AI, one line per 5 minutes:
 - 17:45 (T+50): Speed up: fixed merge order, no new features.
 - 17:50 (T+55): Text interview now; voice deployed in parallel.
 - 17:55 (T+60): Shorter interview, no deadline question; restyle.
+- 18:00 (T+65): Interview done on prod; run the demo pipeline.
+- 18:05 (T+70): Prod commands only through the integrator.
+- 18:10 (T+75): Voice works; transcript layout to the next version.
