@@ -120,3 +120,9 @@ Each merge to `main`, in order: the merge commit, its time (MDT), the branch, an
 - Decision: the orchestrator never sets the stage itself; the stage skills do.
 - Gaps: launching sessions is untested by design.
 - Gates: check (222 tests), build; Prettier on `CLAUDE.md` and the skills.
+
+## 497ff53, 18:00, s2-voice (cf7d782, a shorter interview)
+
+- Gives: from the developer's live interview: at most five questions, never about deadlines, dates or budget; after the fifth answer the interviewer thanks the client and stops, in text and in voice.
+- Entry points: `app/convex/interviews.ts` (`MAX_QUESTIONS`, `CLOSE_NOW`), `agent/src/prompts.ts`.
+- Gates: app check (223 tests), build, e2e 16/16; agent check (20 tests) and `tsc`.
