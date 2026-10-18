@@ -28,14 +28,7 @@ Haiku where speed matters (a live conversation) or the task is extraction; Sonne
 
 ## Running without keys
 
-`npm start` runs the whole app locally on a local Convex backend, with no account. Each key adds a layer, and every layer keeps the ones below it working. The README's "Run locally" follows these layers.
-
-| Layer | Keys                                                                                      | What works                                                                                    |
-| ----- | ----------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
-| 0     | none, nothing to install                                                                  | The live URL.                                                                                 |
-| 1     | none                                                                                      | The whole flow in text; the AI's answers are recorded ones, labelled "recorded demo answer".  |
-| 2     | `OPENROUTER_API_KEY`                                                                      | Real AI at every stage, and voice feedback (its speech-to-text also runs through OpenRouter). |
-| 3     | `LIVEKIT_URL`, `LIVEKIT_API_KEY`, `LIVEKIT_API_SECRET`, `DEEPGRAM_API_KEY`, on top of 2's | The live voice interview.                                                                     |
+`npm start` runs the whole app locally on a local Convex backend, with no account. Each key adds a layer, and every layer keeps the ones below it working. The layers, the keys each needs and what each adds are in the README's [How to run the project](../README.md#how-to-run-the-project).
 
 Voice is offered only with its keys: the voice interview only when all five keys are set, otherwise the interview is in text and no microphone is shown; voice feedback only when `OPENROUTER_API_KEY` is set, otherwise feedback is typed.
 

@@ -31,7 +31,7 @@ First prod setup only:
 ## C. Smoke checks (on the deployed URL)
 
 - [ ] `/` loads; sign-in against prod works.
-- [ ] Deep links load directly, in a fresh tab: `/project/<id>`, `/p/<token>` (`curl -sI` gives 200: the SPA fallback).
+- [ ] Deep links load directly, in a fresh tab: `/project/<id>`, `/c/<token>` (`curl -sI` gives 200: the SPA fallback).
 - [ ] `/favicon.ico`, `/favicon-32.png`, `/apple-touch-icon.png` give 200.
 - [ ] No console errors on the projects page, a project's page and a share link.
 - [ ] The main bundle names the prod deployment, not dev: `curl -s <site>/ | grep -o 'assets/index-[^"]*\.js'`, then grep that file for the deployment name.
