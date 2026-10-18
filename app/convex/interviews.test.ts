@@ -82,6 +82,37 @@ describe("the text interview", () => {
     })
   })
 
+  it("closes a live interview after five answers, even when the model asks on", async () => {
+    vi.stubEnv("OPENROUTER_API_KEY", "test-key")
+    const fetchMock = vi.fn(
+      async (_url: string | URL | Request, _init?: RequestInit) =>
+        new Response(
+          JSON.stringify({
+            choices: [{ message: { content: '{"question":"And then?","done":false}' } }],
+          }),
+        ),
+    )
+    vi.stubGlobal("fetch", fetchMock)
+    const { t, token } = await fixture()
+    const interviewId = await t.mutation(api.interviews.startText, { token })
+
+    await settle(t)
+
+    for (let answer = 1; answer <= 5; answer += 1) {
+      await t.mutation(api.interviews.answer, { token, interviewId, text: `Answer ${answer}` })
+      await settle(t)
+    }
+
+    const lastRequest = JSON.parse(fetchMock.mock.calls.at(-1)?.[1]?.body as string) as {
+      messages: { role: string; content: string }[]
+    }
+    const view = await t.query(api.interviews.current, { token })
+
+    expect(lastRequest.messages[0]?.content).toContain("answered the last question")
+    expect(view?.status).toBe("done")
+    expect(view?.turns.filter((turn) => turn.speaker === "agent")).toHaveLength(6)
+  })
+
   it("refuses a second answer before the next question", async () => {
     const { t, token } = await fixture()
     const interviewId = await t.mutation(api.interviews.startText, { token })
