@@ -18,7 +18,7 @@ describe("the usage check", () => {
     const rows = await t.run(async (ctx) => await ctx.db.query("usage").collect())
 
     expect(rows).toEqual([expect.objectContaining({ kind: "llmCalls", count: 30 })])
-    expect(DAILY_CAPS).toEqual({ interviews: 10, llmCalls: 30 })
+    expect(DAILY_CAPS).toEqual({ interviews: 10, llmCalls: 30, sttSeconds: 30 * 60 })
   })
 
   it("counts minutes without a daily cap, and per UTC day", async () => {
@@ -43,5 +43,16 @@ describe("the usage check", () => {
       { kind: "llmCalls", count: 1 },
     ])
     expect(usageDay(Date.UTC(2026, 9, 17, 23, 59))).toBe("2026-10-17")
+  })
+
+  it("caps speech-to-text at 30 minutes a day", async () => {
+    const t = newBackend()
+
+    await t.mutation(internal.usage.spend, { kind: "sttSeconds", amount: 30 * 60 - 10 })
+
+    await expect(
+      t.mutation(internal.usage.spend, { kind: "sttSeconds", amount: 11 }),
+    ).rejects.toThrow(CAP_REACHED)
+    await t.mutation(internal.usage.spend, { kind: "sttSeconds", amount: 10 })
   })
 })
