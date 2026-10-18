@@ -1,0 +1,50 @@
+.interview-chat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.interview-turn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  max-width: 75%;
+  overflow-wrap: anywhere;
+}
+
+.interview-turn--agent {
+  align-self: flex-start;
+}
+
+.interview-turn--client {
+  align-self: flex-end;
+  align-items: flex-end;
+}
+
+.interview-speaker {
+  padding: 0 var(--space-1);
+  color: var(--muted);
+  font-size: var(--text-2xs);
+}
+
+.interview-bubble {
+  margin: 0;
+  padding: var(--space-2) var(--space-4);
+  color: var(--ink);
+  font-size: var(--text-md);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-normal);
+}
+
+.interview-turn--agent .interview-bubble {
+  background: var(--paper);
+  border-radius: var(--radius-xl) var(--radius-xl) var(--radius-xl) var(--radius-sm);
+}
+
+.interview-turn--client .interview-bubble {
+  background: var(--accent-soft);
+  border-radius: var(--radius-xl) var(--radius-xl) var(--radius-sm) var(--radius-xl);
+}
