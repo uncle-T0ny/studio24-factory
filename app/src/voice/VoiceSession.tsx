@@ -12,6 +12,7 @@ import {
   agentStatus,
   checkMicrophone,
   microphoneProblem,
+  Speaker,
   transcriptLines,
   VOICE_PROBLEMS,
   VoiceProblem,
@@ -28,13 +29,12 @@ import {
   CardHeader,
   Heading,
   HeadingLevel,
-  List,
-  ListRow,
   Text,
   TextSize,
   TextTone,
   Tone,
 } from "../ui"
+import "../interview/interview.css"
 import "./voice.css"
 
 export interface VoiceConnectionDetails {
@@ -157,11 +157,17 @@ function LiveTranscript({ room }: { room: Room }) {
   }
 
   return (
-    <List label="Live transcript">
+    <ol className="interview-chat" aria-label="Live transcript">
       {lines.map((line) => (
-        <ListRow key={line.id} title={line.text} meta={line.speaker} />
+        <li
+          key={line.id}
+          className={`interview-turn interview-turn--${line.speaker === Speaker.You ? "client" : "agent"}`}
+        >
+          <span className="interview-speaker">{line.speaker}</span>
+          <p className="interview-bubble">{line.text}</p>
+        </li>
       ))}
-    </List>
+    </ol>
   )
 }
 

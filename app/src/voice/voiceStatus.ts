@@ -114,7 +114,7 @@ export function agentStatus(state: AgentState): AgentStatus {
 
 export enum Speaker {
   You = "You",
-  Assistant = "Assistant",
+  Assistant = "Interviewer",
 }
 
 export interface TranscriptionStream {
