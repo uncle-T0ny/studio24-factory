@@ -139,3 +139,8 @@ Each merge to `main`, in order: the merge commit, its time (MDT), the branch, an
 - Gives: the made-up demo client carried from the live interview to the prototype: the transcript, the PRD, the decisions, the template analysis, the estimate and a clickable mockup, all in `clients/demo-client/`.
 - Prod: the integrator ran the stage moves and the mockup upload (`prototypes:uploadMockup`, `projects:setStage` to prototype, then feedback); the stage is feedback.
 - Checks: the privacy check passes; no email address or person name in the folder.
+
+## 363bd6a, 18:14, s2-voice (b9113a6, one bubble per speaker run)
+
+- Gives: one shared `src/interview/ChatTranscript.tsx` for text and voice; a speaker's consecutive turns join into one bubble, and a restart keeps the longer text; the stored turns are untouched.
+- Gates: check (225 tests), build, e2e 16/16.
