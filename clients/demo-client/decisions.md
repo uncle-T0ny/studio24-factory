@@ -9,3 +9,4 @@
 - D-7 (prd, 2026-10-17): The uploaded floor plans are PDF files. "PDF"
 - D-8 (prd, 2026-10-17): No deadline. "I have no deadline"
 - D-9 (prd, 2026-10-17): The budget is $1,000. "budget 1000$"
+- D-10 (feedback, 2026-10-17): new: show the prototype on the whole screen, not in a framed box inside the page. "the app should take up the whole screen, not sit in a small framed box inside the page"
