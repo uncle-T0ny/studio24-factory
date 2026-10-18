@@ -6,7 +6,7 @@ Dev app: not built. The run was `/prototype demo-client --mockup-only`: the buil
 
 ## What the mockup covers
 
-One self-contained page with four screens, made-up sample data only; each screen shows the IDs it covers. It reads on a phone and on a desktop.
+One self-contained page with four screens in the template's look (its `tokens.css` and `components.css` inlined, the kit's `ui-` classes and app shell), made-up sample data only; each screen shows the IDs it covers. It reads on a phone and on a desktop.
 
 | Screen              | Covers                             | What it shows                                                                                         |
 | ------------------- | ---------------------------------- | ----------------------------------------------------------------------------------------------------- |

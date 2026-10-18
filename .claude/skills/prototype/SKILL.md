@@ -9,7 +9,7 @@ description: Builds a client's prototype: a clickable mockup first, then a dev a
 
 **Steps.**
 
-1. Mockup: `mockup.html`, one self-contained file (inline CSS, no external scripts, made-up sample data only) with a screen for each `must` FR and its ID on the screen. It must read on a phone.
+1. Mockup: `mockup.html`, one self-contained file (inline CSS, no external scripts, made-up sample data only) with a screen for each `must` FR and its ID on the screen. It must read on a phone. It inlines the template's `app/src/ui/tokens.css` and `app/src/ui/components.css` and uses the kit's `ui-` classes, so it looks like the app it becomes.
 2. Unless `--mockup-only`: create the dev app from the template in its own repo outside this one, build the `must` FRs on it, and deploy it to a dev environment.
 3. Write `prototype.md`: `Mockup: [mockup.html](mockup.html)`, `Dev app: <URL>` (or `not built` with the reason), and what each covers, by FR ID.
 4. Put the prototype on the project, so the client's link opens it. From `app/`, upload the mockup: `npx convex run prototypes:uploadMockup "$(jq -Rs '{slug:"<slug>", html:.}' ../<client folder>/mockup.html)"`; register a dev app by its http(s) URL: `npx convex run prototypes:registerPrototype '{"slug":"<slug>","kind":"devApp","url":"<url>"}'`. Add `--prod` for a real client on the live app, as for the stage.
