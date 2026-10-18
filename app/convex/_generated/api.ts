@@ -51,6 +51,7 @@ import type * as prd from "../prd.js";
 import type * as projects from "../projects.js";
 import type * as prototypes from "../prototypes.js";
 import type * as seed from "../seed.js";
+import type * as stageOutputs from "../stageOutputs.js";
 import type * as templates from "../templates.js";
 import type * as testing from "../testing.js";
 import type * as usage from "../usage.js";
@@ -107,6 +108,7 @@ const fullApi: ApiFromModules<{
   projects: typeof projects;
   prototypes: typeof prototypes;
   seed: typeof seed;
+  stageOutputs: typeof stageOutputs;
   templates: typeof templates;
   testing: typeof testing;
   usage: typeof usage;

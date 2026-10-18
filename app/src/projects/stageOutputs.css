@@ -1,0 +1,28 @@
+.stage-output {
+  display: grid;
+  gap: var(--space-2);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--line);
+}
+
+.stage-output-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.stage-output-frame {
+  height: 200px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--paper);
+}
+
+.stage-output-frame iframe {
+  width: 200%;
+  height: 400px;
+  border: 0;
+  transform: scale(0.5);
+  transform-origin: 0 0;
+}

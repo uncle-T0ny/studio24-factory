@@ -7,6 +7,7 @@ import { projectBackup } from "../backup/projectBackup"
 import { FeedbackButton } from "../feedback/FeedbackButton"
 import { ClientLinks } from "../links/ClientLinks"
 import { PageColumn, PageHeader, PageMessage, TextLink, Toolbar } from "../ui"
+import { StageOutputs } from "./StageOutputs"
 import { StageTimeline } from "./StageTimeline"
 
 function OwnerProject({ project }: { project: Doc<"projects"> }) {
@@ -24,6 +25,7 @@ function OwnerProject({ project }: { project: Doc<"projects"> }) {
         }
       />
       <StageTimeline project={project} />
+      <StageOutputs project={project} />
       <ClientLinks key={project.stage} project={project} />
     </PageColumn>
   )
