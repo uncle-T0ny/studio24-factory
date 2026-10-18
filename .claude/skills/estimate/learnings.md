@@ -1,1 +1,4 @@
 # /estimate learnings (written by /wrap-up, at most 12,000 characters)
+
+- 2026-10-17: The mockup was ordered before the analysis, so prod was already past `analysis` when /estimate ran, and its stage step would have moved the project back. Fix: skipped the stage move; `state.json` kept the later stage. Rule: never move a stage back; skip step 5 when the project is already past `analysis`.
+- 2026-10-17: The free-tier limits had to come from the pricing pages. Fix: fetched convex.dev/pricing, the Cloudflare Workers pricing page and resend.com/pricing with `curl`, stripped the HTML and searched the limit names; which Convex meter file downloads count against is not on the page, so it is marked unverified. Rule: quote each limit from the fetched page; a meter the page doesn't map is unverified.

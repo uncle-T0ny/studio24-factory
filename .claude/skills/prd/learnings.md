@@ -1,1 +1,4 @@
 # /prd learnings (written by /wrap-up, at most 12,000 characters)
+
+- 2026-10-17: On the live app the PRD is drafted by `prd:draft`, an action that takes the client's link token (stored hashed), so the developer can't trigger it from the CLI. Fix: the stage moved to `prd`, main asked the client to press "Draft the PRD" on their page, and `prd.md` was still written by this skill from the transcript. Rule: after the stage move, tell main the client can press "Draft the PRD"; `prd.md` stays this skill's.
+- 2026-10-17: Proving 22 quotes one by one is slow. Fix: one loop over every double-quoted string in `prd.md` and the decision lines, `grep -qF` each against `interview/*.md`, printing only misses; a client's answer that repeats the agent's question ("… - yes") is still the client's words. Rule: prove all quotes in one loop and re-run it after any formatting.

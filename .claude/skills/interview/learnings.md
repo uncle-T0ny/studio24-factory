@@ -1,1 +1,3 @@
 # /interview learnings (written by /wrap-up, at most 12,000 characters)
+
+- 2026-10-17: The live interview's transcript sits in Convex (`transcriptTurns` by `projectId`, ordered by `at`), and the closed text interview ended on an empty agent turn. Fix: exported the project's turns as JSON lines, wrote the file with `jq` from the stored text (`**Agent:**`/`**Client:**` per turn), skipped the empty turn and said so in `Source:`; Prettier would only drop a trailing blank line, trimmed by hand. Rule: build the transcript from the stored turns with a script, never retyped; skip empty turns and name them in `Source:`; never run Prettier on a transcript.
