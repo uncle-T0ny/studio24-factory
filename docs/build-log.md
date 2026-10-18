@@ -144,3 +144,9 @@ Each merge to `main`, in order: the merge commit, its time (MDT), the branch, an
 
 - Gives: one shared `src/interview/ChatTranscript.tsx` for text and voice; a speaker's consecutive turns join into one bubble, and a restart keeps the longer text; the stored turns are untouched.
 - Gates: check (225 tests), build, e2e 16/16.
+
+## 2d10c32, 18:18, p1-mockup-kit (4fb9919, the mockup in the template's look)
+
+- Gives: the demo client's mockup redone with the template's own `tokens.css`, `components.css` and `ui-` classes, so the prototype looks like the app it would become; `/prototype` now inlines the kit.
+- Prod: the integrator uploaded it with `prototypes:uploadMockup` at 18:18; the client's link shows the newest upload. No stage change.
+- Gates: check (225 tests); the privacy check passes, no email address or person name.
