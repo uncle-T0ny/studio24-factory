@@ -111,3 +111,18 @@ Each merge to `main`, in order: the merge commit, its time (MDT), the branch, an
 - Decision: merge same-speaker messages by index, and keep the 800 ms endpointing too.
 - Deploy: `LOG_LEVEL=warn`, `VOICE_MAX_SECONDS` 600, `TimeoutStopSec` 720, the token TTL equal to the interview's maximum.
 - Gates: app check (222 tests), build, e2e 16/16; agent check (20 tests) and `tsc`.
+
+## a22af31, 17:58, s7-skills (915499b, the orchestrator and learnings)
+
+- Gives: `/orchestrator <slug>` says the client's stage, what is done and missing, and the one next skill, and logs `progress.md`; every skill keeps a `learnings.md`, and `/wrap-up` records what a session learned; `/prototype` registers and uploads the mockup through S4's mutations; `CLAUDE.md` now only links.
+- Entry points: `.claude/skills/orchestrator/SKILL.md:1`, `CLAUDE.md` "Start here", `app/scripts/skill-test.ts:189`.
+- Tables: none directly; the skills call `projects:setStage`, `prototypes:registerPrototype` and `prototypes:uploadMockup`.
+- Decision: the orchestrator never sets the stage itself; the stage skills do.
+- Gaps: launching sessions is untested by design.
+- Gates: check (222 tests), build; Prettier on `CLAUDE.md` and the skills.
+
+## 497ff53, 18:00, s2-voice (cf7d782, a shorter interview)
+
+- Gives: from the developer's live interview: at most five questions, never about deadlines, dates or budget; after the fifth answer the interviewer thanks the client and stops, in text and in voice.
+- Entry points: `app/convex/interviews.ts` (`MAX_QUESTIONS`, `CLOSE_NOW`), `agent/src/prompts.ts`.
+- Gates: app check (223 tests), build, e2e 16/16; agent check (20 tests) and `tsc`.

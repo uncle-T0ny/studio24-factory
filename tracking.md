@@ -13,3 +13,4 @@ My instructions to the AI, one line per 5 minutes:
 - 17:30 (T+35): An orchestrator skill that launches sessions.
 - 17:45 (T+50): Speed up: fixed merge order, no new features.
 - 17:50 (T+55): Text interview now; voice deployed in parallel.
+- 17:55 (T+60): Shorter interview, no deadline question; restyle.
