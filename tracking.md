@@ -21,3 +21,8 @@ My instructions to the AI, one line per 5 minutes:
 - 18:20 (T+85): Full-screen prototype; README gaps; public after review.
 - 18:25 (T+90): Skip mockup design; local run check with credentials.
 - 18:30 (T+95): Freeze: README, deploy, checks; fresh-clone rerun.
+- 18:35 (T+100): Demo unclear: show each stage's output.
+- 18:40 (T+105): Simpler README; link tracking, no time.
+- 18:45 (T+110): Weak design: improve templates; repo public.
+- 18:50 (T+115): Last polish merge; shared demo caps noted.
+- 18:55 (T+120): Stop.

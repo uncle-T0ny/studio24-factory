@@ -35,6 +35,7 @@ in production that does its job.
 - The voice interview's transcript grows at the end of the page; it should stay in view without scrolling.
 - Adding a template by link from the UI: the backend exists, the screen doesn't.
 - The design is weak and needs real work, above all in the templates: a template should carry a finished design, so the mockup and the app built on it look good from the start; the mockup should also follow the client's own design reference.
+- Every "Demo as developer" visitor shares one demo owner and its daily caps; feedback uploads have no size limit, and password-reset emails no rate limit.
 
 ## How to run the project
 
