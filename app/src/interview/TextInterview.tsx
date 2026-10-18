@@ -1,6 +1,7 @@
 import { useMutation } from "convex/react"
 import type { FunctionReturnType } from "convex/server"
 import { useState, type SubmitEvent } from "react"
+import { ChatTranscript } from "./ChatTranscript"
 import { api } from "../../convex/_generated/api"
 import { RECORDED_MODEL } from "../../convex/lib/llm"
 import { useErrorState } from "../lib/errors"
@@ -18,7 +19,6 @@ import {
   Tone,
 } from "../ui"
 import "../voice/voice.css"
-import "./interview.css"
 
 export type InterviewView = NonNullable<FunctionReturnType<typeof api.interviews.current>>
 
@@ -66,18 +66,15 @@ export function TextInterview({ token, view }: { token: string; view: InterviewV
 
   return (
     <Card label="Interview">
-      <ol className="interview-chat" aria-label="Transcript">
-        {view.turns
-          .filter((turn) => turn.text.trim())
-          .map((turn) => (
-            <li key={turn.seq} className={`interview-turn interview-turn--${turn.speaker}`}>
-              <span className="interview-speaker">
-                {turn.speaker === "agent" ? interviewer : "You"}
-              </span>
-              <p className="interview-bubble">{turn.text}</p>
-            </li>
-          ))}
-      </ol>
+      <ChatTranscript
+        label="Transcript"
+        lines={view.turns.map((turn) => ({
+          key: String(turn.seq),
+          speaker: turn.speaker,
+          label: turn.speaker === "agent" ? interviewer : "You",
+          text: turn.text,
+        }))}
+      />
       <Status view={view} isAwaiting={isAwaiting} />
       {isAwaiting ? (
         <form

@@ -18,6 +18,7 @@ import {
   VoiceProblem,
 } from "./voiceStatus"
 import { CAP_REACHED } from "../../convex/lib/usage"
+import { ChatTranscript } from "../interview/ChatTranscript"
 import { useErrorState } from "../lib/errors"
 import {
   Badge,
@@ -34,7 +35,6 @@ import {
   TextTone,
   Tone,
 } from "../ui"
-import "../interview/interview.css"
 import "./voice.css"
 
 export interface VoiceConnectionDetails {
@@ -157,17 +157,15 @@ function LiveTranscript({ room }: { room: Room }) {
   }
 
   return (
-    <ol className="interview-chat" aria-label="Live transcript">
-      {lines.map((line) => (
-        <li
-          key={line.id}
-          className={`interview-turn interview-turn--${line.speaker === Speaker.You ? "client" : "agent"}`}
-        >
-          <span className="interview-speaker">{line.speaker}</span>
-          <p className="interview-bubble">{line.text}</p>
-        </li>
-      ))}
-    </ol>
+    <ChatTranscript
+      label="Live transcript"
+      lines={lines.map((line) => ({
+        key: line.id,
+        speaker: line.speaker === Speaker.You ? "client" : "agent",
+        label: line.speaker,
+        text: line.text,
+      }))}
+    />
   )
 }
 
