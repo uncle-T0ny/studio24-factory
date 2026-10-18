@@ -1,0 +1,622 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Floor plan app: mockup</title>
+    <style>
+      :root {
+        --ink: #1f2933;
+        --muted: #616e7c;
+        --line: #d9dee4;
+        --bg: #f5f7fa;
+        --card: #ffffff;
+        --accent: #2f6fdf;
+        --ok: #1f8a4c;
+        --warn: #b7791f;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font:
+          15px/1.45 system-ui,
+          -apple-system,
+          "Segoe UI",
+          sans-serif;
+        color: var(--ink);
+        background: var(--bg);
+      }
+      header {
+        background: var(--card);
+        border-bottom: 1px solid var(--line);
+        padding: 12px 16px;
+      }
+      header h1 {
+        margin: 0;
+        font-size: 18px;
+      }
+      header p {
+        margin: 2px 0 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+      nav {
+        display: flex;
+        gap: 6px;
+        overflow-x: auto;
+        padding: 10px 16px;
+        background: var(--card);
+        border-bottom: 1px solid var(--line);
+      }
+      nav button {
+        flex: none;
+        border: 1px solid var(--line);
+        background: var(--bg);
+        color: var(--ink);
+        border-radius: 999px;
+        padding: 6px 12px;
+        font: inherit;
+        font-size: 13px;
+        cursor: pointer;
+      }
+      nav button[aria-selected="true"] {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: #ffffff;
+      }
+      main {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 16px;
+      }
+      section.screen {
+        display: none;
+      }
+      section.screen.active {
+        display: block;
+      }
+      h2 {
+        font-size: 17px;
+        margin: 0 0 4px;
+      }
+      .ids {
+        display: inline-flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        margin-bottom: 12px;
+      }
+      .id {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        color: var(--accent);
+        background: #e8f0fd;
+        border-radius: 4px;
+        padding: 2px 6px;
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 14px;
+        margin-bottom: 12px;
+      }
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 260px 1fr;
+        gap: 12px;
+      }
+      @media (max-width: 760px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      label {
+        display: block;
+        font-size: 13px;
+        color: var(--muted);
+        margin-bottom: 4px;
+      }
+      input,
+      select {
+        font: inherit;
+        padding: 7px 9px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        width: 100%;
+        background: var(--card);
+        color: var(--ink);
+      }
+      .btn {
+        display: inline-block;
+        border: 1px solid var(--accent);
+        background: var(--accent);
+        color: #ffffff;
+        border-radius: 6px;
+        padding: 7px 12px;
+        font: inherit;
+        font-size: 14px;
+        cursor: pointer;
+        text-decoration: none;
+      }
+      .btn.ghost {
+        background: var(--card);
+        color: var(--accent);
+      }
+      .muted {
+        color: var(--muted);
+        font-size: 13px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+      }
+      td,
+      th {
+        text-align: left;
+        padding: 8px 6px;
+        border-bottom: 1px solid var(--line);
+      }
+      .palette button {
+        width: 100%;
+        margin-bottom: 6px;
+        text-align: left;
+      }
+      .canvas {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .canvas svg {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+      .tag {
+        font-size: 12px;
+        border-radius: 4px;
+        padding: 2px 6px;
+        background: #e6f4ec;
+        color: var(--ok);
+      }
+      .tag.warn {
+        background: #fdf3e2;
+        color: var(--warn);
+      }
+      .drop {
+        border: 2px dashed var(--line);
+        border-radius: 10px;
+        padding: 18px;
+        text-align: center;
+        color: var(--muted);
+      }
+      .phone {
+        max-width: 320px;
+        margin: 0 auto;
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        padding: 28px 18px;
+        background: var(--card);
+        text-align: center;
+      }
+      .page {
+        background: #ffffff;
+        border: 1px solid var(--line);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+        padding: 18px;
+        max-width: 640px;
+        margin: 0 auto;
+      }
+      footer {
+        text-align: center;
+        color: var(--muted);
+        font-size: 12px;
+        padding: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Floor plan app: clickable mockup</h1>
+      <p>
+        Made-up sample data. Each screen names the requirements (FR IDs from the
+        PRD) it shows.
+      </p>
+    </header>
+    <nav role="tablist">
+      <button data-screen="plans" aria-selected="true">
+        1. Plans and upload
+      </button>
+      <button data-screen="editor">2. Plan editor</button>
+      <button data-screen="couple">3. Couple's link</button>
+      <button data-screen="export">4. Export PDF</button>
+    </nav>
+    <main>
+      <section class="screen active" id="plans">
+        <h2>Your plans</h2>
+        <div class="ids">
+          <span class="id">FR-1</span><span class="id">FR-10</span>
+        </div>
+        <div class="card">
+          <table>
+            <tr>
+              <th>Plan</th>
+              <th>Setting</th>
+              <th>Guests</th>
+              <th>Event date</th>
+            </tr>
+            <tr>
+              <td>Sample wedding A</td>
+              <td>Indoors, measured</td>
+              <td>180</td>
+              <td>2027-06-12</td>
+            </tr>
+            <tr>
+              <td>Sample wedding B</td>
+              <td>Outdoors, no measurements</td>
+              <td>64</td>
+              <td>2027-07-03</td>
+            </tr>
+            <tr>
+              <td>Sample wedding C</td>
+              <td>Indoors, from uploaded PDF</td>
+              <td>250</td>
+              <td>2027-08-21</td>
+            </tr>
+          </table>
+        </div>
+        <div class="card">
+          <strong>New plan</strong> <span class="id">FR-1</span>
+          <div class="row" style="margin-top: 10px">
+            <div style="flex: 1 1 180px">
+              <label>Name</label><input value="Sample wedding D" />
+            </div>
+            <div style="flex: 1 1 140px">
+              <label>Setting</label
+              ><select>
+                <option>Indoors</option>
+                <option>Outdoors</option>
+              </select>
+            </div>
+            <div style="flex: 1 1 140px">
+              <label>Width (m), optional</label
+              ><input placeholder="Leave empty if unknown" />
+            </div>
+            <div style="flex: 1 1 140px">
+              <label>Length (m), optional</label
+              ><input placeholder="Leave empty if unknown" />
+            </div>
+          </div>
+          <p class="muted">
+            Without measurements, the plan uses a free grid and the tables keep
+            their relative sizes.
+          </p>
+        </div>
+        <div class="card">
+          <strong>Start from a ready-made floor plan</strong>
+          <span class="id">FR-10</span>
+          <div class="drop" style="margin-top: 10px">
+            Drop the venue's floor plan here (PDF only) or
+            <a class="btn ghost" href="#">Choose a PDF</a>
+          </div>
+          <p class="muted">
+            The PDF's first page becomes the plan's background; you place tables
+            on top of it.
+          </p>
+        </div>
+        <button class="btn" data-go="editor">Open Sample wedding A</button>
+      </section>
+
+      <section class="screen" id="editor">
+        <h2>Sample wedding A: the editor</h2>
+        <div class="ids">
+          <span class="id">FR-1</span><span class="id">FR-2</span
+          ><span class="id">FR-3</span><span class="id">FR-4</span
+          ><span class="id">FR-5</span><span class="id">FR-6</span>
+        </div>
+        <div class="grid">
+          <div>
+            <div class="card">
+              <label for="guests"
+                >Guest count <span class="id">FR-3</span>
+                <span class="id">FR-4</span></label
+              >
+              <input
+                id="guests"
+                type="range"
+                min="50"
+                max="300"
+                step="10"
+                value="180"
+              />
+              <p style="margin: 6px 0 0">
+                <strong id="guestOut">180</strong> guests:
+                <strong id="tableOut">18</strong> tables of 10 chairs, updated
+                live
+              </p>
+            </div>
+            <div class="card palette">
+              <label>Add to the plan</label>
+              <button class="btn ghost">
+                Round table, 10 chairs <span class="id">FR-2</span>
+              </button>
+              <button class="btn ghost">
+                Long table, 8 chairs <span class="id">FR-2</span>
+              </button>
+              <button class="btn ghost">
+                Ceremony rows: 4 rows x 2 sides x 10
+                <span class="id">FR-6</span>
+              </button>
+              <button class="btn ghost">
+                My items: dance floor, bar, DJ, cake
+                <span class="id">FR-5</span>
+              </button>
+              <button class="btn ghost">
+                + New custom item <span class="id">FR-5</span>
+              </button>
+            </div>
+            <p class="muted">
+              Hall: 30 m x 20 m, indoors (FR-1). Couple's link: on, expires the
+              day after 2027-06-12.
+            </p>
+          </div>
+          <div class="canvas">
+            <svg
+              id="plan"
+              viewBox="0 0 600 400"
+              role="img"
+              aria-label="Floor plan"
+            ></svg>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen" id="couple">
+        <h2>The couple's link</h2>
+        <div class="ids">
+          <span class="id">FR-7</span><span class="id">FR-8</span
+          ><span class="id">FR-11</span><span class="id">FR-12</span>
+        </div>
+        <div class="card">
+          <div class="row">
+            <strong>Share with the couple</strong>
+            <span class="tag">No sign-up needed</span>
+          </div>
+          <div class="row" style="margin-top: 10px">
+            <input
+              readonly
+              value="https://app.example.com/p/sample-link"
+              style="flex: 1 1 260px"
+            />
+            <a class="btn" href="#">Copy link</a>
+          </div>
+          <p class="muted">
+            Expires after the event date, 2027-06-12 (FR-11). Only the couple
+            gets this link.
+          </p>
+        </div>
+        <div class="card">
+          <strong>What the couple sees on a desktop</strong>
+          <span class="id">FR-7</span>
+          <p class="muted">
+            The same editor, without the plans list. Every move saves straight
+            to your plan, with no approval step (FR-8).
+          </p>
+          <table>
+            <tr>
+              <th>Change by the couple</th>
+              <th>When</th>
+              <th>Status</th>
+            </tr>
+            <tr>
+              <td>Moved table 7 next to the dance floor</td>
+              <td>2 min ago</td>
+              <td><span class="tag">Saved to your plan</span></td>
+            </tr>
+            <tr>
+              <td>Guest count 180 to 176</td>
+              <td>5 min ago</td>
+              <td><span class="tag">Saved to your plan</span></td>
+            </tr>
+          </table>
+        </div>
+        <div class="card">
+          <strong>What the couple sees on a phone</strong>
+          <span class="id">FR-12</span>
+          <div class="phone" style="margin-top: 10px">
+            <p><strong>Please open this link on a desktop</strong></p>
+            <p class="muted">
+              The floor plan is made for a large screen. Copy the link and open
+              it on a computer.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="screen" id="export">
+        <h2>Export for the venue</h2>
+        <div class="ids"><span class="id">FR-9</span></div>
+        <div class="card">
+          <div class="row">
+            <a class="btn" href="#">Download PDF</a
+            ><span class="muted">A4 landscape, the plan plus a table list</span>
+          </div>
+        </div>
+        <div class="page">
+          <strong>Sample wedding A: floor plan</strong>
+          <p class="muted" style="margin: 2px 0 10px">
+            2027-06-12, 180 guests, 18 tables, ceremony 80 chairs
+          </p>
+          <svg
+            id="pdfPlan"
+            viewBox="0 0 600 400"
+            style="width: 100%; height: auto; border: 1px solid #d9dee4"
+          ></svg>
+          <p class="muted">
+            Tables 1 to 18: 10 chairs each. Items: dance floor, bar, DJ, cake.
+          </p>
+        </div>
+      </section>
+    </main>
+    <footer>
+      Mockup only: no data is saved. Requirements FR-1 to FR-12 are in the PRD.
+    </footer>
+    <script>
+      const tabs = document.querySelectorAll("nav button");
+      function show(id) {
+        document
+          .querySelectorAll("section.screen")
+          .forEach((s) => s.classList.toggle("active", s.id === id));
+        tabs.forEach((t) =>
+          t.setAttribute("aria-selected", String(t.dataset.screen === id)),
+        );
+      }
+      tabs.forEach((t) =>
+        t.addEventListener("click", () => show(t.dataset.screen)),
+      );
+      document
+        .querySelectorAll("[data-go]")
+        .forEach((b) => b.addEventListener("click", () => show(b.dataset.go)));
+
+      const ns = "http://www.w3.org/2000/svg";
+      function el(svg, name, attrs, text) {
+        const node = document.createElementNS(ns, name);
+        Object.entries(attrs).forEach(([k, v]) => node.setAttribute(k, v));
+        if (text) node.textContent = text;
+        svg.appendChild(node);
+      }
+      function draw(svg, guests) {
+        svg.innerHTML = "";
+        el(svg, "rect", {
+          x: 5,
+          y: 5,
+          width: 590,
+          height: 390,
+          fill: "#fbfcfd",
+          stroke: "#9aa5b1",
+          "stroke-width": 2,
+        });
+        const tables = Math.ceil(guests / 10);
+        for (let i = 0; i < tables; i++) {
+          const cx = 50 + (i % 5) * 62,
+            cy = 50 + Math.floor(i / 5) * 62;
+          const seats = Math.min(10, guests - i * 10);
+          for (let c = 0; c < seats; c++) {
+            const a = (c / 10) * Math.PI * 2;
+            el(svg, "circle", {
+              cx: cx + Math.cos(a) * 24,
+              cy: cy + Math.sin(a) * 24,
+              r: 4,
+              fill: "#2f6fdf",
+            });
+          }
+          el(svg, "circle", {
+            cx,
+            cy,
+            r: 16,
+            fill: "#ffffff",
+            stroke: "#1f2933",
+          });
+          el(
+            svg,
+            "text",
+            { x: cx, y: cy + 4, "text-anchor": "middle", "font-size": 11 },
+            String(i + 1),
+          );
+        }
+        el(svg, "rect", {
+          x: 420,
+          y: 30,
+          width: 150,
+          height: 110,
+          fill: "#e8f0fd",
+          stroke: "#2f6fdf",
+        });
+        el(
+          svg,
+          "text",
+          { x: 495, y: 90, "text-anchor": "middle", "font-size": 12 },
+          "Dance floor",
+        );
+        el(svg, "rect", {
+          x: 420,
+          y: 155,
+          width: 70,
+          height: 30,
+          fill: "#fdf3e2",
+          stroke: "#b7791f",
+        });
+        el(
+          svg,
+          "text",
+          { x: 455, y: 174, "text-anchor": "middle", "font-size": 11 },
+          "Bar",
+        );
+        el(svg, "rect", {
+          x: 500,
+          y: 155,
+          width: 70,
+          height: 30,
+          fill: "#fdf3e2",
+          stroke: "#b7791f",
+        });
+        el(
+          svg,
+          "text",
+          { x: 535, y: 174, "text-anchor": "middle", "font-size": 11 },
+          "DJ",
+        );
+        el(
+          svg,
+          "text",
+          { x: 330, y: 268, "font-size": 11, fill: "#616e7c" },
+          "Ceremony rows",
+        );
+        for (let r = 0; r < 4; r++) {
+          for (let s = 0; s < 10; s++) {
+            el(svg, "rect", {
+              x: 330 + s * 10,
+              y: 280 + r * 14,
+              width: 7,
+              height: 7,
+              fill: "#1f8a4c",
+            });
+            el(svg, "rect", {
+              x: 455 + s * 10,
+              y: 280 + r * 14,
+              width: 7,
+              height: 7,
+              fill: "#1f8a4c",
+            });
+          }
+        }
+        el(
+          svg,
+          "text",
+          { x: 432, y: 352, "font-size": 10, fill: "#616e7c" },
+          "aisle",
+        );
+      }
+      const range = document.getElementById("guests");
+      function update() {
+        const g = Number(range.value);
+        document.getElementById("guestOut").textContent = g;
+        document.getElementById("tableOut").textContent = Math.ceil(g / 10);
+        draw(document.getElementById("plan"), g);
+      }
+      range.addEventListener("input", update);
+      update();
+      draw(document.getElementById("pdfPlan"), 180);
+    </script>
+  </body>
+</html>
