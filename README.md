@@ -58,6 +58,8 @@ cd studio24-factory
 npm start
 ```
 
+The app needs port 5173 free.
+
 `npm start` installs the packages, downloads Convex's local backend and runs everything on your machine (the first run takes a minute or two; later runs are ready in seconds). It prints:
 
 - `App:` http://localhost:5173. Open it and press **Demo as developer**, or sign in with the printed `Sign in:` email and `Password:` (saved in `.env.local`).
